@@ -503,7 +503,6 @@ function loop() {
     // (ocean fill removed — dots show through cleanly)
 
     // ── Backlit planet glow — drawn FIRST (behind dots) ──
-    // Project globe center (0,0,0) to get screen center + radius
     {
       const gcx=v[12], gcy=v[13], gcz=v[14];
       const grx=p[0]*gcx+p[4]*gcy+p[8]*gcz+p[12];
@@ -512,28 +511,24 @@ function loop() {
       if (grw>0) {
         const gscx = ( grx/grw*0.5+0.5)*CW;
         const gscy = (-gry/grw*0.5+0.5)*CH;
-        const gsR  = Math.abs((p[0]*R/grw)*CW*0.5); // globe screen radius
+        const gsR  = Math.abs((p[0]*R/grw)*CW*0.5);
 
-        // Solid dark disc — fills the globe area cleanly behind dots
+        // Solid dark disc behind dots
         ctxDots.beginPath();
         ctxDots.arc(gscx, gscy, gsR*0.995, 0, 6.2832);
         ctxDots.fillStyle = 'rgba(2,7,20,0.92)';
         ctxDots.fill();
 
-        // Rim glow — UV/violet color, nearly full perimeter, brightest at bottom-right
-        const rimW  = gsR * 0.035;
+        // Rim glow — UV/violet, ~300° wrap, brightest at bottom-right (45° canvas)
+        const rimW = gsR * 0.035;
         const glowR = gsR;
-
-        // Sun angle: bottom-right = 135° from positive X (clockwise from right) = ~2.356 rad
-        const sunAngle = Math.PI * 0.75; // 135° — points toward bottom-right
+        const sunAngle = Math.PI * 0.25; // 45° = bottom-right
         const SEG = 180;
 
         for (let i = 0; i < SEG; i++) {
           const angle = (i / SEG) * Math.PI * 2;
           let diff = Math.abs(angle - sunAngle);
           if (diff > Math.PI) diff = Math.PI * 2 - diff;
-
-          // Spread covers ~320° of the perimeter, only a small gap at the opposite (top-left)
           const spread = Math.PI * 0.89;
           const intensity = Math.max(0, 1 - diff / spread);
           const eased = Math.pow(intensity, 1.4);
@@ -542,21 +537,21 @@ function loop() {
           const a1 = angle - (Math.PI * 2 / SEG) * 0.6;
           const a2 = angle + (Math.PI * 2 / SEG) * 0.6;
 
-          // Wide soft outer halo — deep violet/UV
+          // Wide soft outer halo
           ctxDots.beginPath();
           ctxDots.arc(gscx, gscy, glowR + rimW * 3.5, a1, a2);
           ctxDots.strokeStyle = `rgba(160,80,255,${(eased * 0.18).toFixed(3)})`;
           ctxDots.lineWidth = rimW * 4;
           ctxDots.stroke();
 
-          // Mid glow — brighter violet
+          // Mid glow
           ctxDots.beginPath();
           ctxDots.arc(gscx, gscy, glowR + rimW * 1.2, a1, a2);
           ctxDots.strokeStyle = `rgba(180,100,255,${(eased * 0.38).toFixed(3)})`;
           ctxDots.lineWidth = rimW * 2;
           ctxDots.stroke();
 
-          // Tight bright rim — near-white UV core
+          // Tight bright rim
           ctxDots.beginPath();
           ctxDots.arc(gscx, gscy, glowR + rimW * 0.3, a1, a2);
           ctxDots.strokeStyle = `rgba(220,180,255,${(eased * 0.65).toFixed(3)})`;
