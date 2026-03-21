@@ -116,8 +116,15 @@ header{
 <script>
 // ── Constants ──────────────────────────────────────────────────────────────────
 const ACCENT = '#00c2b2';
-const PC = { swift:ACCENT, fedwire:ACCENT, stablecoin:ACCENT, ach:ACCENT };
-const TYPES = ['swift','fedwire','stablecoin','ach'];
+const PC = {
+  swift:      '#00c2b2',  // teal
+  fedwire:    '#00c2b2',  // teal
+  stablecoin: '#00c2b2',  // teal
+  ach:        '#00c2b2',  // teal
+  withdrawal: '#f59e0b',  // amber/yellow
+  internal:   '#3b82f6',  // blue
+};
+const TYPES = ['swift','fedwire','stablecoin','ach','withdrawal','internal'];
 const FADE_IN=600, HOLD=800, FADE_OUT=800, RING_DUR=3000;
 
 const CITIES = {
@@ -430,17 +437,29 @@ function boot() {
   world.controls().autoRotate = true;
   world.controls().autoRotateSpeed = 0.4;
 
+  let _initW = window.innerWidth, _initH = window.innerHeight;
+
   function setView() {
     const mob = window.innerWidth <= 640;
-    // altitude: on mobile zoom out enough to fit width; use CW to calculate
     const alt = mob ? Math.max(2.2, (CH / CW) * 1.4) : 2.0;
     world.pointOfView({ lat: 25, lng: -10, altitude: alt });
   }
-  setView();
-  window.addEventListener('resize', setView);
+  setView(); // set once on boot only
+
+  // Only reset on genuine layout changes (orientation flip, window resize)
+  // NOT on pinch-zoom — check if actual px dimensions changed
+  window.addEventListener('resize', () => {
+    const w = window.innerWidth, h = window.innerHeight;
+    if (Math.abs(w - _initW) > 10 || Math.abs(h - _initH) > 10) {
+      _initW = w; _initH = h;
+      setView();
+    }
+  });
 
   loop();
-  [0,900,1900,3100,4500].forEach(d => setTimeout(fireDemo, d));
+  // Fire initial burst then continuously every 2 seconds
+  fireDemo();
+  setInterval(fireDemo, 2000);
 }
 
 // ── Render loop ───────────────────────────────────────────────────────────────
@@ -613,10 +632,28 @@ function loop() {
 }
 
 // ── Rotate globe to bring a lat/lng into view ─────────────────────────────────
-let _rotAnim = null; // cancel any in-progress rotation
+let _rotAnim = null;
+
+// Cancel animation the moment user touches/clicks the globe
+function _setupOverride() {
+  const gw = document.getElementById('gw');
+  if (!gw || gw._overrideSetup) return;
+  gw._overrideSetup = true;
+  const cancel = () => {
+    if (_rotAnim) {
+      _rotAnim.cancelled = true;
+      _rotAnim = null;
+      // Re-enable autorotate after user takes over
+      if (world && world.controls()) world.controls().autoRotate = true;
+    }
+  };
+  gw.addEventListener('pointerdown', cancel, { passive: true });
+  gw.addEventListener('touchstart',  cancel, { passive: true });
+}
 
 function rotateTo(targetLat, targetLng) {
   if (!world) return;
+  _setupOverride();
   if (_rotAnim) { _rotAnim.cancelled = true; }
 
   const pov = world.pointOfView();
@@ -628,15 +665,15 @@ function rotateTo(targetLat, targetLng) {
   let dLng = ((targetLng - startLng) + 540) % 360 - 180;
   const dLat = targetLat - startLat;
 
-  const DURATION = 1800;
+  const DURATION = 2600; // longer, more cinematic
   const t0 = Date.now();
   const anim = { cancelled: false };
   _rotAnim = anim;
 
   if (world.controls()) world.controls().autoRotate = false;
 
-  // Ease-out cubic — fast start, decelerates into landing
-  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  // Quintic ease-out — very smooth deceleration into landing
+  const easeOut = t => 1 - Math.pow(1 - t, 5);
 
   function step() {
     if (anim.cancelled || !world) return;
@@ -646,7 +683,7 @@ function rotateTo(targetLat, targetLng) {
     world.pointOfView({
       lat: startLat + dLat * e,
       lng: startLng + dLng * e,
-      altitude: startAlt,
+      altitude: world.pointOfView().altitude, // preserve whatever zoom user is at
     });
 
     if (raw < 1) {
@@ -718,14 +755,15 @@ function addFeed(from,to,same,type,col,amount,currency) {
   const feed=document.getElementById('feed');
   const el=document.createElement('div'); el.className='fi';
   const now=new Date().toLocaleTimeString('en-US',{hour12:false});
-  const route = same ? `◎ ${from}` : `${from} → ${to}`;
-  el.innerHTML=`<span class="fi-pre">▸</span><span class="fi-amt">${currency} ${fmtA(amount)}</span><span class="fi-route">${route}</span><span class="fi-time">${now}</span>`;
+  // Arrow direction: withdrawal = outgoing ↓, internal = ↔, rest = →
+  const arrow = type==='withdrawal' ? '↓' : type==='internal' ? '↔' : '→';
+  const route = same ? `◎ ${from}` : `${from} ${arrow} ${to}`;
+  el.innerHTML=`<span class="fi-pre" style="color:${col}">▸</span><span class="fi-amt" style="color:${col}">${currency} ${fmtA(amount)}</span><span class="fi-route">${route}</span><span class="fi-time">${now}</span>`;
   feed.insertBefore(el, feed.firstChild);
 
   const isMob = window.innerWidth <= 640;
   const MAX = isMob ? 3 : 12;
 
-  // On mobile: force-expire oldest when hitting 3
   if (isMob && feed.children.length >= MAX) {
     const oldest = feed.lastChild;
     if (oldest && oldest !== el) {
@@ -754,13 +792,61 @@ window.receiveWebhook=p=>{ try{processTx(typeof p==='string'?JSON.parse(p):p);}c
 window.addEventListener('message',e=>{ if(e.data?.type==='transaction') processTx(e.data.payload); });
 
 function fireDemo() {
-  const from=CODES[Math.floor(Math.random()*CODES.length)];
-  let to=CODES[Math.floor(Math.random()*CODES.length)];
-  if(Math.random()<.1) to=from;
-  processTx({from_country:from,to_country:to,payment_type:TYPES[demoIdx++%TYPES.length],amount:(Math.random()*48000+200).toFixed(2),currency:'USD'});
+  const from = CODES[Math.floor(Math.random()*CODES.length)];
+  let to = CODES[Math.floor(Math.random()*CODES.length)];
+
+  // Weighted type distribution
+  const r = Math.random();
+  let type;
+  if      (r < 0.30) type = 'swift';
+  else if (r < 0.50) type = 'fedwire';
+  else if (r < 0.62) type = 'stablecoin';
+  else if (r < 0.72) type = 'ach';
+  else if (r < 0.86) type = 'withdrawal';
+  else               type = 'internal';
+
+  // Withdrawals and internals can be same-country; big amounts occasionally
+  const isSame = type === 'internal' ? (Math.random() < 0.6) : (Math.random() < 0.08);
+  if (isSame) to = from;
+
+  // Amount: small/medium/large weighted distribution; withdrawals/internals skew larger
+  const bigChance = (type === 'withdrawal' || type === 'internal') ? 0.35 : 0.12;
+  let amount;
+  const ar = Math.random();
+  if (ar < bigChance)        amount = (Math.random()*4800000 + 100000).toFixed(2);  // 100K–5M
+  else if (ar < bigChance+0.3) amount = (Math.random()*48000 + 5000).toFixed(2);   // 5K–53K
+  else                       amount = (Math.random()*4800 + 50).toFixed(2);         // 50–4850
+
+  processTx({ from_country:from, to_country:to, payment_type:type, amount, currency:'USD' });
 }
-// Globe is the button — click anywhere on it to fire a transaction
-document.getElementById('gw').addEventListener('click', fireDemo);
+// Globe tap-to-fire — only triggers on quick taps, not drag/hold
+(function() {
+  const gw = document.getElementById('gw');
+  let _tapStart = null;
+
+  function onDown(e) {
+    _tapStart = {
+      t: Date.now(),
+      x: e.touches ? e.touches[0].clientX : e.clientX,
+      y: e.touches ? e.touches[0].clientY : e.clientY,
+    };
+  }
+
+  function onUp(e) {
+    if (!_tapStart) return;
+    const dt = Date.now() - _tapStart.t;
+    const cx = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+    const cy = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+    const dx = Math.abs(cx - _tapStart.x);
+    const dy = Math.abs(cy - _tapStart.y);
+    _tapStart = null;
+    // Only fire if: held <300ms AND moved <8px (pure tap, not drag or long-press)
+    if (dt < 300 && dx < 8 && dy < 8) fireDemo();
+  }
+
+  gw.addEventListener('pointerdown', onDown, { passive: true });
+  gw.addEventListener('pointerup',   onUp,   { passive: true });
+})();
 </script>
 </body>
 </html>
