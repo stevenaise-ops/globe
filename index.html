@@ -526,16 +526,22 @@ function loop() {
       const pos = proj(tx.lat, tx.lng);
       if (!pos) return;
       const {r,g,b} = H2R(tx.col);
-      // Draw 3 staggered rings expanding outward
-      for (let ring = 0; ring < 3; ring++) {
-        const offset = ring / 3;
-        const p = (progress + offset) % 1;
-        const radius = 4 + p * 32;
-        const alpha = (1 - p) * 0.7;
+      // 2 rings, staggered by half, each runs once (no looping)
+      // Ring fades in opacity and grows in radius, both tied to overall alpha
+      const overallAlpha = progress < 0.3
+        ? progress / 0.3                    // fade in
+        : 1 - (progress - 0.3) / 0.7;      // fade out for rest of duration
+      for (let ring = 0; ring < 2; ring++) {
+        const offset = ring * 0.4;
+        const p = Math.min((progress - offset) / (1 - offset), 1);
+        if (p <= 0) continue;
+        const radius = 5 + p * 28;
+        const alpha = overallAlpha * (1 - p) * 0.75;
+        if (alpha < 0.01) continue;
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, radius, 0, 6.2832);
         ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
-        ctx.lineWidth = 1.2;
+        ctx.lineWidth = 1.3;
         ctx.stroke();
       }
       return;
@@ -606,6 +612,53 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
+// ── Rotate globe to bring a lat/lng into view ─────────────────────────────────
+let _rotAnim = null; // cancel any in-progress rotation
+
+function rotateTo(targetLat, targetLng) {
+  if (!world) return;
+  if (_rotAnim) { _rotAnim.cancelled = true; }
+
+  const pov = world.pointOfView();
+  const startLat = pov.lat;
+  const startLng = pov.lng;
+  const startAlt = pov.altitude;
+
+  // Shortest-path longitude delta
+  let dLng = ((targetLng - startLng) + 540) % 360 - 180;
+  const dLat = targetLat - startLat;
+
+  const DURATION = 1800;
+  const t0 = Date.now();
+  const anim = { cancelled: false };
+  _rotAnim = anim;
+
+  if (world.controls()) world.controls().autoRotate = false;
+
+  // Ease-out cubic — fast start, decelerates into landing
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+  function step() {
+    if (anim.cancelled || !world) return;
+    const raw = Math.min((Date.now() - t0) / DURATION, 1);
+    const e = easeOut(raw);
+
+    world.pointOfView({
+      lat: startLat + dLat * e,
+      lng: startLng + dLng * e,
+      altitude: startAlt,
+    });
+
+    if (raw < 1) {
+      requestAnimationFrame(step);
+    } else {
+      _rotAnim = null;
+      if (world.controls()) world.controls().autoRotate = true;
+    }
+  }
+  requestAnimationFrame(step);
+}
+
 // ── Process transaction ────────────────────────────────────────────────────────
 function processTx(data) {
   const { from_country='US', to_country='GB', payment_type='swift', amount=1000, currency='USD' } = data;
@@ -624,13 +677,28 @@ function processTx(data) {
     fromName: fc[2], toName: tc[2],
   });
 
-  // Canvas pulse rings — separate entries that just expand and fade
-  const pulseDur = RING_DUR;
+  // Canvas pulse rings — duration matches arc fade lifecycle exactly
+  const arcDur = FADE_IN + HOLD + FADE_OUT; // 2200ms
   const addPulse = (lat,lng,c) => txAnims.push({
-    isPulse:true, t0:Date.now(), dur:pulseDur, lat, lng, col:c, done:false,
+    isPulse:true, t0:Date.now(), dur:arcDur, lat, lng, col:c, done:false,
   });
-  addPulse(fc[0], fc[1], col);
-  if (!same) addPulse(tc[0], tc[1], col);
+  const PURPLE = '#7c3aed';
+  addPulse(fc[0], fc[1], PURPLE);       // origin = purple
+  if (!same) addPulse(tc[0], tc[1], col); // dest = teal
+
+  // Rotate globe so arc midpoint is centered — offset +90° lng so it appears
+  // center-right of hemisphere, fixed lat so vertical always resets
+  const FIXED_LAT = 20; // always look from this latitude
+  const LNG_OFFSET = 90; // shift arc into center of visible face
+  if (!same) {
+    let dL = tc[1] - fc[1];
+    while (dL > 180) dL -= 360;
+    while (dL < -180) dL += 360;
+    const midLng = fc[1] + dL / 2;
+    rotateTo(FIXED_LAT, midLng - LNG_OFFSET);
+  } else {
+    rotateTo(FIXED_LAT, fc[1] - LNG_OFFSET);
+  }
 
   addFeed(fc[2], tc[2], same, type, col, amount, currency);
   updateStats();
