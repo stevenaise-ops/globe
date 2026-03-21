@@ -7,9 +7,9 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;background:linear-gradient(180deg,#1e3a8a 0%,#3b82f6 20%,#ffffff 33%);color:#111827;font-family:'Inter',sans-serif;overflow:hidden}
+html,body{height:100%;background:linear-gradient(180deg,#020510 0%,#060d2e 20%,#ffffff 33%);color:#111827;font-family:'Inter',sans-serif;overflow:hidden}
 .shell{display:flex;flex-direction:column;height:100vh}
-header{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:54px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.15);background:rgba(30,58,138,0.6);backdrop-filter:blur(12px);color:#fff}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:54px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.1);background:rgba(10,15,44,0.7);backdrop-filter:blur(12px);color:#fff}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-icon{width:26px;height:26px;background:conic-gradient(from 180deg,#00c2b2,#007f76,#00c2b2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
 .logo-name{font-size:14px;font-weight:600;color:#fff}
@@ -26,10 +26,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 /* Sidebar — notifications only */
 .sb{width:300px;display:flex;flex-direction:column;border-left:1px solid rgba(0,0,0,0.06);background:transparent;overflow:hidden}
 
-/* Notification stack — aligns to bottom, items stack upward */
+/* Notification stack — anchored to top */
 .feed{
   flex:1;overflow:hidden;
-  display:flex;flex-direction:column;justify-content:flex-end;
+  display:flex;flex-direction:column;justify-content:flex-start;
   padding:16px 14px;gap:8px;
 }
 
@@ -42,12 +42,12 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
   padding:11px 14px;
   box-shadow:0 4px 16px rgba(0,0,0,0.08),0 1px 3px rgba(0,0,0,0.05);
   animation:notify-in .4s cubic-bezier(0.34,1.56,0.64,1);
-  transition:opacity .5s ease,transform .5s ease,max-height .5s ease;
+  transition:opacity .4s ease,transform .4s ease;
   flex-shrink:0;
 }
-.fi.dying{opacity:0;transform:translateX(16px) scale(0.97);max-height:0;padding:0;margin:0;border:0}
+.fi.dying{opacity:0;transform:translateY(-6px) scale(0.97)}
 @keyframes notify-in{
-  from{opacity:0;transform:translateX(28px) scale(0.95)}
+  from{opacity:0;transform:translateY(-10px) scale(0.95)}
   to{opacity:1;transform:none}
 }
 .fr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
@@ -479,56 +479,62 @@ function loop() {
     if (tx.done || tx.al < 0.01) return;
     const {r,g,b}=H2R(tx.col);
     const al=tx.al;
+    const PURPLE='#7c3aed';
+    const TEAL=tx.col; // #00c2b2
+    const {r:pr,g:pg,b:pb}=H2R(PURPLE);
+    const {r:tr,g:tg,b:tb}=H2R(TEAL);
 
-    // ── Arc — drawn as a canvas bezier curve through multiple projected points ──
+    // ── Arc with purple→teal gradient ──
     if (!tx.same) {
-      // Sample ~40 points along a great-circle arc and project each to screen
       const pts=[];
       for (let t=0; t<=1; t+=0.025) {
-        // Spherical interpolation between origin and dest
         const lat = tx.fLat + (tx.tLat-tx.fLat)*t;
         const lng = tx.fLng + (tx.tLng-tx.fLng)*t;
-        // Add altitude: sin curve peaks at t=0.5
-        const alt = Math.sin(t*Math.PI) * 0.4; // 0.4 = arc height factor
+        const alt = Math.sin(t*Math.PI) * 0.4;
         const pp = projAlt(lat, lng, alt);
-        if (pp) pts.push(pp);
+        if (pp) pts.push({...pp, t});
       }
       if (pts.length > 2) {
-        ctx.beginPath();
-        ctx.moveTo(pts[0].x, pts[0].y);
-        for (let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-        ctx.strokeStyle=`rgba(${r},${g},${b},${al.toFixed(2)})`;
-        ctx.lineWidth=1.5;
-        ctx.stroke();
+        // Draw arc as small segments each with interpolated color
+        for (let i=1; i<pts.length; i++) {
+          const t0=pts[i-1].t, t1=pts[i].t;
+          const tm=(t0+t1)/2;
+          // Interpolate purple→teal along arc
+          const ri=Math.round(pr+(tr-pr)*tm);
+          const gi=Math.round(pg+(tg-pg)*tm);
+          const bi=Math.round(pb+(tb-pb)*tm);
+          ctx.beginPath();
+          ctx.moveTo(pts[i-1].x, pts[i-1].y);
+          ctx.lineTo(pts[i].x, pts[i].y);
+          ctx.strokeStyle=`rgba(${ri},${gi},${bi},${al.toFixed(2)})`;
+          ctx.lineWidth=1.8;
+          ctx.stroke();
+        }
       }
     }
 
-    // ── Origin circle (hollow ring) ──
+    // ── Origin circle (hollow ring) — PURPLE ──
     const op=proj(tx.fLat,tx.fLng);
     if (op) {
       ctx.beginPath(); ctx.arc(op.x,op.y,6,0,6.2832);
-      ctx.strokeStyle=`rgba(${r},${g},${b},${al.toFixed(2)})`; ctx.lineWidth=1.8; ctx.stroke();
+      ctx.strokeStyle=`rgba(${pr},${pg},${pb},${al.toFixed(2)})`; ctx.lineWidth=1.8; ctx.stroke();
       const grd=ctx.createRadialGradient(op.x,op.y,2,op.x,op.y,18);
-      grd.addColorStop(0,`rgba(${r},${g},${b},${(al*.25).toFixed(2)})`);
-      grd.addColorStop(1,`rgba(${r},${g},${b},0)`);
+      grd.addColorStop(0,`rgba(${pr},${pg},${pb},${(al*.28).toFixed(2)})`);
+      grd.addColorStop(1,`rgba(${pr},${pg},${pb},0)`);
       ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(op.x,op.y,18,0,6.2832); ctx.fill();
-
-      // ── Origin city label ──
-      if (tx.fromName) drawLabel(tx.fromName, op.x, op.y-14, `rgba(${r},${g},${b},${al.toFixed(2)})`, al);
+      if (tx.fromName) drawLabel(tx.fromName, op.x, op.y-14, `rgba(${pr},${pg},${pb},${al.toFixed(2)})`, al);
     }
 
-    // ── Destination circle (solid dot) ──
+    // ── Destination circle (solid dot) — TEAL ──
     const dp=proj(tx.tLat,tx.tLng);
     if (dp) {
-      ctx.fillStyle=`rgba(${r},${g},${b},${al.toFixed(2)})`;
+      ctx.fillStyle=`rgba(${tr},${tg},${tb},${al.toFixed(2)})`;
       ctx.beginPath(); ctx.arc(dp.x,dp.y,5,0,6.2832); ctx.fill();
       const grd=ctx.createRadialGradient(dp.x,dp.y,0,dp.x,dp.y,18);
-      grd.addColorStop(0,`rgba(${r},${g},${b},${(al*.3).toFixed(2)})`);
-      grd.addColorStop(1,`rgba(${r},${g},${b},0)`);
+      grd.addColorStop(0,`rgba(${tr},${tg},${tb},${(al*.3).toFixed(2)})`);
+      grd.addColorStop(1,`rgba(${tr},${tg},${tb},0)`);
       ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(dp.x,dp.y,18,0,6.2832); ctx.fill();
-
-      // ── Destination city label ──
-      if (tx.toName && !tx.same) drawLabel(tx.toName, dp.x, dp.y-14, `rgba(${r},${g},${b},${al.toFixed(2)})`, al);
+      if (tx.toName && !tx.same) drawLabel(tx.toName, dp.x, dp.y-14, `rgba(${tr},${tg},${tb},${al.toFixed(2)})`, al);
     }
   });
 
@@ -589,12 +595,12 @@ function addFeed(from,to,same,type,col,amount,currency) {
     old && old.remove();
   }
 
-  // Auto-expire after 5s: fade out then remove
+  // Auto-expire after 2s: fade out then remove
   setTimeout(()=>{
     if(!el.parentNode) return;
     el.classList.add('dying');
-    setTimeout(()=>{ if(el.parentNode) el.remove(); }, 550);
-  }, 5000);
+    setTimeout(()=>{ if(el.parentNode) el.remove(); }, 400);
+  }, 2000);
 }
 
 function updateStats() {
