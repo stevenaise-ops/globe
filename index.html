@@ -9,57 +9,94 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:#060d2e;color:#e2e8f0;font-family:'Inter',sans-serif;overflow:hidden}
 .shell{display:flex;flex-direction:column;height:100vh}
-header{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:54px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(6,13,46,0.85);backdrop-filter:blur(12px);color:#fff}
-.logo{display:flex;align-items:center;gap:10px}
-.logo-title{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.55)}
-.hstats{display:flex;gap:32px}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:50px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(6,13,46,0.85);backdrop-filter:blur(12px);color:#fff}
+.logo-title{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.55)}
+.hstats{display:flex;gap:20px}
 .stat{text-align:right}
-.stv{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;color:#fff}
-.stl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:3px}
-.main{flex:1;display:flex;min-height:0}
-#gw{flex:1;position:relative;overflow:hidden;background:transparent}
+.stv{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:#fff}
+.stl{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:2px}
+
+/* Desktop: globe left, sidebar right */
+.main{flex:1;display:flex;min-height:0;flex-direction:row;position:relative}
+#gw{flex:1;position:relative;overflow:hidden;background:transparent;min-height:0}
+#gw canvas{position:absolute;top:0;left:0;width:100% !important;height:100% !important;}
 #gw-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(255,255,255,0.3);z-index:5;letter-spacing:.05em}
 
-/* Sidebar */
-.sb{width:300px;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,0.06);background:transparent;overflow:hidden}
+/* Sidebar — desktop: right column */
+.sb{width:280px;flex-shrink:0;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,0.06);background:transparent;overflow:hidden}
 
 /* Notification stack */
-.feed{
-  flex:1;overflow:hidden;
-  display:flex;flex-direction:column;justify-content:flex-start;
-  padding:16px 14px;gap:8px;
-}
+.feed{flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;padding:12px 12px;gap:7px}
 
-/* Notification card — dark translucent */
-.fi{
-  background:rgba(15,25,70,0.72);
-  border:1px solid rgba(255,255,255,0.09);
-  border-left:2px solid #00c2b2;
-  border-radius:10px;
-  padding:11px 14px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.35);
-  backdrop-filter:blur(12px);
-  animation:notify-in .4s cubic-bezier(0.34,1.56,0.64,1);
-  transition:opacity .4s ease,transform .4s ease;
-  flex-shrink:0;
-}
+/* Notification card */
+.fi{background:rgba(15,25,70,0.72);border:1px solid rgba(255,255,255,0.09);border-left:2px solid #00c2b2;border-radius:10px;padding:10px 13px;box-shadow:0 4px 20px rgba(0,0,0,0.35);backdrop-filter:blur(12px);animation:notify-in .4s cubic-bezier(0.34,1.56,0.64,1);transition:opacity .4s ease,transform .4s ease;flex-shrink:0}
 .fi.dying{opacity:0;transform:translateY(-6px) scale(0.97)}
-@keyframes notify-in{
-  from{opacity:0;transform:translateY(-10px) scale(0.95)}
-  to{opacity:1;transform:none}
-}
+@keyframes notify-in{from{opacity:0;transform:translateY(-10px) scale(0.95)}to{opacity:1;transform:none}}
 .fr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
 .ft{font-size:8px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:1px 5px;border-radius:2px}
-.fa{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:#e2e8f0}
+.fa{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:#e2e8f0}
 .fro{font-size:9px;color:rgba(255,255,255,0.45)}
 .fti{font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.3)}
 
 /* Button area */
-.apw{padding:14px}
-.apl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:7px;font-weight:500}
-.apu{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#00c2b2;background:rgba(0,194,178,.07);border:1px solid rgba(0,194,178,.2);padding:6px 9px;border-radius:4px;margin-bottom:9px}
-.dbt{width:100%;padding:9px;background:rgba(0,194,178,.1);border:1px solid rgba(0,194,178,.3);color:#00c2b2;font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all .15s;font-weight:500}
-.dbt:hover{background:rgba(0,194,178,.2);border-color:#00c2b2}
+.apw{padding:12px}
+.apl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;font-weight:500}
+.apu{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#00c2b2;background:rgba(0,194,178,.07);border:1px solid rgba(0,194,178,.2);padding:5px 8px;border-radius:4px;margin-bottom:8px}
+.dbt{width:100%;padding:11px;background:rgba(0,194,178,.1);border:1px solid rgba(0,194,178,.3);color:#00c2b2;font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;border-radius:6px;cursor:pointer;transition:all .15s;font-weight:500;-webkit-tap-highlight-color:transparent}
+.dbt:hover,.dbt:active{background:rgba(0,194,178,.2);border-color:#00c2b2}
+
+/* ── Mobile: stack vertically, notifications float over globe ── */
+@media(max-width:640px){
+  header{padding:0 16px;height:46px}
+  .logo-title{font-size:9px}
+  .hstats{gap:14px}
+  .stv{font-size:12px}
+
+  /* Globe takes full height minus header */
+  .main{flex-direction:column}
+  #gw{flex:1;width:100%}
+
+  /* Sidebar floats over the globe as a transparent overlay at the bottom */
+  .sb{
+    position:absolute;
+    bottom:0;left:0;right:0;
+    width:100%;
+    border-left:none;
+    border-top:1px solid rgba(255,255,255,0.06);
+    flex-direction:column;
+    background:rgba(6,13,46,0.6);
+    backdrop-filter:blur(16px);
+    max-height:42vh;
+    z-index:20;
+  }
+
+  /* On mobile: notifications scroll horizontally in a row */
+  .feed{
+    flex-direction:row;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    overflow-y:hidden;
+    justify-content:flex-start;
+    padding:10px 12px;
+    gap:8px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .feed::-webkit-scrollbar{display:none}
+  .fi{
+    min-width:200px;
+    max-width:220px;
+    flex-shrink:0;
+  }
+
+  /* Button row on mobile */
+  .apw{padding:8px 12px 12px}
+  .apl{display:none}
+  .apu{display:none}
+  .dbt{padding:12px;font-size:11px;border-radius:8px}
+}
 </style>
 </head>
 <body>
@@ -124,7 +161,7 @@ const CODES = Object.keys(CITIES);
 // ── State ──────────────────────────────────────────────────────────────────────
 let world, cv, ctx, ctxDots, CW, CH;
 let dotVecs = [];
-let arcs = [], rings = [], txAnims = [];
+let arcs = [], txAnims = [];
 let totalTx = 0, totalVol = 0, demoIdx = 0;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -266,6 +303,7 @@ function buildDots() {
     for (let r=0; r<ROWS; r++) {
       for (let c=0; c<COLS; c++) {
         const lon=(c/COLS)*360-180, lat=90-(r/ROWS)*180;
+        if (lat < -50) continue;  // truncate south pole / Antarctica
         if (!isLandApprox(lon, lat)) continue;
         const phi=(90-lat)*Math.PI/180, theta=(lon+180)*Math.PI/180;
         dotVecs.push({ x:Math.sin(phi)*Math.cos(theta), y:Math.cos(phi), z:-Math.sin(phi)*Math.sin(theta) });
@@ -302,6 +340,7 @@ function buildDots() {
           for (let r=0; r<ROWS2; r++) {
             for (let c=0; c<COLS2; c++) {
               const lon=(c/COLS2)*360-180, lat=90-(r/ROWS2)*180;
+              if (lat < -50) continue;  // truncate south pole / Antarctica
               const ix=Math.min(SW-1,Math.floor(((lon+180)/360)*SW));
               const iy=Math.min(SH-1,Math.floor(((90-lat)/180)*SH));
               if (!test(px, (iy*SW+ix)*4)) continue;
@@ -364,12 +403,8 @@ function boot() {
     .showAtmosphere(false)
     .arcsData([]).arcStartLat(d=>d.fLat).arcStartLng(d=>d.fLng)
     .arcEndLat(d=>d.tLat).arcEndLng(d=>d.tLng)
-    .arcColor(d=>d.colors).arcAltitudeAutoScale(0.4).arcStroke(0.8)
+    .arcColor(d=>d.colors).arcAltitudeAutoScale(0.3).arcStroke(0.8)
     .arcDashLength(1).arcDashGap(0).arcDashAnimateTime(0).arcsTransitionDuration(0)
-    .ringsData([])
-    .ringLat(d=>d.lat).ringLng(d=>d.lng)
-    .ringColor(d=>{ const{r,g,b}=H2R(d.col); return t=>`rgba(${r},${g},${b},${(1-t).toFixed(2)})`; })
-    .ringMaxRadius(5).ringPropagationSpeed(2.8).ringRepeatPeriod(900)
     .htmlElementsData([])
     .htmlLat(d=>d.lat).htmlLng(d=>d.lng)
     .htmlAltitude(0.02).htmlElement(d=>d.el)
@@ -385,10 +420,21 @@ function boot() {
   ctxDots = ctx; // same context
   gw.appendChild(cv);
 
-  window.addEventListener('resize', () => {
-    CW=gw.clientWidth; CH=gw.clientHeight;
-    cv.width=CW; cv.height=CH;
-  });
+  function onResize() {
+    CW = gw.clientWidth;
+    CH = gw.clientHeight;
+    if (!CW || !CH) return;
+    cv.width  = CW;
+    cv.height = CH;
+    world && world.width(CW).height(CH);
+  }
+
+  // ResizeObserver catches all size changes (window, flex reflow, mobile keyboard)
+  if (window.ResizeObserver) {
+    new ResizeObserver(onResize).observe(gw);
+  } else {
+    window.addEventListener('resize', onResize);
+  }
 
   world.controls().autoRotate = true;
   world.controls().autoRotateSpeed = 0.4;
@@ -405,7 +451,7 @@ function loop() {
 
   // Animate txAnims
   txAnims.forEach(tx => {
-    if (tx.done) return;
+    if (tx.done || tx.isPulse) return;  // pulses manage their own lifecycle in draw
     const e = now - tx.t0;
     let al;
     if (e < FADE_IN) al = ease(e/FADE_IN);
@@ -471,11 +517,36 @@ function loop() {
 
   // ── Transaction animations — drawn AFTER dots so they appear on top ──
   txAnims.forEach(tx => {
-    if (tx.done || tx.al < 0.01) return;
+    if (tx.done) return;
+
+    // ── Canvas pulse rings (expanding circles, fully canvas-projected) ──
+    if (tx.isPulse) {
+      const elapsed = Date.now() - tx.t0;
+      const progress = elapsed / tx.dur;
+      if (progress >= 1) { tx.done = true; return; }
+      const pos = proj(tx.lat, tx.lng);
+      if (!pos) return;
+      const {r,g,b} = H2R(tx.col);
+      // Draw 3 staggered rings expanding outward
+      for (let ring = 0; ring < 3; ring++) {
+        const offset = ring / 3;
+        const p = (progress + offset) % 1;
+        const radius = 4 + p * 32;
+        const alpha = (1 - p) * 0.7;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, radius, 0, 6.2832);
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+      return;
+    }
+
+    if (tx.al < 0.01) return;
     const {r,g,b}=H2R(tx.col);
     const al=tx.al;
     const PURPLE='#7c3aed';
-    const TEAL=tx.col; // #00c2b2
+    const TEAL=tx.col;
     const {r:pr,g:pg,b:pb}=H2R(PURPLE);
     const {r:tr,g:tg,b:tb}=H2R(TEAL);
 
@@ -485,7 +556,7 @@ function loop() {
       for (let t=0; t<=1; t+=0.025) {
         const lat = tx.fLat + (tx.tLat-tx.fLat)*t;
         const lng = tx.fLng + (tx.tLng-tx.fLng)*t;
-        const alt = Math.sin(t*Math.PI) * 0.4;
+        const alt = Math.sin(t*Math.PI) * 0.3;
         const pp = projAlt(lat, lng, alt);
         if (pp) pts.push({...pp, t});
       }
@@ -547,21 +618,20 @@ function processTx(data) {
 
   const same = from_country === to_country;
 
-  const addRing = (lat,lng) => {
-    const ring={lat,lng,col,id:Date.now()+Math.random()};
-    rings=[...rings,ring]; world&&world.ringsData(rings);
-    setTimeout(()=>{ rings=rings.filter(r=>r.id!==ring.id); world&&world.ringsData(rings); }, RING_DUR);
-  };
-
-  // All drawing is now on canvas — no globe.gl arcs or html labels needed
+  // All drawing is on canvas — no globe.gl rings
   txAnims.push({
     t0: Date.now(), col, al:0, done:false, same,
     fLat:fc[0], fLng:fc[1], tLat:tc[0], tLng:tc[1],
     fromName: fc[2], toName: tc[2],
   });
 
-  addRing(fc[0], fc[1]);
-  if (!same) addRing(tc[0], tc[1]);
+  // Canvas pulse rings — separate entries that just expand and fade
+  const pulseDur = RING_DUR;
+  const addPulse = (lat,lng,c) => txAnims.push({
+    isPulse:true, t0:Date.now(), dur:pulseDur, lat, lng, col:c, done:false,
+  });
+  addPulse(fc[0], fc[1], col);
+  if (!same) addPulse(tc[0], tc[1], col);
 
   addFeed(fc[2], tc[2], same, type, col, amount, currency);
   updateStats();
