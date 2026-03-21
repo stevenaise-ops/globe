@@ -18,42 +18,43 @@ header{
   background:rgba(6,13,46,0.9);backdrop-filter:blur(12px);
 }
 .logo-title{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.5)}
-.header-right{display:flex;align-items:center;gap:20px}
 .hstats{display:flex;gap:20px}
 .stat{text-align:right}
 .stv{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:#fff}
 .stl{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:2px}
-/* Button in header */
-.dbt{
-  padding:7px 14px;
-  background:rgba(0,194,178,.12);border:1px solid rgba(0,194,178,.35);
-  color:#00c2b2;font-family:'Inter',sans-serif;font-size:9px;
-  letter-spacing:.1em;text-transform:uppercase;border-radius:5px;
-  cursor:pointer;transition:all .15s;font-weight:500;white-space:nowrap;
-  -webkit-tap-highlight-color:transparent;flex-shrink:0;
-}
-.dbt:hover,.dbt:active{background:rgba(0,194,178,.22);border-color:#00c2b2}
 
 /* ── Main ── */
 .main{flex:1;display:flex;min-height:0;position:relative}
-#gw{flex:1;position:relative;overflow:hidden;background:transparent}
+#gw{flex:1;position:relative;overflow:hidden;background:transparent;cursor:pointer}
 #gw canvas{position:absolute;top:0;left:0;width:100% !important;height:100% !important}
 #gw-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(255,255,255,0.3);z-index:5}
 
 /* ── Sidebar (desktop) ── */
 .sb{width:280px;flex-shrink:0;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,0.06)}
-.apw{display:none} /* button is in header now */
-.feed{flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;padding:12px;gap:7px}
+.feed{flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;padding:12px 14px;gap:4px}
 
-/* ── Notification cards ── */
-.fi{background:rgba(15,25,70,0.72);border:1px solid rgba(255,255,255,0.09);border-left:2px solid #00c2b2;border-radius:10px;padding:10px 13px;box-shadow:0 4px 20px rgba(0,0,0,0.35);backdrop-filter:blur(12px);animation:notify-in .4s cubic-bezier(0.34,1.56,0.64,1);transition:opacity .4s ease,transform .4s ease;flex-shrink:0}
-.fi.dying{opacity:0;transform:translateY(-6px) scale(0.97)}
-@keyframes notify-in{from{opacity:0;transform:translateY(-10px) scale(0.95)}to{opacity:1;transform:none}}
-.fr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
-.ft{font-size:8px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:1px 5px;border-radius:2px}
-.fa{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:#e2e8f0}
-.fro{font-size:9px;color:rgba(255,255,255,0.45)}
-.fti{font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.3)}
+/* ── Terminal-style notification rows ── */
+.fi{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  line-height:1.4;
+  color:rgba(255,255,255,0.85);
+  padding:4px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  animation:term-in .2s ease;
+  transition:opacity .4s ease;
+  flex-shrink:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.fi.dying{opacity:0}
+@keyframes term-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+/* Terminal prefix */
+.fi-pre{color:rgba(0,194,178,0.7);margin-right:6px}
+.fi-amt{color:#00c2b2;font-weight:500}
+.fi-route{color:rgba(255,255,255,0.4);font-size:10px;margin-left:8px}
+.fi-time{color:rgba(255,255,255,0.2);font-size:9px;float:right}
 
 /* ── Mobile ── */
 @media(max-width:640px){
@@ -62,30 +63,33 @@ header{
   .hstats{gap:12px}
   .stv{font-size:12px}
   .stl{font-size:7px}
-  .dbt{padding:6px 11px;font-size:8px}
 
-  /* Globe fills FULL main area — sidebar does not take space */
   .main{flex-direction:column}
   #gw{flex:1;width:100%}
 
-  /* Notifications float over the globe, anchored bottom-left, no layout impact */
+  /* Terminal feed floats over globe from the top-left */
   .sb{
     position:absolute;
-    bottom:20px;left:12px;right:12px;
+    top:10px;left:12px;right:12px;
     width:auto;
-    border:none;background:transparent;backdrop-filter:none;
+    border:none;background:transparent;
     pointer-events:none;
     z-index:50;
   }
   .feed{
-    flex-direction:column-reverse;
+    flex-direction:column;
     overflow:visible;
-    padding:0;gap:8px;
+    padding:0;gap:3px;
     flex:none;height:auto;
   }
   .fi{
-    width:100%;
-    pointer-events:auto;
+    pointer-events:none;
+    background:rgba(4,8,24,0.65);
+    backdrop-filter:blur(8px);
+    border-radius:4px;
+    padding:4px 8px;
+    border-bottom:none;
+    border-left:2px solid rgba(0,194,178,0.5);
   }
 }
 </style>
@@ -94,7 +98,6 @@ header{
 <div class="shell">
   <header>
     <span class="logo-title">Zenus Bank Live</span>
-    <button class="dbt" id="demo-btn">▶ Demo</button>
     <div class="hstats">
       <div class="stat"><div class="stv" id="sc">0</div><div class="stl">Transactions</div></div>
       <div class="stat"><div class="stv" id="sv">$0</div><div class="stl">Volume</div></div>
@@ -647,13 +650,14 @@ function addFeed(from,to,same,type,col,amount,currency) {
   const feed=document.getElementById('feed');
   const el=document.createElement('div'); el.className='fi';
   const now=new Date().toLocaleTimeString('en-US',{hour12:false});
-  el.innerHTML=`<div class="fr"><span class="ft" style="color:${col};border:1px solid ${col}44;background:${col}11">${type.toUpperCase()}</span><span class="fa" style="color:${col}">${currency} ${fmtA(amount)}</span></div><div class="fr"><span class="fro">${same?`◎ ${from}`:`${from} → ${to}`}</span><span class="fti">${now}</span></div>`;
+  const route = same ? `◎ ${from}` : `${from} → ${to}`;
+  el.innerHTML=`<span class="fi-pre">▸</span><span class="fi-amt">${currency} ${fmtA(amount)}</span><span class="fi-route">${route}</span><span class="fi-time">${now}</span>`;
   feed.insertBefore(el, feed.firstChild);
 
   const isMob = window.innerWidth <= 640;
-  const MAX = isMob ? 3 : 6;
+  const MAX = isMob ? 3 : 12;
 
-  // On mobile: if we now have 3, immediately expire the oldest
+  // On mobile: force-expire oldest when hitting 3
   if (isMob && feed.children.length >= MAX) {
     const oldest = feed.lastChild;
     if (oldest && oldest !== el) {
@@ -661,19 +665,16 @@ function addFeed(from,to,same,type,col,amount,currency) {
       setTimeout(()=>{ if(oldest.parentNode) oldest.remove(); }, 350);
     }
   }
-
-  // Trim hard cap
   while(feed.children.length > MAX) {
-    const old = feed.lastChild;
-    old && old.remove();
+    const old = feed.lastChild; old && old.remove();
   }
 
-  // Auto-expire after 2s
+  // Auto-expire after 3s
   setTimeout(()=>{
     if(!el.parentNode) return;
     el.classList.add('dying');
     setTimeout(()=>{ if(el.parentNode) el.remove(); }, 400);
-  }, 2000);
+  }, 3000);
 }
 
 function updateStats() {
@@ -690,7 +691,8 @@ function fireDemo() {
   if(Math.random()<.1) to=from;
   processTx({from_country:from,to_country:to,payment_type:TYPES[demoIdx++%TYPES.length],amount:(Math.random()*48000+200).toFixed(2),currency:'USD'});
 }
-document.getElementById('demo-btn').addEventListener('click',fireDemo);
+// Globe is the button — click anywhere on it to fire a transaction
+document.getElementById('gw').addEventListener('click', fireDemo);
 </script>
 </body>
 </html>
