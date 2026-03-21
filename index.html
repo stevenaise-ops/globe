@@ -7,8 +7,11 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;background:#060d2e;color:#e2e8f0;font-family:'Inter',sans-serif;overflow:hidden}
-.shell{display:flex;flex-direction:column;height:100svh}
+html,body{height:100%;background:#020714;color:#e2e8f0;font-family:'Inter',sans-serif;overflow:hidden}
+.shell{display:flex;flex-direction:column;height:100svh;position:relative}
+
+/* Background aurora canvas — sits behind everything */
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
 
 /* ── Header ── */
 header{
@@ -42,7 +45,7 @@ header{
   padding:4px 0;
   border-bottom:1px solid rgba(255,255,255,0.04);
   animation:term-in .2s ease;
-  transition:opacity .4s ease;
+  transition:opacity 1.2s ease;
   flex-shrink:0;
   white-space:nowrap;
   overflow:hidden;
@@ -95,6 +98,7 @@ header{
 </style>
 </head>
 <body>
+<canvas id="bg"></canvas>
 <div class="shell">
   <header>
     <span class="logo-title">Zenus Bank Live</span>
@@ -498,6 +502,57 @@ function loop() {
 
     // (ocean fill removed — dots show through cleanly)
 
+    // ── Backlit planet glow — drawn FIRST (behind dots) ──
+    // Project globe center (0,0,0) to get screen center + radius
+    {
+      const gcx=v[12], gcy=v[13], gcz=v[14];
+      const grx=p[0]*gcx+p[4]*gcy+p[8]*gcz+p[12];
+      const gry=p[1]*gcx+p[5]*gcy+p[9]*gcz+p[13];
+      const grw=p[3]*gcx+p[7]*gcy+p[11]*gcz+p[15];
+      if (grw>0) {
+        const gscx = ( grx/grw*0.5+0.5)*CW;
+        const gscy = (-gry/grw*0.5+0.5)*CH;
+        const gsR  = Math.abs((p[0]*R/grw)*CW*0.5); // globe screen radius
+        const rimW = gsR * 0.04;
+        const glowR = gsR;
+
+        // Solid dark disc — fills the globe area cleanly behind dots
+        ctxDots.beginPath();
+        ctxDots.arc(gscx, gscy, gsR*0.995, 0, 6.2832);
+        ctxDots.fillStyle = 'rgba(2,7,20,0.92)';
+        ctxDots.fill();
+
+        // Backlit rim glow — clipped tightly to globe perimeter
+        // Sun bottom-right: horizontal flip of top-left = angle 315° = -45°
+        // In canvas coords (0=right, CW): bottom-right = 45° = π/4
+        const sunA = Math.PI * 0.25; // 45° — bottom-right in canvas coords
+
+        ctxDots.save();
+        // Clip to a very thin annular ring — stays hugged to the globe edge
+        const clipOuter = glowR + rimW * 3.5;
+        const clipInner = glowR - rimW * 0.5;
+        ctxDots.beginPath();
+        ctxDots.arc(gscx, gscy, clipOuter, 0, 6.2832);
+        ctxDots.arc(gscx, gscy, clipInner, 0, 6.2832, true);
+        ctxDots.clip('evenodd');
+
+        // Gradient source at the sun-side point on the globe edge
+        const sunX = gscx + Math.cos(sunA) * glowR;
+        const sunY = gscy + Math.sin(sunA) * glowR;
+
+        // Tight radial — fades quickly away from the source point
+        const grd = ctxDots.createRadialGradient(sunX, sunY, 0, sunX, sunY, gsR * 0.9);
+        grd.addColorStop(0,    'rgba(180,130,230,0.42)'); // desaturated violet
+        grd.addColorStop(0.2,  'rgba(140,100,200,0.22)');
+        grd.addColorStop(0.45, 'rgba(100,70,180,0.08)');
+        grd.addColorStop(0.7,  'rgba(60,40,140,0.02)');
+        grd.addColorStop(1,    'rgba(0,0,0,0)');
+        ctxDots.fillStyle = grd;
+        ctxDots.fillRect(gscx - gsR*2, gscy - gsR*2, gsR*4, gsR*4);
+        ctxDots.restore();
+      }
+    }
+
     // Land dots — all dots visible, front=large, back=small
     if (dotVecs.length > 0) {
       const cp=cam.position;
@@ -768,19 +823,19 @@ function addFeed(from,to,same,type,col,amount,currency) {
     const oldest = feed.lastChild;
     if (oldest && oldest !== el) {
       oldest.classList.add('dying');
-      setTimeout(()=>{ if(oldest.parentNode) oldest.remove(); }, 350);
+      setTimeout(()=>{ if(oldest.parentNode) oldest.remove(); }, 1300);
     }
   }
   while(feed.children.length > MAX) {
     const old = feed.lastChild; old && old.remove();
   }
 
-  // Auto-expire after 3s
+  // Auto-expire after 5s with slow fade
   setTimeout(()=>{
     if(!el.parentNode) return;
     el.classList.add('dying');
-    setTimeout(()=>{ if(el.parentNode) el.remove(); }, 400);
-  }, 3000);
+    setTimeout(()=>{ if(el.parentNode) el.remove(); }, 1300);
+  }, 5000);
 }
 
 function updateStats() {
@@ -788,7 +843,72 @@ function updateStats() {
   document.getElementById('sv').textContent=fmtV(totalVol);
 }
 
-window.receiveWebhook=p=>{ try{processTx(typeof p==='string'?JSON.parse(p):p);}catch(e){} };
+// ── Sun glare background ───────────────────────────────────────────────────────
+(function() {
+  const bg = document.getElementById('bg');
+  const bx = bg.getContext('2d');
+  let BW, BH;
+
+  function sizeBackground() {
+    BW = bg.width  = window.innerWidth  * (window.devicePixelRatio||1);
+    BH = bg.height = window.innerHeight * (window.devicePixelRatio||1);
+    bg.style.width  = window.innerWidth  + 'px';
+    bg.style.height = window.innerHeight + 'px';
+    drawGlare();
+  }
+  sizeBackground();
+  window.addEventListener('resize', sizeBackground);
+
+  function drawGlare() {
+    bx.clearRect(0, 0, BW, BH);
+
+    // Deep dark base — 20% darker
+    bx.fillStyle = '#020714';
+    bx.fillRect(0, 0, BW, BH);
+
+    // Sun source — bottom right corner
+    const sx = BW * 0.92;
+    const sy = BH * 1.08;
+
+    // Core hot bloom
+    const core = bx.createRadialGradient(sx, sy, 0, sx, sy, BW * 0.22);
+    core.addColorStop(0,    'rgba(255,240,200,0.55)');
+    core.addColorStop(0.15, 'rgba(255,200,120,0.30)');
+    core.addColorStop(0.45, 'rgba(180,140,255,0.10)');
+    core.addColorStop(1,    'rgba(0,0,0,0)');
+    bx.fillStyle = core;
+    bx.fillRect(0, 0, BW, BH);
+
+    // Wide warm halo
+    const halo = bx.createRadialGradient(sx, sy, 0, sx, sy, BW * 0.85);
+    halo.addColorStop(0,    'rgba(120,100,255,0.14)');
+    halo.addColorStop(0.3,  'rgba(60,80,200,0.10)');
+    halo.addColorStop(0.65, 'rgba(20,40,120,0.06)');
+    halo.addColorStop(1,    'rgba(0,0,0,0)');
+    bx.fillStyle = halo;
+    bx.fillRect(0, 0, BW, BH);
+
+    // Lens flare streak — diagonal from bottom-right toward upper left
+    const streak = bx.createLinearGradient(sx, sy, BW * 0.05, BH * 0.08);
+    streak.addColorStop(0,    'rgba(200,180,255,0.18)');
+    streak.addColorStop(0.25, 'rgba(140,120,255,0.07)');
+    streak.addColorStop(0.6,  'rgba(80,60,180,0.03)');
+    streak.addColorStop(1,    'rgba(0,0,0,0)');
+    bx.save();
+    bx.globalCompositeOperation = 'screen';
+    bx.fillStyle = streak;
+    bx.fillRect(0, 0, BW, BH);
+    bx.restore();
+
+    // Keep globe area dark — vignette over center
+    const dark = bx.createRadialGradient(BW*0.38, BH*0.48, BH*0.08, BW*0.38, BH*0.48, BH*0.72);
+    dark.addColorStop(0,   'rgba(2,7,20,0.88)');
+    dark.addColorStop(0.5, 'rgba(2,7,20,0.50)');
+    dark.addColorStop(1,   'rgba(2,7,20,0)');
+    bx.fillStyle = dark;
+    bx.fillRect(0, 0, BW, BH);
+  }
+})();
 window.addEventListener('message',e=>{ if(e.data?.type==='transaction') processTx(e.data.payload); });
 
 function fireDemo() {
