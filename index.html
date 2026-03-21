@@ -68,8 +68,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
     flex-direction:column;
     background:rgba(6,13,46,0.6);
     backdrop-filter:blur(16px);
-    max-height:42vh;
+    max-height:38vh;
     z-index:20;
+    padding-bottom:env(safe-area-inset-bottom, 0px);
   }
 
   /* On mobile: notifications scroll horizontally in a row */
@@ -92,10 +93,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
   }
 
   /* Button row on mobile */
-  .apw{padding:8px 12px 12px}
+  .apw{padding:8px 12px;padding-bottom:calc(12px + env(safe-area-inset-bottom, 16px));margin-bottom:8px}
   .apl{display:none}
   .apu{display:none}
-  .dbt{padding:12px;font-size:11px;border-radius:8px}
+  .dbt{padding:14px;font-size:11px;border-radius:8px}
 }
 </style>
 </head>
@@ -438,7 +439,19 @@ function boot() {
 
   world.controls().autoRotate = true;
   world.controls().autoRotateSpeed = 0.4;
-  world.pointOfView({ lat:20, lng:-10, altitude:2.0 });
+
+  // On mobile (portrait), zoom out more so globe fits the narrow width
+  // and tilt camera north so globe sits in upper portion of screen
+  const isMobile = window.innerWidth <= 640;
+  const altitude = isMobile ? 2.8 : 2.0;
+  const lat      = isMobile ? 30  : 20;
+  world.pointOfView({ lat, lng:-10, altitude });
+
+  // Keep altitude correct after resize/orientation change
+  window.addEventListener('resize', () => {
+    const mob = window.innerWidth <= 640;
+    world && world.pointOfView({ lat: mob ? 30 : 20, lng:-10, altitude: mob ? 2.8 : 2.0 });
+  });
 
   loop();
   [0,900,1900,3100,4500].forEach(d => setTimeout(fireDemo, d));
