@@ -64,44 +64,40 @@ header{
   .stl{font-size:7px}
   .dbt{padding:6px 11px;font-size:8px}
 
-  /* Globe fills full area */
+  /* Globe fills FULL main area — sidebar does not take space */
   .main{flex-direction:column}
   #gw{flex:1;width:100%}
 
-  /* Sidebar: thin notification strip at bottom, no sidebar width */
+  /* Notifications float over the globe, anchored bottom-left, no layout impact */
   .sb{
-    width:100%;flex-shrink:0;
-    border-left:none;border-top:1px solid rgba(255,255,255,0.07);
-    background:rgba(6,13,46,0.7);backdrop-filter:blur(16px);
-    flex-direction:column;
-    height:auto;
+    position:absolute;
+    bottom:20px;left:12px;right:12px;
+    width:auto;
+    border:none;background:transparent;backdrop-filter:none;
+    pointer-events:none;
+    z-index:50;
   }
   .feed{
-    flex-direction:row;flex-wrap:nowrap;
-    overflow-x:auto;overflow-y:hidden;
-    justify-content:flex-start;
-    padding:10px 12px;gap:8px;
-    flex:none;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    flex-direction:column-reverse;
+    overflow:visible;
+    padding:0;gap:8px;
+    flex:none;height:auto;
   }
-  .feed::-webkit-scrollbar{display:none}
-  .fi{min-width:190px;max-width:210px;flex-shrink:0}
+  .fi{
+    width:100%;
+    pointer-events:auto;
+  }
 }
 </style>
 </head>
 <body>
 <div class="shell">
   <header>
-    <div class="logo">
-      <span class="logo-title">Zenus Bank · Live Transactions</span>
-    </div>
-    <div class="header-right">
-      <div class="hstats">
-        <div class="stat"><div class="stv" id="sc">0</div><div class="stl">Transactions</div></div>
-        <div class="stat"><div class="stv" id="sv">$0</div><div class="stl">Volume</div></div>
-        <div class="stat"><div class="stv" id="sa">0</div><div class="stl">Active</div></div>
-      </div>
-      <button class="dbt" id="demo-btn">▶ Demo</button>
+    <span class="logo-title">Zenus Bank Live</span>
+    <button class="dbt" id="demo-btn">▶ Demo</button>
+    <div class="hstats">
+      <div class="stat"><div class="stv" id="sc">0</div><div class="stl">Transactions</div></div>
+      <div class="stat"><div class="stv" id="sv">$0</div><div class="stl">Volume</div></div>
     </div>
   </header>
   <div class="main">
@@ -197,8 +193,8 @@ function drawLabel(name, x, y, color, alpha) {
   const tw = ctx.measureText(name).width;
   const pad=5, h=16;
   const lx = x - tw/2 - pad, ly = y - h;
-  // Background pill
-  ctx.fillStyle = `rgba(255,255,255,${(alpha*0.92).toFixed(2)})`;
+  // Background pill — near black for dark mode
+  ctx.fillStyle = `rgba(8,12,30,${(alpha*0.92).toFixed(2)})`;
   ctx.strokeStyle = color;
   ctx.lineWidth = 1;
   ctx.beginPath();
@@ -402,18 +398,22 @@ function boot() {
 
   // Single canvas on top of everything — draws ocean, dots, AND circles
   cv = document.createElement('canvas');
-  cv.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:999;';
-  cv.width = CW; cv.height = CH;
+  const DPR = window.devicePixelRatio || 1;
+  cv.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:999;width:100%;height:100%;';
+  cv.width = CW * DPR; cv.height = CH * DPR;
   ctx = cv.getContext('2d');
-  ctxDots = ctx; // same context
+  ctx.scale(DPR, DPR);
+  ctxDots = ctx;
   gw.appendChild(cv);
 
   function onResize() {
     CW = gw.clientWidth;
     CH = gw.clientHeight;
     if (!CW || !CH) return;
-    cv.width  = CW;
-    cv.height = CH;
+    const dpr = window.devicePixelRatio || 1;
+    cv.width  = CW * dpr;
+    cv.height = CH * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     world && world.width(CW).height(CH);
   }
 
@@ -648,15 +648,27 @@ function addFeed(from,to,same,type,col,amount,currency) {
   const el=document.createElement('div'); el.className='fi';
   const now=new Date().toLocaleTimeString('en-US',{hour12:false});
   el.innerHTML=`<div class="fr"><span class="ft" style="color:${col};border:1px solid ${col}44;background:${col}11">${type.toUpperCase()}</span><span class="fa" style="color:${col}">${currency} ${fmtA(amount)}</span></div><div class="fr"><span class="fro">${same?`◎ ${from}`:`${from} → ${to}`}</span><span class="fti">${now}</span></div>`;
-  feed.insertBefore(el,feed.firstChild);
+  feed.insertBefore(el, feed.firstChild);
 
-  // Remove oldest notifications if over 6
-  while(feed.children.length>6) {
-    const old=feed.lastChild;
+  const isMob = window.innerWidth <= 640;
+  const MAX = isMob ? 3 : 6;
+
+  // On mobile: if we now have 3, immediately expire the oldest
+  if (isMob && feed.children.length >= MAX) {
+    const oldest = feed.lastChild;
+    if (oldest && oldest !== el) {
+      oldest.classList.add('dying');
+      setTimeout(()=>{ if(oldest.parentNode) oldest.remove(); }, 350);
+    }
+  }
+
+  // Trim hard cap
+  while(feed.children.length > MAX) {
+    const old = feed.lastChild;
     old && old.remove();
   }
 
-  // Auto-expire after 2s: fade out then remove
+  // Auto-expire after 2s
   setTimeout(()=>{
     if(!el.parentNode) return;
     el.classList.add('dying');
@@ -667,7 +679,6 @@ function addFeed(from,to,same,type,col,amount,currency) {
 function updateStats() {
   document.getElementById('sc').textContent=totalTx.toLocaleString();
   document.getElementById('sv').textContent=fmtV(totalVol);
-  document.getElementById('sa').textContent=txAnims.filter(t=>!t.done).length;
 }
 
 window.receiveWebhook=p=>{ try{processTx(typeof p==='string'?JSON.parse(p):p);}catch(e){} };
