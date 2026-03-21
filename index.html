@@ -7,40 +7,38 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;background:linear-gradient(180deg,#020510 0%,#060d2e 20%,#ffffff 33%);color:#111827;font-family:'Inter',sans-serif;overflow:hidden}
+html,body{height:100%;background:#060d2e;color:#e2e8f0;font-family:'Inter',sans-serif;overflow:hidden}
 .shell{display:flex;flex-direction:column;height:100vh}
-header{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:54px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.1);background:rgba(10,15,44,0.7);backdrop-filter:blur(12px);color:#fff}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:54px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(6,13,46,0.85);backdrop-filter:blur(12px);color:#fff}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:26px;height:26px;background:conic-gradient(from 180deg,#00c2b2,#007f76,#00c2b2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
-.logo-name{font-size:14px;font-weight:600;color:#fff}
-.logo-div{width:1px;height:16px;background:rgba(255,255,255,0.2);margin:0 8px}
-.logo-sub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.5)}
+.logo-title{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.55)}
 .hstats{display:flex;gap:32px}
 .stat{text-align:right}
 .stv{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;color:#fff}
-.stl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-top:3px}
+.stl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:3px}
 .main{flex:1;display:flex;min-height:0}
 #gw{flex:1;position:relative;overflow:hidden;background:transparent}
-#gw-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#9ca3af;z-index:5;letter-spacing:.05em}
+#gw-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(255,255,255,0.3);z-index:5;letter-spacing:.05em}
 
-/* Sidebar — notifications only */
-.sb{width:300px;display:flex;flex-direction:column;border-left:1px solid rgba(0,0,0,0.06);background:transparent;overflow:hidden}
+/* Sidebar */
+.sb{width:300px;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,0.06);background:transparent;overflow:hidden}
 
-/* Notification stack — anchored to top */
+/* Notification stack */
 .feed{
   flex:1;overflow:hidden;
   display:flex;flex-direction:column;justify-content:flex-start;
   padding:16px 14px;gap:8px;
 }
 
-/* Notification card */
+/* Notification card — dark translucent */
 .fi{
-  background:rgba(255,255,255,0.92);
-  border:1px solid rgba(0,0,0,0.07);
-  border-left:3px solid #00c2b2;
+  background:rgba(15,25,70,0.72);
+  border:1px solid rgba(255,255,255,0.09);
+  border-left:2px solid #00c2b2;
   border-radius:10px;
   padding:11px 14px;
-  box-shadow:0 4px 16px rgba(0,0,0,0.08),0 1px 3px rgba(0,0,0,0.05);
+  box-shadow:0 4px 20px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
   animation:notify-in .4s cubic-bezier(0.34,1.56,0.64,1);
   transition:opacity .4s ease,transform .4s ease;
   flex-shrink:0;
@@ -52,26 +50,23 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 }
 .fr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
 .ft{font-size:8px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:1px 5px;border-radius:2px}
-.fa{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500}
-.fro{font-size:9px;color:#6b7280}
-.fti{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#9ca3af}
+.fa{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:#e2e8f0}
+.fro{font-size:9px;color:rgba(255,255,255,0.45)}
+.fti{font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.3)}
 
 /* Button area */
 .apw{padding:14px}
-.apl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#9ca3af;margin-bottom:7px;font-weight:500}
-.apu{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#00a89a;background:rgba(0,194,178,.06);border:1px solid rgba(0,194,178,.2);padding:6px 9px;border-radius:4px;margin-bottom:9px}
-.dbt{width:100%;padding:9px;background:rgba(0,194,178,.08);border:1px solid rgba(0,194,178,.25);color:#00a89a;font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all .15s;font-weight:500}
-.dbt:hover{background:rgba(0,194,178,.14);border-color:#00c2b2}
+.apl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:7px;font-weight:500}
+.apu{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#00c2b2;background:rgba(0,194,178,.07);border:1px solid rgba(0,194,178,.2);padding:6px 9px;border-radius:4px;margin-bottom:9px}
+.dbt{width:100%;padding:9px;background:rgba(0,194,178,.1);border:1px solid rgba(0,194,178,.3);color:#00c2b2;font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all .15s;font-weight:500}
+.dbt:hover{background:rgba(0,194,178,.2);border-color:#00c2b2}
 </style>
 </head>
 <body>
 <div class="shell">
   <header>
     <div class="logo">
-      <div class="logo-icon">Z</div>
-      <span class="logo-name">Zenus</span>
-      <div class="logo-div"></div>
-      <span class="logo-sub">Transaction Globe</span>
+      <span class="logo-title">Zenus Bank · Live Transactions</span>
     </div>
     <div class="hstats">
       <div class="stat"><div class="stv" id="sc">0</div><div class="stl">Transactions</div></div>
