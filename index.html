@@ -84,6 +84,7 @@ header{
       <div class="stat"><div class="stv" id="sq-vol">$4.2B</div><div class="stl">Q1 Volume</div></div>
       <div class="stat"><div class="stv" style="color:#00c2b2" id="sq-zt">$2.3B</div><div class="stl" style="color:#00c2b2">Q1 Zenus Transfers</div></div>
       <div class="stat"><div class="stv" id="sq-tx">321,096</div><div class="stl">Q1 Transactions</div></div>
+      <div class="stat"><div class="stv" id="sq-today">$37.92M</div><div class="stl">Volume Today</div></div>
     </div>
   </header>
   <div class="main">
@@ -106,8 +107,34 @@ const PC = {
   ach:        '#00c2b2',  // teal
   withdrawal: '#ff2052',  // punk red
   internal:   '#3b82f6',  // blue
+  domestic:   '#f97316',  // orange
 };
-const TYPES = ['swift','fedwire','stablecoin','ach','withdrawal','internal'];
+const TYPES = ['swift','fedwire','stablecoin','ach','withdrawal','internal','domestic'];
+
+// US cities for domestic transactions
+const US_CITIES = {
+  US_NYC: [40.71,-74.01,'New York'],
+  US_LAX: [34.05,-118.24,'Los Angeles'],
+  US_CHI: [41.88,-87.63,'Chicago'],
+  US_HOU: [29.76,-95.37,'Houston'],
+  US_PHX: [33.45,-112.07,'Phoenix'],
+  US_PHI: [39.95,-75.17,'Philadelphia'],
+  US_SAN: [29.42,-98.49,'San Antonio'],
+  US_DAL: [32.78,-96.8,'Dallas'],
+  US_MIA: [25.77,-80.19,'Miami'],
+  US_ATL: [33.75,-84.39,'Atlanta'],
+  US_SEA: [47.61,-122.33,'Seattle'],
+  US_BOS: [42.36,-71.06,'Boston'],
+  US_DEN: [39.74,-104.98,'Denver'],
+  US_LAS: [36.17,-115.14,'Las Vegas'],
+  US_DC:  [38.91,-77.04,'Washington DC'],
+  US_SJO: [37.34,-121.89,'San Jose'],
+  US_AUS: [30.27,-97.74,'Austin'],
+  US_POR: [45.52,-122.68,'Portland'],
+  US_SFO: [37.77,-122.42,'San Francisco'],
+  US_NAS: [36.17,-86.78,'Nashville'],
+};
+const US_CODES = Object.keys(US_CITIES);
 const FADE_IN=600, HOLD=800, FADE_OUT=800, RING_DUR=3000;
 
 const CITIES = {
@@ -657,38 +684,46 @@ function loop() {
           ctx.stroke();
         }
 
-        // ── Traveling dot — moves from origin to destination during FADE_IN+HOLD ──
+        // ── Traveling dot — moves origin→destination, fades out on arrival ──
         const totalTravel = FADE_IN + HOLD;
         const elapsed = Date.now() - tx.t0;
         const travelProgress = Math.min(elapsed / totalTravel, 1);
 
-        // Find the point on pts closest to travelProgress
-        let dotPt = null;
-        for (let i = 0; i < pts.length - 1; i++) {
-          if (pts[i].t <= travelProgress && pts[i+1].t >= travelProgress) {
-            const seg = (travelProgress - pts[i].t) / (pts[i+1].t - pts[i].t);
-            dotPt = {
-              x: pts[i].x + (pts[i+1].x - pts[i].x) * seg,
-              y: pts[i].y + (pts[i+1].y - pts[i].y) * seg,
-            };
-            break;
-          }
-        }
-        if (!dotPt && travelProgress >= 1) dotPt = pts[pts.length - 1];
+        // Dot alpha: full during travel, fades out over 200ms after arrival
+        const arrivalFade = 200;
+        const overdue = elapsed - totalTravel;
+        const dotAl = travelProgress < 1
+          ? al
+          : al * Math.max(0, 1 - overdue / arrivalFade);
 
-        if (dotPt) {
-          // Dot size: log scale mapped from $50 → 1.5px, $5M → 5px
-          const amt = tx.amount || 1000;
-          const dotR = 0.5 + (Math.log10(Math.max(amt, 100)) - Math.log10(100))
-                           / (Math.log10(1000000) - Math.log10(100)) * 5.5;
-          const glowR2 = dotR * 4;
-          const grd = ctx.createRadialGradient(dotPt.x, dotPt.y, 0, dotPt.x, dotPt.y, glowR2);
-          grd.addColorStop(0,   `rgba(255,255,255,${(al*0.35).toFixed(2)})`);
-          grd.addColorStop(1,   'rgba(255,255,255,0)');
-          ctx.fillStyle = grd;
-          ctx.beginPath(); ctx.arc(dotPt.x, dotPt.y, glowR2, 0, 6.2832); ctx.fill();
-          ctx.fillStyle = `rgba(255,255,255,${al.toFixed(2)})`;
-          ctx.beginPath(); ctx.arc(dotPt.x, dotPt.y, dotR, 0, 6.2832); ctx.fill();
+        if (dotAl > 0.01) {
+          // Find position along arc
+          let dotPt = null;
+          for (let i = 0; i < pts.length - 1; i++) {
+            if (pts[i].t <= travelProgress && pts[i+1].t >= travelProgress) {
+              const seg = (travelProgress - pts[i].t) / (pts[i+1].t - pts[i].t);
+              dotPt = {
+                x: pts[i].x + (pts[i+1].x - pts[i].x) * seg,
+                y: pts[i].y + (pts[i+1].y - pts[i].y) * seg,
+              };
+              break;
+            }
+          }
+          if (!dotPt) dotPt = pts[pts.length - 1];
+
+          if (dotPt) {
+            const amt = tx.amount || 1000;
+            const dotR = 0.5 + (Math.log10(Math.max(amt, 100)) - Math.log10(100))
+                             / (Math.log10(1000000) - Math.log10(100)) * 5.5;
+            const glowR2 = dotR * 4;
+            const grd = ctx.createRadialGradient(dotPt.x, dotPt.y, 0, dotPt.x, dotPt.y, glowR2);
+            grd.addColorStop(0,   `rgba(255,255,255,${(dotAl*0.35).toFixed(2)})`);
+            grd.addColorStop(1,   'rgba(255,255,255,0)');
+            ctx.fillStyle = grd;
+            ctx.beginPath(); ctx.arc(dotPt.x, dotPt.y, glowR2, 0, 6.2832); ctx.fill();
+            ctx.fillStyle = `rgba(255,255,255,${dotAl.toFixed(2)})`;
+            ctx.beginPath(); ctx.arc(dotPt.x, dotPt.y, dotR, 0, 6.2832); ctx.fill();
+          }
         }
       }
     }
@@ -791,8 +826,12 @@ function processTx(data) {
   const { from_country='US', to_country='GB', payment_type='swift', amount=1000, currency='USD' } = data;
   const type = (payment_type||'swift').toLowerCase();
   const col  = PC[type] || PC.swift;
-  const fc   = CITIES[from_country]||CITIES.US;
-  const tc   = CITIES[to_country]  ||CITIES.GB;
+  const fc = type === 'domestic'
+    ? (US_CITIES[from_country] || US_CITIES.US_NYC)
+    : (CITIES[from_country] || CITIES.US);
+  const tc = type === 'domestic'
+    ? (US_CITIES[to_country]   || US_CITIES.US_LAX)
+    : (CITIES[to_country]      || CITIES.GB);
   totalTx++; totalVol += parseFloat(amount)||0;
 
   const same = from_country === to_country;
@@ -805,15 +844,15 @@ function processTx(data) {
     amount: parseFloat(amount)||0,
   });
 
-  // Canvas pulse rings — duration matches arc fade lifecycle exactly
+  // Canvas pulse rings — only for same-location transactions
   const arcDur = FADE_IN + HOLD + FADE_OUT; // 2200ms
-  const addPulse = (lat,lng,c) => txAnims.push({
-    isPulse:true, t0:Date.now(), dur:arcDur, lat, lng, col:c, done:false,
-    amount: parseFloat(amount)||0,
-  });
-  const PURPLE = '#7c3aed';
-  addPulse(fc[0], fc[1], PURPLE);       // origin = purple
-  if (!same) addPulse(tc[0], tc[1], col); // dest = teal
+  if (same) {
+    const addPulse = (lat,lng,c) => txAnims.push({
+      isPulse:true, t0:Date.now(), dur:arcDur, lat, lng, col:c, done:false,
+      amount: parseFloat(amount)||0,
+    });
+    addPulse(fc[0], fc[1], col);
+  }
 
   // Rotate globe so arc midpoint is centered — offset +90° lng so it appears
   // center-right of hemisphere, fixed lat so vertical always resets
@@ -921,15 +960,18 @@ function addFeed(from,to,same,type,col,amount,currency) {
   }, 5000);
 }
 
-const Q_ZT_BASE = 2.3e9; // Zenus Transfers baseline
+const Q_ZT_BASE    = 2.3e9;
+const Q_TODAY_BASE = 37.92e6; // today's volume baseline
 
 function updateStats() {
-  const qVol = Q_BASE_VOL + totalVol;
-  const qTx  = Q_BASE_TX  + totalTx;
-  const qZT  = Q_ZT_BASE  + totalVol * 0.55; // ~55% of volume flows through Zenus Transfers
-  document.getElementById('sq-vol').textContent = fmtV(qVol);
-  document.getElementById('sq-tx').textContent  = qTx.toLocaleString();
-  document.getElementById('sq-zt').textContent  = fmtV(qZT);
+  const qVol  = Q_BASE_VOL  + totalVol;
+  const qTx   = Q_BASE_TX   + totalTx;
+  const qZT   = Q_ZT_BASE   + totalVol * 0.55;
+  const today = Q_TODAY_BASE + totalVol;
+  document.getElementById('sq-vol').textContent   = fmtV(qVol);
+  document.getElementById('sq-tx').textContent    = qTx.toLocaleString();
+  document.getElementById('sq-zt').textContent    = fmtV(qZT);
+  document.getElementById('sq-today').textContent = fmtV(today);
 }
 
 // ── Sun glare background ───────────────────────────────────────────────────────
@@ -1001,30 +1043,35 @@ function updateStats() {
 window.addEventListener('message',e=>{ if(e.data?.type==='transaction') processTx(e.data.payload); });
 
 function fireDemo() {
-  const from = CODES[Math.floor(Math.random()*CODES.length)];
-  let to = CODES[Math.floor(Math.random()*CODES.length)];
-
   // Weighted type distribution
   const r = Math.random();
   let type;
-  if      (r < 0.30) type = 'swift';
-  else if (r < 0.50) type = 'fedwire';
-  else if (r < 0.62) type = 'stablecoin';
-  else if (r < 0.72) type = 'ach';
-  else if (r < 0.86) type = 'withdrawal';
-  else               type = 'internal';
+  if      (r < 0.26) type = 'swift';
+  else if (r < 0.44) type = 'fedwire';
+  else if (r < 0.55) type = 'stablecoin';
+  else if (r < 0.63) type = 'ach';
+  else if (r < 0.75) type = 'withdrawal';
+  else if (r < 0.85) type = 'internal';
+  else               type = 'domestic';
 
-  // Withdrawals and internals can be same-country; big amounts occasionally
-  const isSame = type === 'internal' ? (Math.random() < 0.6) : (Math.random() < 0.08);
-  if (isSame) to = from;
+  let from, to;
+  if (type === 'domestic') {
+    // Pick two different US cities
+    from = US_CODES[Math.floor(Math.random()*US_CODES.length)];
+    do { to = US_CODES[Math.floor(Math.random()*US_CODES.length)]; } while (to === from);
+  } else {
+    from = CODES[Math.floor(Math.random()*CODES.length)];
+    to   = CODES[Math.floor(Math.random()*CODES.length)];
+    const isSame = type === 'internal' ? (Math.random() < 0.6) : (Math.random() < 0.08);
+    if (isSame) to = from;
+  }
 
-  // Amount: small/medium/large weighted distribution; withdrawals/internals skew larger
   const bigChance = (type === 'withdrawal' || type === 'internal') ? 0.35 : 0.12;
   let amount;
   const ar = Math.random();
-  if (ar < bigChance)        amount = (Math.random()*4800000 + 100000).toFixed(2);  // 100K–5M
-  else if (ar < bigChance+0.3) amount = (Math.random()*48000 + 5000).toFixed(2);   // 5K–53K
-  else                       amount = (Math.random()*4800 + 50).toFixed(2);         // 50–4850
+  if (ar < bigChance)          amount = (Math.random()*4800000+100000).toFixed(2);
+  else if (ar < bigChance+0.3) amount = (Math.random()*48000+5000).toFixed(2);
+  else                         amount = (Math.random()*4800+50).toFixed(2);
 
   processTx({ from_country:from, to_country:to, payment_type:type, amount, currency:'USD' });
 }
