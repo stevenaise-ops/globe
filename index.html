@@ -824,16 +824,8 @@ function addFeed(from,to,same,type,col,amount,currency) {
   el.innerHTML=`<span class="fi-pre" style="color:${col}">▸</span><span class="fi-amt" style="color:${col}">${currency} ${fmtA(amount)}</span><span class="fi-route">${route}</span><span class="fi-time">${now}</span>`;
   feed.insertBefore(el, feed.firstChild);
 
-  const isMob = window.innerWidth <= 640;
-  const MAX = isMob ? 3 : 12;
+  const MAX = 12;
 
-  if (isMob && feed.children.length >= MAX) {
-    const oldest = feed.lastChild;
-    if (oldest && oldest !== el) {
-      oldest.classList.add('dying');
-      setTimeout(()=>{ if(oldest.parentNode) oldest.remove(); }, 1300);
-    }
-  }
   while(feed.children.length > MAX) {
     const old = feed.lastChild; old && old.remove();
   }
