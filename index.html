@@ -872,40 +872,45 @@ function getAudioCtx() {
 }
 
 function triggerFeedback(amount, type) {
-  // Haptic — vary pattern by type
+  // Haptic — same firm pulse for all transactions
   if (navigator.vibrate) {
-    if (type === 'withdrawal') navigator.vibrate([30, 20, 30]); // double pulse for withdrawal
-    else if (amount > 100000)  navigator.vibrate(40);           // longer for big amounts
-    else                       navigator.vibrate(15);           // short tick for normal
+    navigator.vibrate(25);
   }
 
-  // Web Audio beep — short, subtle, pitched by amount
+  // Web Audio — happy G and C tones, all transactions are good news
   const ac = getAudioCtx();
   if (!ac) return;
-
-  // Resume context if suspended (browser autoplay policy)
   if (ac.state === 'suspended') ac.resume();
 
-  const osc  = ac.createOscillator();
-  const gain = ac.createGain();
-  const now  = ac.currentTime;
+  const now = ac.currentTime;
 
-  // Pitch: small tx = higher freq, large = lower; withdrawal = minor tone
-  const baseFreq = type === 'withdrawal' ? 220 : 440;
-  const freq = baseFreq + Math.min(amount / 5000, 1) * (type === 'withdrawal' ? -60 : 180);
+  // Alternate between G (392Hz) and C (523Hz) based on transaction index
+  // Large amounts get a two-note chord (G + C together)
+  const G4 = 392, C5 = 523.25, G5 = 784;
+  const notes = amount > 50000
+    ? [G4, C5]          // big amount: warm G+C chord
+    : (amount > 5000
+        ? [C5]          // medium: bright C
+        : [G4]);        // small: gentle G
 
-  osc.type = type === 'withdrawal' ? 'sawtooth' : 'sine';
-  osc.frequency.setValueAtTime(freq, now);
-  osc.frequency.exponentialRampToValueAtTime(freq * 0.85, now + 0.12);
+  notes.forEach((freq, i) => {
+    const osc  = ac.createOscillator();
+    const gain = ac.createGain();
+    const t    = now + i * 0.01; // tiny stagger for chord
 
-  gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(0.06, now + 0.01);  // soft attack
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14); // quick fade
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, t);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.005, t + 0.08); // tiny pitch lift
 
-  osc.connect(gain);
-  gain.connect(ac.destination);
-  osc.start(now);
-  osc.stop(now + 0.15);
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.07, t + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+
+    osc.connect(gain);
+    gain.connect(ac.destination);
+    osc.start(t);
+    osc.stop(t + 0.2);
+  });
 }
 
 function addFeed(from,to,same,type,col,amount,currency) {
