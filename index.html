@@ -63,37 +63,15 @@ header{
 @media(max-width:640px){
   header{padding:0 14px;height:38px}
   .logo-title{font-size:9px;letter-spacing:.1em}
-  .hstats{gap:12px}
-  .stv{font-size:12px}
-  .stl{font-size:7px}
+  .hstats{gap:10px}
+  .stv{font-size:11px}
+  .stl{font-size:6px}
 
   .main{flex-direction:column}
   #gw{flex:1;width:100%}
 
-  /* Terminal feed floats over globe from the top-left */
-  .sb{
-    position:absolute;
-    top:10px;left:12px;right:12px;
-    width:auto;
-    border:none;background:transparent;
-    pointer-events:none;
-    z-index:50;
-  }
-  .feed{
-    flex-direction:column;
-    overflow:visible;
-    padding:0;gap:3px;
-    flex:none;height:auto;
-  }
-  .fi{
-    pointer-events:none;
-    background:rgba(4,8,24,0.65);
-    backdrop-filter:blur(8px);
-    border-radius:4px;
-    padding:4px 8px;
-    border-bottom:none;
-    border-left:2px solid rgba(0,194,178,0.5);
-  }
+  /* Hide notifications on mobile */
+  .sb{display:none}
 }
 </style>
 </head>
@@ -103,8 +81,9 @@ header{
   <header>
     <span class="logo-title">Zenus Bank Live</span>
     <div class="hstats">
-      <div class="stat"><div class="stv" id="sc">0</div><div class="stl">Transactions</div></div>
-      <div class="stat"><div class="stv" id="sv">$0</div><div class="stl">Volume</div></div>
+      <div class="stat"><div class="stv" id="sq-vol">$4.2B</div><div class="stl">Q1 Volume</div></div>
+      <div class="stat"><div class="stv" style="color:#00c2b2" id="sq-zt">$2.3B</div><div class="stl" style="color:#00c2b2">Q1 Zenus Transfers</div></div>
+      <div class="stat"><div class="stv" id="sq-tx">321,096</div><div class="stl">Q1 Transactions</div></div>
     </div>
   </header>
   <div class="main">
@@ -161,6 +140,9 @@ let world, cv, ctx, ctxDots, CW, CH;
 let dotVecs = [];
 let arcs = [], txAnims = [];
 let totalTx = 0, totalVol = 0, demoIdx = 0;
+// Quarterly baseline — grows with every demo transaction
+const Q_BASE_VOL = 4.2e9;
+const Q_BASE_TX  = 321096;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const ease = t => t<.5 ? 2*t*t : -1+(4-2*t)*t;
@@ -628,8 +610,8 @@ function loop() {
       }
       // ── White dot for same-location transactions — appears/fades with pulse ──
       const amt2 = tx.amount || 1000;
-      const dotR2 = 0.6 + (Math.log10(Math.max(amt2, 50)) - Math.log10(50))
-                        / (Math.log10(5000000) - Math.log10(50)) * 4.5;
+      const dotR2 = 0.5 + (Math.log10(Math.max(amt2, 100)) - Math.log10(100))
+                        / (Math.log10(1000000) - Math.log10(100)) * 5.5;
       const glowR3 = dotR2 * 4;
       const grd2 = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, glowR3);
       grd2.addColorStop(0,   `rgba(255,255,255,${(overallAlpha*0.35).toFixed(2)})`);
@@ -697,8 +679,8 @@ function loop() {
         if (dotPt) {
           // Dot size: log scale mapped from $50 → 1.5px, $5M → 5px
           const amt = tx.amount || 1000;
-          const dotR = 0.6 + (Math.log10(Math.max(amt, 50)) - Math.log10(50))
-                           / (Math.log10(5000000) - Math.log10(50)) * 4.5;
+          const dotR = 0.5 + (Math.log10(Math.max(amt, 100)) - Math.log10(100))
+                           / (Math.log10(1000000) - Math.log10(100)) * 5.5;
           const glowR2 = dotR * 4;
           const grd = ctx.createRadialGradient(dotPt.x, dotPt.y, 0, dotPt.x, dotPt.y, glowR2);
           grd.addColorStop(0,   `rgba(255,255,255,${(al*0.35).toFixed(2)})`);
@@ -939,9 +921,15 @@ function addFeed(from,to,same,type,col,amount,currency) {
   }, 5000);
 }
 
+const Q_ZT_BASE = 2.3e9; // Zenus Transfers baseline
+
 function updateStats() {
-  document.getElementById('sc').textContent=totalTx.toLocaleString();
-  document.getElementById('sv').textContent=fmtV(totalVol);
+  const qVol = Q_BASE_VOL + totalVol;
+  const qTx  = Q_BASE_TX  + totalTx;
+  const qZT  = Q_ZT_BASE  + totalVol * 0.55; // ~55% of volume flows through Zenus Transfers
+  document.getElementById('sq-vol').textContent = fmtV(qVol);
+  document.getElementById('sq-tx').textContent  = qTx.toLocaleString();
+  document.getElementById('sq-zt').textContent  = fmtV(qZT);
 }
 
 // ── Sun glare background ───────────────────────────────────────────────────────
