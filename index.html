@@ -16,15 +16,15 @@ html,body{height:100%;background:#020714;color:#e2e8f0;font-family:'Inter',sans-
 /* ── Header ── */
 header{
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px;height:40px;flex-shrink:0;
+  padding:0 24px;height:62px;flex-shrink:0;
   border-bottom:1px solid rgba(255,255,255,0.05);
   background:#020714;
 }
 .logo-title{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.5)}
-.hstats{display:flex;gap:20px}
+.hstats{display:flex;gap:28px}
 .stat{text-align:right}
-.stv{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:#fff}
-.stl{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:2px}
+.stv{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:300;color:#fff}
+.stl{font-size:8px;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-top:3px;line-height:1.35}
 
 /* ── Main ── */
 .main{flex:1;display:flex;min-height:0;position:relative}
@@ -61,7 +61,7 @@ header{
 
 /* ── Mobile ── */
 @media(max-width:640px){
-  header{padding:0 14px;height:38px}
+  header{padding:0 14px;height:56px}
   .logo-title{font-size:9px;letter-spacing:.1em}
   .hstats{gap:10px}
   .stv{font-size:11px}
@@ -81,10 +81,10 @@ header{
   <header>
     <span class="logo-title">Zenus Bank Live</span>
     <div class="hstats">
-      <div class="stat"><div class="stv" id="sq-vol">$4.2B</div><div class="stl">Q1 Volume</div></div>
-      <div class="stat"><div class="stv" style="color:#00c2b2" id="sq-zt">$2.3B</div><div class="stl" style="color:#00c2b2">Q1 Zenus Transfers</div></div>
-      <div class="stat"><div class="stv" id="sq-tx">321,096</div><div class="stl">Q1 Transactions</div></div>
-      <div class="stat"><div class="stv" id="sq-today">$37.92M</div><div class="stl">Volume Today</div></div>
+      <div class="stat"><div class="stv" id="sq-vol">$4.2B</div><div class="stl">Q1'26 Volume</div></div>
+      <div class="stat"><div class="stv" style="color:#00c2b2" id="sq-zt">$2.3B</div><div class="stl" style="color:rgba(0,194,178,0.6)">Q1'26 Zenus<br>Transfers</div></div>
+      <div class="stat"><div class="stv" id="sq-tx">321,096</div><div class="stl">Q1'26 Transactions</div></div>
+      <div class="stat"><div class="stv" id="sq-today">$37.92M</div><div class="stl">Today's Volume</div></div>
     </div>
   </header>
   <div class="main">
@@ -107,7 +107,7 @@ const PC = {
   ach:        '#00c2b2',  // teal
   withdrawal: '#ff2052',  // punk red
   internal:   '#3b82f6',  // blue
-  domestic:   '#f97316',  // orange
+  domestic:   '#00c2b2',  // teal — same as other transfers
 };
 const TYPES = ['swift','fedwire','stablecoin','ach','withdrawal','internal','domestic'];
 
@@ -907,31 +907,26 @@ function triggerFeedback(amount, type) {
 
   // Alternate between G (392Hz) and C (523Hz) based on transaction index
   // Large amounts get a two-note chord (G + C together)
-  const G4 = 392, C5 = 523.25, G5 = 784;
-  const notes = amount > 50000
-    ? [G4, C5]          // big amount: warm G+C chord
-    : (amount > 5000
-        ? [C5]          // medium: bright C
-        : [G4]);        // small: gentle G
+  const G4 = 392, C5 = 523.25;
+  // Single note only — G for small, C for larger amounts
+  const freq = amount > 5000 ? C5 : G4;
 
-  notes.forEach((freq, i) => {
-    const osc  = ac.createOscillator();
-    const gain = ac.createGain();
-    const t    = now + i * 0.01; // tiny stagger for chord
+  const osc  = ac.createOscillator();
+  const gain = ac.createGain();
+  const t    = now;
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, t);
-    osc.frequency.exponentialRampToValueAtTime(freq * 1.005, t + 0.08); // tiny pitch lift
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, t);
+  osc.frequency.exponentialRampToValueAtTime(freq * 1.005, t + 0.08);
 
-    gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(0.07, t + 0.012);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(0.07, t + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
 
-    osc.connect(gain);
-    gain.connect(ac.destination);
-    osc.start(t);
-    osc.stop(t + 0.2);
-  });
+  osc.connect(gain);
+  gain.connect(ac.destination);
+  osc.start(t);
+  osc.stop(t + 0.2);
 }
 
 function addFeed(from,to,same,type,col,amount,currency) {
@@ -942,7 +937,7 @@ function addFeed(from,to,same,type,col,amount,currency) {
   const arrow = type==='withdrawal' ? '↓' : type==='internal' ? '↔' : '→';
   const route = same ? `◎ ${from}` : `${from} ${arrow} ${to}`;
   const sign = type === 'withdrawal' ? '−' : '';
-  el.innerHTML=`<span class="fi-pre" style="color:${col}">▸</span><span class="fi-amt" style="color:${col}">${sign}${currency} ${fmtA(amount)}</span><span class="fi-route">${route}</span><span class="fi-time">${now}</span>`;
+  el.innerHTML=`<span class="fi-pre" style="color:${col}">▸</span><span class="fi-amt" style="color:${col}">${currency} ${sign}${fmtA(amount)}</span><span class="fi-route">${route}</span><span class="fi-time">${now}</span>`;
   feed.insertBefore(el, feed.firstChild);
 
   const isMob = window.innerWidth <= 640;
