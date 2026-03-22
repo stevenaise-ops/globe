@@ -16,9 +16,9 @@ html,body{height:100%;background:#020714;color:#e2e8f0;font-family:'Inter',sans-
 /* ── Header ── */
 header{
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px;height:54px;flex-shrink:0;
-  border-bottom:1px solid rgba(255,255,255,0.08);
-  background:rgba(6,13,46,0.9);backdrop-filter:blur(12px);
+  padding:0 20px;height:40px;flex-shrink:0;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  background:#020714;
 }
 .logo-title{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.5)}
 .hstats{display:flex;gap:20px}
@@ -61,7 +61,7 @@ header{
 
 /* ── Mobile ── */
 @media(max-width:640px){
-  header{padding:0 14px;height:50px}
+  header{padding:0 14px;height:38px}
   .logo-title{font-size:9px;letter-spacing:.1em}
   .hstats{gap:12px}
   .stv{font-size:12px}
@@ -125,7 +125,7 @@ const PC = {
   fedwire:    '#00c2b2',  // teal
   stablecoin: '#00c2b2',  // teal
   ach:        '#00c2b2',  // teal
-  withdrawal: '#f59e0b',  // amber/yellow
+  withdrawal: '#ff2052',  // punk red
   internal:   '#3b82f6',  // blue
 };
 const TYPES = ['swift','fedwire','stablecoin','ach','withdrawal','internal'];
@@ -626,6 +626,18 @@ function loop() {
         ctx.lineWidth = 1.3;
         ctx.stroke();
       }
+      // ── White dot for same-location transactions — appears/fades with pulse ──
+      const amt2 = tx.amount || 1000;
+      const dotR2 = 0.6 + (Math.log10(Math.max(amt2, 50)) - Math.log10(50))
+                        / (Math.log10(5000000) - Math.log10(50)) * 4.5;
+      const glowR3 = dotR2 * 4;
+      const grd2 = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, glowR3);
+      grd2.addColorStop(0,   `rgba(255,255,255,${(overallAlpha*0.35).toFixed(2)})`);
+      grd2.addColorStop(1,   'rgba(255,255,255,0)');
+      ctx.fillStyle = grd2;
+      ctx.beginPath(); ctx.arc(pos.x, pos.y, glowR3, 0, 6.2832); ctx.fill();
+      ctx.fillStyle = `rgba(255,255,255,${overallAlpha.toFixed(2)})`;
+      ctx.beginPath(); ctx.arc(pos.x, pos.y, dotR2, 0, 6.2832); ctx.fill();
       return;
     }
 
@@ -648,11 +660,10 @@ function loop() {
         if (pp) pts.push({...pp, t});
       }
       if (pts.length > 2) {
-        // Draw arc as small segments each with interpolated color
+        // Draw arc segments with color gradient
         for (let i=1; i<pts.length; i++) {
           const t0=pts[i-1].t, t1=pts[i].t;
           const tm=(t0+t1)/2;
-          // Interpolate purple→teal along arc
           const ri=Math.round(pr+(tr-pr)*tm);
           const gi=Math.round(pg+(tg-pg)*tm);
           const bi=Math.round(pb+(tb-pb)*tm);
@@ -662,6 +673,40 @@ function loop() {
           ctx.strokeStyle=`rgba(${ri},${gi},${bi},${al.toFixed(2)})`;
           ctx.lineWidth=1.8;
           ctx.stroke();
+        }
+
+        // ── Traveling dot — moves from origin to destination during FADE_IN+HOLD ──
+        const totalTravel = FADE_IN + HOLD;
+        const elapsed = Date.now() - tx.t0;
+        const travelProgress = Math.min(elapsed / totalTravel, 1);
+
+        // Find the point on pts closest to travelProgress
+        let dotPt = null;
+        for (let i = 0; i < pts.length - 1; i++) {
+          if (pts[i].t <= travelProgress && pts[i+1].t >= travelProgress) {
+            const seg = (travelProgress - pts[i].t) / (pts[i+1].t - pts[i].t);
+            dotPt = {
+              x: pts[i].x + (pts[i+1].x - pts[i].x) * seg,
+              y: pts[i].y + (pts[i+1].y - pts[i].y) * seg,
+            };
+            break;
+          }
+        }
+        if (!dotPt && travelProgress >= 1) dotPt = pts[pts.length - 1];
+
+        if (dotPt) {
+          // Dot size: log scale mapped from $50 → 1.5px, $5M → 5px
+          const amt = tx.amount || 1000;
+          const dotR = 0.6 + (Math.log10(Math.max(amt, 50)) - Math.log10(50))
+                           / (Math.log10(5000000) - Math.log10(50)) * 4.5;
+          const glowR2 = dotR * 4;
+          const grd = ctx.createRadialGradient(dotPt.x, dotPt.y, 0, dotPt.x, dotPt.y, glowR2);
+          grd.addColorStop(0,   `rgba(255,255,255,${(al*0.35).toFixed(2)})`);
+          grd.addColorStop(1,   'rgba(255,255,255,0)');
+          ctx.fillStyle = grd;
+          ctx.beginPath(); ctx.arc(dotPt.x, dotPt.y, glowR2, 0, 6.2832); ctx.fill();
+          ctx.fillStyle = `rgba(255,255,255,${al.toFixed(2)})`;
+          ctx.beginPath(); ctx.arc(dotPt.x, dotPt.y, dotR, 0, 6.2832); ctx.fill();
         }
       }
     }
@@ -775,12 +820,14 @@ function processTx(data) {
     t0: Date.now(), col, al:0, done:false, same,
     fLat:fc[0], fLng:fc[1], tLat:tc[0], tLng:tc[1],
     fromName: fc[2], toName: tc[2],
+    amount: parseFloat(amount)||0,
   });
 
   // Canvas pulse rings — duration matches arc fade lifecycle exactly
   const arcDur = FADE_IN + HOLD + FADE_OUT; // 2200ms
   const addPulse = (lat,lng,c) => txAnims.push({
     isPulse:true, t0:Date.now(), dur:arcDur, lat, lng, col:c, done:false,
+    amount: parseFloat(amount)||0,
   });
   const PURPLE = '#7c3aed';
   addPulse(fc[0], fc[1], PURPLE);       // origin = purple
@@ -802,6 +849,7 @@ function processTx(data) {
 
   addFeed(fc[2], tc[2], same, type, col, amount, currency);
   updateStats();
+  triggerFeedback(parseFloat(amount)||0, type);
 }
 
 function mkLabel(name, col, isOrigin) {
@@ -814,6 +862,52 @@ function mkLabel(name, col, isOrigin) {
   lbl.textContent=name; w.appendChild(dot); w.appendChild(lbl); return w;
 }
 
+// ── Haptic + Audio feedback ────────────────────────────────────────────────────
+let _audioCtx = null;
+function getAudioCtx() {
+  if (!_audioCtx) {
+    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+  return _audioCtx;
+}
+
+function triggerFeedback(amount, type) {
+  // Haptic — vary pattern by type
+  if (navigator.vibrate) {
+    if (type === 'withdrawal') navigator.vibrate([30, 20, 30]); // double pulse for withdrawal
+    else if (amount > 100000)  navigator.vibrate(40);           // longer for big amounts
+    else                       navigator.vibrate(15);           // short tick for normal
+  }
+
+  // Web Audio beep — short, subtle, pitched by amount
+  const ac = getAudioCtx();
+  if (!ac) return;
+
+  // Resume context if suspended (browser autoplay policy)
+  if (ac.state === 'suspended') ac.resume();
+
+  const osc  = ac.createOscillator();
+  const gain = ac.createGain();
+  const now  = ac.currentTime;
+
+  // Pitch: small tx = higher freq, large = lower; withdrawal = minor tone
+  const baseFreq = type === 'withdrawal' ? 220 : 440;
+  const freq = baseFreq + Math.min(amount / 5000, 1) * (type === 'withdrawal' ? -60 : 180);
+
+  osc.type = type === 'withdrawal' ? 'sawtooth' : 'sine';
+  osc.frequency.setValueAtTime(freq, now);
+  osc.frequency.exponentialRampToValueAtTime(freq * 0.85, now + 0.12);
+
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.06, now + 0.01);  // soft attack
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14); // quick fade
+
+  osc.connect(gain);
+  gain.connect(ac.destination);
+  osc.start(now);
+  osc.stop(now + 0.15);
+}
+
 function addFeed(from,to,same,type,col,amount,currency) {
   const feed=document.getElementById('feed');
   const el=document.createElement('div'); el.className='fi';
@@ -821,10 +915,12 @@ function addFeed(from,to,same,type,col,amount,currency) {
   // Arrow direction: withdrawal = outgoing ↓, internal = ↔, rest = →
   const arrow = type==='withdrawal' ? '↓' : type==='internal' ? '↔' : '→';
   const route = same ? `◎ ${from}` : `${from} ${arrow} ${to}`;
-  el.innerHTML=`<span class="fi-pre" style="color:${col}">▸</span><span class="fi-amt" style="color:${col}">${currency} ${fmtA(amount)}</span><span class="fi-route">${route}</span><span class="fi-time">${now}</span>`;
+  const sign = type === 'withdrawal' ? '−' : '';
+  el.innerHTML=`<span class="fi-pre" style="color:${col}">▸</span><span class="fi-amt" style="color:${col}">${sign}${currency} ${fmtA(amount)}</span><span class="fi-route">${route}</span><span class="fi-time">${now}</span>`;
   feed.insertBefore(el, feed.firstChild);
 
-  const MAX = 12;
+  const isMob = window.innerWidth <= 640;
+  const MAX = isMob ? 9 : 12;
 
   while(feed.children.length > MAX) {
     const old = feed.lastChild; old && old.remove();
