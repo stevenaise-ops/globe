@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,333 +9,453 @@
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
+/* ── THEME TOKENS ─────────────────────────────────────────────────── */
 :root {
-  --bg:       #04080f;
-  --surface:  rgba(255,255,255,0.03);
-  --teal:     #00b8a9;
-  --teal-dim: rgba(0,184,169,0.12);
-  --white:    #f0f4f8;
-  --muted:    rgba(240,244,248,0.45);
-  --subtle:   rgba(240,244,248,0.22);
-  --border:   rgba(255,255,255,0.07);
-  --border-strong: rgba(255,255,255,0.12);
-  --mono:     'IBM Plex Mono', monospace;
-  --sans:     'Inter', sans-serif;
+  --teal:          #00b8a9;
+  --teal-light:    #00cfc0;
+  --mono:          'IBM Plex Mono', monospace;
+  --sans:          'Inter', sans-serif;
+  --transition:    color .2s, background .2s, border-color .2s, opacity .2s;
+}
+
+/* DARK MODE (default) */
+[data-theme="dark"] {
+  --bg:            #04080f;
+  --bg-nav:        rgba(4,8,15,0.85);
+  --bg-card:       rgba(4,8,15,0.42);
+  --bg-card-solid: rgba(4,8,15,0.88);
+  --text:          #f0f4f8;
+  --text-muted:    rgba(240,244,248,0.5);
+  --text-subtle:   rgba(240,244,248,0.25);
+  --border:        rgba(255,255,255,0.07);
+  --border-mid:    rgba(255,255,255,0.11);
+  --star-color:    255,255,255;
+  --globe-disc:    rgba(4,8,15,0.94);
+  --label-bg:      rgba(4,8,15,0.92);
+  /* gradient fades */
+  --fade-l-0:      rgba(4,8,15,0.96);
+  --fade-l-1:      rgba(4,8,15,0.85);
+  --fade-l-2:      rgba(4,8,15,0.55);
+  --fade-b-0:      rgba(4,8,15,1.0);
+  --fade-b-1:      rgba(4,8,15,0.85);
+  /* partners slider */
+  --partners-bg:   rgba(4,8,15,0.96);
+  --partner-text:  rgba(240,244,248,0.22);
+  --partner-hover: rgba(240,244,248,0.55);
+}
+
+/* LIGHT MODE */
+[data-theme="light"] {
+  --bg:            #f0f4f8;
+  --bg-nav:        rgba(240,244,248,0.90);
+  --bg-card:       rgba(255,255,255,0.55);
+  --bg-card-solid: rgba(240,244,248,0.94);
+  --text:          #0d1117;
+  --text-muted:    rgba(13,17,23,0.55);
+  --text-subtle:   rgba(13,17,23,0.35);
+  --border:        rgba(0,0,0,0.08);
+  --border-mid:    rgba(0,0,0,0.14);
+  --star-color:    50,80,120;
+  --globe-disc:    rgba(220,230,240,0.88);
+  --label-bg:      rgba(240,244,248,0.94);
+  --fade-l-0:      rgba(240,244,248,0.97);
+  --fade-l-1:      rgba(240,244,248,0.88);
+  --fade-l-2:      rgba(240,244,248,0.52);
+  --fade-b-0:      rgba(240,244,248,1.0);
+  --fade-b-1:      rgba(240,244,248,0.82);
+  --partners-bg:   rgba(240,244,248,0.97);
+  --partner-text:  rgba(13,17,23,0.3);
+  --partner-hover: rgba(13,17,23,0.65);
 }
 
 html, body {
   background: var(--bg);
-  color: var(--white);
+  color: var(--text);
   font-family: var(--sans);
   overflow-x: hidden;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  transition: var(--transition);
 }
 
 /* ── NAV ─────────────────────────────────────────────────────────── */
 nav {
   position: fixed; top:0; left:0; right:0; z-index:300;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 52px; height: 62px;
-  background: rgba(4,8,15,0.82);
+  padding: 0 48px; height: 62px;
+  background: var(--bg-nav);
   backdrop-filter: blur(24px) saturate(160%);
   border-bottom: 1px solid var(--border);
+  transition: var(--transition);
 }
-.nav-logo {
-  display: flex; align-items: center;
-  text-decoration: none; flex-shrink: 0;
-}
-.nav-logo img {
-  height: 22px; width: auto;
-  /* Teal SVG — no filter needed, it's already the brand color */
-}
-.nav-links { display:flex; gap:32px; list-style:none; }
-.nav-links a {
+.nav-logo { display:flex; align-items:center; text-decoration:none; flex-shrink:0; }
+.nav-logo img { height:22px; width:auto; }
+/* Invert logo in light mode since it's teal on transparent */
+[data-theme="light"] .nav-logo img { filter: brightness(0.85) saturate(1.2); }
+
+.nav-center { display:flex; gap:32px; list-style:none; }
+.nav-center a {
   font-size: 13px; font-weight: 400;
-  color: var(--muted); text-decoration: none;
+  color: var(--text-muted); text-decoration: none;
   letter-spacing: 0.01em; transition: color .15s;
 }
-.nav-links a:hover { color: var(--white); }
+.nav-center a:hover { color: var(--text); }
+
+.nav-right { display:flex; align-items:center; gap:12px; }
+
+/* ── THEME TOGGLE ─────────────────────────────────────────────────── */
+.theme-toggle {
+  width: 38px; height: 22px;
+  background: var(--border-mid);
+  border: 1px solid var(--border-mid);
+  border-radius: 11px;
+  cursor: pointer;
+  position: relative;
+  transition: background .25s, border-color .25s;
+  flex-shrink: 0;
+}
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  background: var(--text-muted);
+  transition: transform .25s, background .25s;
+}
+[data-theme="light"] .theme-toggle {
+  background: rgba(0,184,169,0.18);
+  border-color: rgba(0,184,169,0.3);
+}
+[data-theme="light"] .theme-toggle::after {
+  transform: translateX(16px);
+  background: var(--teal);
+}
+.theme-toggle-label {
+  font-family: var(--mono); font-size: 8px; letter-spacing:.14em;
+  text-transform: uppercase; color: var(--text-subtle);
+  white-space: nowrap;
+}
+
 .nav-cta {
   font-family: var(--sans); font-size: 12px; font-weight: 500;
   letter-spacing: 0.04em;
   background: var(--teal); color: #04080f; border: none;
-  border-radius: 3px; padding: 9px 20px; cursor: pointer;
+  border-radius: 6px; padding: 9px 20px; cursor: pointer;
   transition: background .15s, box-shadow .15s;
 }
-.nav-cta:hover {
-  background: #00cfc0;
-  box-shadow: 0 0 20px rgba(0,184,169,0.35);
-}
+.nav-cta:hover { background: var(--teal-light); box-shadow: 0 0 20px rgba(0,184,169,0.35); }
 
-/* ── PAGE BG ──────────────────────────────────────────────────────── */
-#page-bg {
-  position: fixed; inset:0; z-index:0; pointer-events:none;
-}
+/* ── PAGE BG CANVAS ───────────────────────────────────────────────── */
+#page-bg { position:fixed; inset:0; z-index:0; pointer-events:none; }
 
-/* ── HERO LAYOUT ─────────────────────────────────────────────────── */
-/*
-  Two-column structure:
-  Left col (40%) — headline, sub, CTAs, metrics  [text, left-aligned]
-  Right col (60%) — globe rising from the right side
-  The globe clips at the right edge, showing the left/top hemisphere arc
-*/
+/* ── HERO ─────────────────────────────────────────────────────────── */
 .hero {
   position: relative;
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 42% 58%;
+  height: 100vh; min-height: 700px;
   overflow: hidden;
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
 }
 
-/* Left panel — all text content */
-.hero-left {
-  position: relative; z-index:20;
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 100px 0 80px 52px;
-  /* Subtle right-edge fade so globe bleeds through */
-}
-
-.eyebrow {
-  font-family: var(--mono); font-size: 9.5px; font-weight: 500;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--teal); margin-bottom: 24px;
-  display: flex; align-items: center; gap: 10px;
-  opacity: 0; animation: fadeUp .6s .1s forwards;
-}
-.eyebrow::before {
-  content:''; width:20px; height:1px;
-  background:var(--teal); opacity:.6; flex-shrink:0;
-}
-
-.hero-h1 {
-  font-family: var(--sans); font-weight: 600;
-  font-size: clamp(32px, 3.2vw, 52px);
-  line-height: 1.12; letter-spacing: -0.025em;
-  color: var(--white);
-  margin-bottom: 20px;
-  max-width: 480px;
-  opacity: 0; animation: fadeUp .6s .2s forwards;
-}
-/* No gradient — clean, authoritative white */
-.hero-h1 em {
-  font-style: normal;
-  color: var(--teal);
-}
-
-.hero-sub {
-  font-size: 14px; font-weight: 300; line-height: 1.8;
-  color: var(--muted); max-width: 380px;
-  margin-bottom: 40px;
-  opacity: 0; animation: fadeUp .6s .3s forwards;
-}
-
-/* ── CTAs ─────────────────────────────────────────────────────────── */
-.hero-actions {
-  display: flex; gap: 12px; align-items: center;
-  margin-bottom: 52px;
-  opacity: 0; animation: fadeUp .6s .4s forwards;
-}
-.btn-primary {
-  font-family: var(--sans); font-size: 13px; font-weight: 500;
-  letter-spacing: 0.02em;
-  background: var(--teal); color: #04080f; border: none;
-  border-radius: 6px; padding: 12px 24px; cursor: pointer;
-  transition: background .15s, box-shadow .15s;
-}
-.btn-primary:hover {
-  background: #00cfc0;
-  box-shadow: 0 4px 24px rgba(0,184,169,0.35);
-}
-.btn-secondary {
-  font-family: var(--sans); font-size: 13px; font-weight: 400;
-  color: var(--muted); background: none;
-  border: 1px solid var(--border-strong); border-radius: 6px;
-  padding: 12px 24px; cursor: pointer; transition: all .15s;
-}
-.btn-secondary:hover { color:var(--white); border-color:rgba(255,255,255,.28); }
-
-/* ── METRICS ──────────────────────────────────────────────────────── */
-.metrics {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: 10px; overflow: hidden;
-  max-width: 420px;
-  opacity: 0; animation: fadeUp .6s .5s forwards;
-}
-.metric {
-  background: rgba(4,8,15,0.9);
-  padding: 18px 20px;
-}
-.m-val {
-  font-family: var(--mono); font-size: 15px; font-weight: 300;
-  color: var(--white); letter-spacing: -0.01em;
-  line-height: 1; margin-bottom: 7px;
-}
-.m-val.live { color: var(--teal); }
-.m-label {
-  font-family: var(--mono); font-size: 8px; font-weight: 400;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--subtle); line-height:1.4;
-  display: flex; align-items: center; gap: 5px;
-}
-.live-dot {
-  width: 4px; height: 4px; background: var(--teal);
-  border-radius: 50%; flex-shrink: 0;
-  animation: blink 2.4s ease-in-out infinite;
-}
-
-/* ── GLOBE ZONE ───────────────────────────────────────────────────── */
-/*
-  The right column is the globe zone.
-  We position the globe so that only the upper/left portion
-  of the sphere is visible — the northern hemisphere arc.
-  
-  The key: push the globe DOWN and LEFT so the globe center
-  is below and to the right of the visible area.
-  The clip on the right panel + bottom edge creates the arc illusion.
-*/
-.hero-right {
-  position: relative;
-  overflow: hidden;
-  /* No background — globe draws its own dark disc */
+/* Globe fills entire hero background */
+.hero-globe {
+  position: absolute; inset:0; z-index:1; overflow:hidden;
 }
 
 #gw-wrap {
   position: absolute;
-  /* Position the globe center at bottom-right of this column
-     so we see the upper-left arc of the sphere */
-  bottom: 0%;
-  right: 0%;
-  width: 100%;
-  height: 100%;
+  left: 55%; transform: translateX(-50%);
+  top: 4%;
+  width: 100vw; height: 100vw;
+  max-width: 1300px; max-height: 1300px;
 }
-
 #gw {
-  width: 100% !important;
-  height: 100% !important;
-  position: relative;
-  cursor: grab;
-  background: transparent;
-}
-#gw canvas {
-  position:absolute; top:0; left:0;
   width:100% !important; height:100% !important;
+  position:relative; cursor:grab; background:transparent;
 }
+#gw canvas { position:absolute; top:0; left:0; width:100% !important; height:100% !important; }
 #gw-status {
-  position:absolute; inset:0; display:flex; align-items:center;
-  justify-content:center; font-family:var(--mono); font-size:11px;
-  letter-spacing:.12em; color:rgba(255,255,255,.2); z-index:5;
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+  color:var(--text-subtle); z-index:5;
 }
 
-/* Gradient masks — blend globe into page seamlessly */
-.g-fade { position:absolute; pointer-events:none; z-index:20; }
+/* Gradient masks */
+.g-fade { position:absolute; pointer-events:none; z-index:10; }
 .g-fade-l {
-  top:0; left:0; bottom:0; width:30%;
-  background: linear-gradient(to right, var(--bg) 0%, transparent 100%);
+  top:0; left:0; bottom:0; width:64%;
+  background: linear-gradient(to right,
+    var(--fade-l-0) 0%, var(--fade-l-1) 22%,
+    var(--fade-l-2) 44%, rgba(4,8,15,0.08) 60%, transparent 100%);
+}
+[data-theme="light"] .g-fade-l {
+  background: linear-gradient(to right,
+    var(--fade-l-0) 0%, var(--fade-l-1) 22%,
+    var(--fade-l-2) 44%, rgba(240,244,248,0.08) 60%, transparent 100%);
 }
 .g-fade-t {
-  top:0; left:0; right:0; height:20%;
-  background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+  top:0; left:0; right:0; height:16%;
+  background: linear-gradient(to bottom, var(--fade-l-0) 0%, transparent 100%);
 }
 .g-fade-r {
-  top:0; right:0; bottom:0; width:12%;
+  top:0; right:0; bottom:0; width:8%;
   background: linear-gradient(to left, var(--bg), transparent);
 }
 .g-fade-b {
-  bottom:0; left:0; right:0; height:30%;
-  background: linear-gradient(to top, var(--bg), transparent);
+  bottom:0; left:0; right:0; height:48%;
+  background: linear-gradient(to top,
+    var(--fade-b-0) 0%, var(--fade-b-1) 18%,
+    rgba(4,8,15,0.55) 38%, transparent 100%);
+}
+[data-theme="light"] .g-fade-b {
+  background: linear-gradient(to top,
+    var(--fade-b-0) 0%, var(--fade-b-1) 18%,
+    rgba(240,244,248,0.55) 38%, transparent 100%);
 }
 
-/* ── PARTNER STRIP ────────────────────────────────────────────────── */
-.strip {
-  position: relative; z-index:50;
-  background: rgba(4,8,15,0.95);
+/* ── HERO CONTENT (overlays globe) ───────────────────────────────── */
+.hero-content {
+  position: relative; z-index:20;
+  padding: 0 52px 0;
+  display: flex; flex-direction: column;
+  max-width: 580px;
+  /* vertically centered in the upper 60% of hero */
+  margin-top: auto;
+  padding-bottom: 0;
+  /* position in middle-ish */
+  position: absolute;
+  top: 50%; left: 0;
+  transform: translateY(-52%);
+  padding-left: 52px;
+}
+
+.eyebrow {
+  font-family: var(--mono); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+  opacity:0; animation: fadeUp .6s .1s forwards;
+}
+.eyebrow::before { content:''; width:18px; height:1px; background:var(--teal); opacity:.6; }
+
+.hero-h1 {
+  font-family: var(--sans); font-weight: 600;
+  font-size: clamp(32px, 3.6vw, 58px);
+  line-height: 1.08; letter-spacing: -0.03em;
+  color: var(--text); margin-bottom: 16px;
+  opacity:0; animation: fadeUp .6s .2s forwards;
+}
+.hero-h1 em { font-style:normal; color: var(--teal); }
+
+.hero-sub {
+  font-size: 14px; font-weight: 300; line-height: 1.78;
+  color: var(--text-muted); max-width: 340px;
+  margin-bottom: 30px;
+  opacity:0; animation: fadeUp .6s .3s forwards;
+}
+
+/* ── CTA BUTTONS ─────────────────────────────────────────────────── */
+.hero-actions {
+  display:flex; gap:10px; align-items:center;
+  margin-bottom: 40px;
+  opacity:0; animation: fadeUp .6s .4s forwards;
+}
+.btn-primary {
+  font-family:var(--sans); font-size:13px; font-weight:500; letter-spacing:.02em;
+  background:var(--teal); color:#04080f; border:none;
+  border-radius:6px; padding:11px 22px; cursor:pointer;
+  transition: background .15s, box-shadow .15s;
+}
+.btn-primary:hover { background:var(--teal-light); box-shadow:0 4px 22px rgba(0,184,169,.35); }
+.btn-secondary {
+  font-family:var(--sans); font-size:13px; font-weight:400;
+  color:var(--text-muted); background:var(--bg-card);
+  border:1px solid var(--border-mid); border-radius:6px;
+  padding:11px 22px; cursor:pointer; transition:all .15s;
+  backdrop-filter:blur(10px);
+}
+.btn-secondary:hover { color:var(--text); border-color:var(--border-mid); }
+
+/* ── METRICS BAR — 4 stats horizontal ────────────────────────────── */
+/*
+  Key design decision: numbers at 36-40px, compressed to 3-sig-fig format.
+  Horizontal row on desktop, 2×2 on tablet, stacked on mobile.
+  Glass card, no heavy background.
+*/
+.metrics-bar {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  background: var(--bg-card);
+  border: 1px solid var(--border-mid);
+  border-radius: 10px; overflow:hidden;
+  backdrop-filter: blur(18px);
+  max-width: 560px;
+  opacity:0; animation: fadeUp .6s .5s forwards;
+}
+.metric {
+  padding: 16px 18px;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.metric:last-child { border-right:none; }
+.m-val {
+  font-family: var(--mono); font-weight: 300;
+  font-size: clamp(22px, 2.4vw, 34px);
+  color: var(--text); letter-spacing:-0.02em; line-height:1;
+  margin-bottom: 6px;
+  white-space: nowrap;
+}
+.m-val.live { color: var(--teal); }
+.m-label {
+  font-family: var(--mono); font-size: 7.5px; font-weight:400;
+  letter-spacing:.13em; text-transform:uppercase;
+  color: var(--text-subtle); line-height:1.4;
+  display:flex; align-items:center; gap:4px;
+}
+.live-dot {
+  width:4px; height:4px; background:var(--teal);
+  border-radius:50%; flex-shrink:0;
+  animation: blink 2.4s ease-in-out infinite;
+}
+
+/* ── PARTNERS SLIDER (inside hero, below fold line) ──────────────── */
+/*
+  Sits at the very bottom of the hero — above the partner strip.
+  Infinite CSS marquee. Two rows: rail names + logos/text.
+*/
+.partners-band {
+  position: absolute;
+  bottom: 0; left:0; right:0; z-index:25;
+  background: var(--partners-bg);
   border-top: 1px solid var(--border);
-  padding: 22px 52px;
-  display: flex; align-items: center; gap: 36px;
+  padding: 14px 0;
+  overflow: hidden;
 }
-.strip-label {
-  font-family: var(--mono); font-size: 8px; letter-spacing: .2em;
-  text-transform: uppercase; color: rgba(255,255,255,.18);
-  white-space: nowrap; flex-shrink: 0;
+.partners-inner {
+  display: flex; gap: 0;
+  animation: marquee 32s linear infinite;
+  width: max-content;
 }
-.strip-items {
-  display: flex; align-items:center; gap: 28px; flex-wrap:wrap;
+.partners-band:hover .partners-inner { animation-play-state: paused; }
+.partner-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 32px;
+  border-right: 1px solid var(--border);
+  white-space: nowrap; flex-shrink:0;
 }
-.strip-item {
-  font-family: var(--sans); font-weight: 500; font-size: 11px;
-  letter-spacing: .06em; text-transform: uppercase;
-  color: rgba(255,255,255,.2); transition: color .15s;
+.partner-item:last-child { border-right: none; }
+.partner-name {
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--partner-text); transition: color .2s;
 }
-.strip-item:hover { color: rgba(255,255,255,.5); }
-.strip-sep { width:1px; height:14px; background: var(--border); flex-shrink:0; }
+.partners-band:hover .partner-name { color: var(--partner-hover); }
+.partner-tag {
+  font-family: var(--mono); font-size: 8px;
+  color: var(--teal); opacity:.7;
+  letter-spacing:.06em;
+  background: rgba(0,184,169,0.1);
+  padding: 2px 6px; border-radius:3px;
+}
 
-/* ── LIVE FEED ────────────────────────────────────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── LIVE FEED PANEL ─────────────────────────────────────────────── */
 .feed-panel {
-  position: fixed; bottom: 24px; right: 24px; z-index:200;
-  background: rgba(4,8,15,0.9);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  width: 280px; overflow: hidden;
+  position:fixed; bottom:24px; right:24px; z-index:200;
+  background: var(--bg-card-solid);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--border); border-radius:10px;
+  width:272px; overflow:hidden;
+  transition: var(--transition);
 }
 .feed-header {
-  padding: 10px 14px 8px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 7px;
+  padding:10px 14px 8px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:7px;
 }
 .feed-title {
-  font-family: var(--mono); font-size: 8px; letter-spacing: .18em;
-  text-transform: uppercase; color: rgba(255,255,255,.28);
+  font-family:var(--mono); font-size:8px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--text-subtle);
 }
 #feed {
-  padding: 6px 0;
-  display: flex; flex-direction: column;
-  max-height: 180px; overflow: hidden;
+  padding:4px 0; display:flex; flex-direction:column;
+  max-height:168px; overflow:hidden;
 }
 .fi {
-  font-family: var(--mono); font-size: 9.5px; line-height: 1.5;
-  color: rgba(255,255,255,.7);
-  padding: 3px 14px;
-  border-bottom: 1px solid rgba(255,255,255,.03);
-  animation: term-in .18s ease;
-  transition: opacity 1.2s;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family:var(--mono); font-size:9.5px; line-height:1.5;
+  color:var(--text-muted);
+  padding:3px 14px; border-bottom:1px solid var(--border);
+  animation:term-in .18s ease; transition:opacity 1.2s;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .fi.dying { opacity:0; }
-.fi-amt  { font-weight: 500; }
-.fi-route{ color: rgba(255,255,255,.32); font-size:9px; margin-left:6px; }
-.fi-time { color: rgba(255,255,255,.15); font-size:8.5px; float:right; }
-.fi-pre  { margin-right: 4px; }
+.fi-amt { font-weight:500; }
+.fi-route { color:var(--text-subtle); font-size:9px; margin-left:6px; }
+.fi-time { color:var(--text-subtle); font-size:8.5px; float:right; opacity:.6; }
+.fi-pre { margin-right:4px; }
+
+/* ── PARTNER STRIP (below hero) ──────────────────────────────────── */
+.strip {
+  position:relative; z-index:50;
+  background: var(--bg);
+  border-top:1px solid var(--border);
+  padding:22px 52px;
+  display:flex; align-items:center; gap:36px;
+  transition: var(--transition);
+}
+.strip-label {
+  font-family:var(--mono); font-size:8px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--text-subtle);
+  white-space:nowrap; flex-shrink:0;
+}
+.strip-items { display:flex; align-items:center; gap:28px; flex-wrap:wrap; }
+.strip-item {
+  font-family:var(--sans); font-weight:500; font-size:11px;
+  letter-spacing:.06em; text-transform:uppercase;
+  color:var(--text-subtle); transition:color .15s;
+}
+.strip-item:hover { color:var(--text-muted); }
+.strip-sep { width:1px; height:14px; background:var(--border); flex-shrink:0; }
 
 /* ── KEYFRAMES ────────────────────────────────────────────────────── */
 @keyframes fadeUp {
-  from { opacity:0; transform:translateY(16px); }
+  from { opacity:0; transform:translateY(14px); }
   to   { opacity:1; transform:translateY(0); }
 }
-@keyframes blink {
-  0%,100% { opacity:1; } 50% { opacity:.2; }
-}
-@keyframes term-in {
-  from { opacity:0; transform:translateY(-3px); }
-  to   { opacity:1; transform:none; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.2;} }
+@keyframes term-in { from{opacity:0;transform:translateY(-3px);} to{opacity:1;transform:none;} }
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────── */
+@media(max-width:1100px){
+  .metrics-bar { grid-template-columns: repeat(2,1fr); max-width:420px; }
+  .metric:nth-child(2) { border-right:none; }
+  .metric:nth-child(3) { border-top:1px solid var(--border); }
+  .metric:nth-child(4) { border-top:1px solid var(--border); border-right:none; }
 }
 
-/* ── MOBILE ───────────────────────────────────────────────────────── */
 @media(max-width:900px){
-  .hero { grid-template-columns: 1fr; }
-  .hero-left { padding: 96px 24px 48px; }
-  .hero-h1 { font-size: clamp(28px,6vw,44px); }
-  .hero-right { height: 50vw; min-height: 280px; }
-  #gw-wrap { bottom:-10%; right:-15%; width:120%; height:140%; }
-  nav { padding:0 24px; }
-  .nav-links { display:none; }
-  .strip { padding:16px 24px; }
+  nav { padding:0 20px; }
+  .nav-center { display:none; }
+  .hero-content { padding-left:24px; max-width:100%; transform:translateY(-46%); }
+  #gw-wrap { left:50%; top:0; width:150vw; height:150vw; }
+  .g-fade-l {
+    width:100%;
+    background:linear-gradient(to right, var(--fade-l-0) 0%, var(--fade-l-1) 30%, var(--fade-l-2) 60%, transparent 100%);
+  }
+  .strip { padding:16px 20px; }
   .feed-panel { display:none; }
-  .metrics { max-width:100%; }
+  .metrics-bar { max-width:100%; }
+  .partners-band { display:none; }
+}
+
+@media(max-width:600px){
+  .hero-h1 { font-size: clamp(28px,8vw,40px); }
+  .metrics-bar { grid-template-columns:1fr 1fr; }
+  .m-val { font-size:20px; }
 }
 </style>
 </head>
@@ -343,73 +463,34 @@ nav {
 
 <canvas id="page-bg"></canvas>
 
-<!-- ── NAV ──────────────────────────────────────────────────────────── -->
+<!-- ── NAV ─────────────────────────────────────────────────────── -->
 <nav>
   <a href="https://zenus.com" class="nav-logo">
-    <img
+    <img id="nav-logo-img"
       src="https://zenus.com/media/rpjl0yaw/zenus-bank-logo-turquoise-v2.svg?rmode=max&width=400&quality=85&rnd=133857463896170000"
-      alt="Zenus Bank"
-    >
+      alt="Zenus Bank">
   </a>
-  <ul class="nav-links">
+  <ul class="nav-center">
     <li><a href="#">Network</a></li>
     <li><a href="#">Infrastructure</a></li>
     <li><a href="#">API</a></li>
     <li><a href="#">Partners</a></li>
     <li><a href="#">About</a></li>
   </ul>
-  <button class="nav-cta">Get Started</button>
+  <div class="nav-right">
+    <span class="theme-toggle-label" id="theme-label">Dark</span>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
+    <button class="nav-cta">Get Started</button>
+  </div>
 </nav>
 
-<!-- ── HERO ─────────────────────────────────────────────────────────── -->
+<!-- ── HERO ─────────────────────────────────────────────────────── -->
 <div class="hero">
 
-  <!-- LEFT: content -->
-  <div class="hero-left">
-
-    <div class="eyebrow">Global Banking Infrastructure</div>
-
-    <h1 class="hero-h1">
-      The backbone of<br><em>global commerce</em>
-    </h1>
-
-    <p class="hero-sub">
-      Real-time settlement across 135+ currencies and payment methods.
-      Built on the same rails that power the world's largest financial institutions.
-    </p>
-
-    <div class="hero-actions">
-      <button class="btn-primary">Get Started</button>
-      <button class="btn-secondary">View Network Stats</button>
-    </div>
-
-    <div class="metrics">
-      <div class="metric">
-        <div class="m-val live" id="sq-vol">$1,402,819,440</div>
-        <div class="m-label">Jan '26 Volume</div>
-      </div>
-      <div class="metric">
-        <div class="m-val live" id="sq-zt">$765,231,800</div>
-        <div class="m-label"><span class="live-dot"></span>Zenus Transfers</div>
-      </div>
-      <div class="metric">
-        <div class="m-val" id="sq-tx">107,032</div>
-        <div class="m-label">Jan '26 Transactions</div>
-      </div>
-      <div class="metric">
-        <div class="m-val live" id="sq-today">$37,920,000</div>
-        <div class="m-label"><span class="live-dot"></span>Today's Volume</div>
-      </div>
-    </div>
-
-  </div><!-- /hero-left -->
-
-  <!-- RIGHT: globe -->
-  <div class="hero-right">
+  <!-- Globe background -->
+  <div class="hero-globe">
     <div id="gw-wrap">
-      <div id="gw">
-        <div id="gw-status">Loading globe…</div>
-      </div>
+      <div id="gw"><div id="gw-status">Loading…</div></div>
     </div>
     <div class="g-fade g-fade-l"></div>
     <div class="g-fade g-fade-t"></div>
@@ -417,27 +498,72 @@ nav {
     <div class="g-fade g-fade-b"></div>
   </div>
 
+  <!-- Text overlay -->
+  <div class="hero-content">
+    <div class="eyebrow">Global Banking Infrastructure</div>
+    <h1 class="hero-h1">The backbone of<br><em>global commerce</em></h1>
+    <p class="hero-sub">Real-time settlement across 135+ currencies and payment methods. Built on the rails that power the world's largest institutions.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Get Started</button>
+      <button class="btn-secondary">View Network Stats</button>
+    </div>
+
+    <!-- Metrics: large 3-sig-fig numbers -->
+    <div class="metrics-bar">
+      <div class="metric">
+        <div class="m-val live" id="sq-vol">$1.4B</div>
+        <div class="m-label">Jan '26 Volume</div>
+      </div>
+      <div class="metric">
+        <div class="m-val live" id="sq-zt">$765M</div>
+        <div class="m-label"><span class="live-dot"></span>Zenus Transfers</div>
+      </div>
+      <div class="metric">
+        <div class="m-val" id="sq-tx">107K</div>
+        <div class="m-label">Transactions</div>
+      </div>
+      <div class="metric">
+        <div class="m-val live" id="sq-today">$37.9M</div>
+        <div class="m-label"><span class="live-dot"></span>Today's Volume</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Partners slider inside the hero -->
+  <div class="partners-band">
+    <div class="partners-inner" id="partners-inner">
+      <!-- First set -->
+      <div class="partner-item"><span class="partner-name">SWIFT</span><span class="partner-tag">Intl Wire</span></div>
+      <div class="partner-item"><span class="partner-name">Fedwire</span><span class="partner-tag">USD Same-Day</span></div>
+      <div class="partner-item"><span class="partner-name">SEPA</span><span class="partner-tag">EUR Rails</span></div>
+      <div class="partner-item"><span class="partner-name">ACH Network</span><span class="partner-tag">Batch</span></div>
+      <div class="partner-item"><span class="partner-name">Mastercard</span><span class="partner-tag">Card Network</span></div>
+      <div class="partner-item"><span class="partner-name">Visa</span><span class="partner-tag">Card Network</span></div>
+      <div class="partner-item"><span class="partner-name">Circle</span><span class="partner-tag">Stablecoin</span></div>
+      <div class="partner-item"><span class="partner-name">Tether</span><span class="partner-tag">Stablecoin</span></div>
+      <div class="partner-item"><span class="partner-name">CHIPS</span><span class="partner-tag">USD Clearing</span></div>
+      <div class="partner-item"><span class="partner-name">Target2</span><span class="partner-tag">EUR RTGS</span></div>
+      <div class="partner-item"><span class="partner-name">CHAPS</span><span class="partner-tag">GBP Same-Day</span></div>
+      <div class="partner-item"><span class="partner-name">135+ Currencies</span><span class="partner-tag">FX</span></div>
+      <!-- Duplicate for seamless loop -->
+      <div class="partner-item"><span class="partner-name">SWIFT</span><span class="partner-tag">Intl Wire</span></div>
+      <div class="partner-item"><span class="partner-name">Fedwire</span><span class="partner-tag">USD Same-Day</span></div>
+      <div class="partner-item"><span class="partner-name">SEPA</span><span class="partner-tag">EUR Rails</span></div>
+      <div class="partner-item"><span class="partner-name">ACH Network</span><span class="partner-tag">Batch</span></div>
+      <div class="partner-item"><span class="partner-name">Mastercard</span><span class="partner-tag">Card Network</span></div>
+      <div class="partner-item"><span class="partner-name">Visa</span><span class="partner-tag">Card Network</span></div>
+      <div class="partner-item"><span class="partner-name">Circle</span><span class="partner-tag">Stablecoin</span></div>
+      <div class="partner-item"><span class="partner-name">Tether</span><span class="partner-tag">Stablecoin</span></div>
+      <div class="partner-item"><span class="partner-name">CHIPS</span><span class="partner-tag">USD Clearing</span></div>
+      <div class="partner-item"><span class="partner-name">Target2</span><span class="partner-tag">EUR RTGS</span></div>
+      <div class="partner-item"><span class="partner-name">CHAPS</span><span class="partner-tag">GBP Same-Day</span></div>
+      <div class="partner-item"><span class="partner-name">135+ Currencies</span><span class="partner-tag">FX</span></div>
+    </div>
+  </div>
+
 </div><!-- /hero -->
 
-<!-- ── PARTNER STRIP ─────────────────────────────────────────────────── -->
-<div class="strip">
-  <span class="strip-label">Settlement rails</span>
-  <div class="strip-items">
-    <span class="strip-item">SWIFT</span>
-    <div class="strip-sep"></div>
-    <span class="strip-item">Fedwire</span>
-    <div class="strip-sep"></div>
-    <span class="strip-item">ACH Network</span>
-    <div class="strip-sep"></div>
-    <span class="strip-item">SEPA</span>
-    <div class="strip-sep"></div>
-    <span class="strip-item">Stablecoin Rails</span>
-    <div class="strip-sep"></div>
-    <span class="strip-item">135+ Currencies</span>
-  </div>
-</div>
-
-<!-- ── LIVE FEED ──────────────────────────────────────────────────────── -->
+<!-- ── LIVE FEED ─────────────────────────────────────────────────── -->
 <div class="feed-panel">
   <div class="feed-header">
     <span class="live-dot"></span>
@@ -446,17 +572,59 @@ nav {
   <div id="feed"></div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     GLOBE JS — full original logic, sounds removed, view adjusted
-     to show the northern hemisphere (top of globe)
-     ══════════════════════════════════════════════════════════════════ -->
-<script>
-const PC = {
-  swift:'#00b8a9', fedwire:'#00b8a9', stablecoin:'#00b8a9', ach:'#00b8a9',
-  withdrawal:'#e53e3e', internal:'#4a90d9', domestic:'#00b8a9', zenus_transfer:'#00b8a9',
-};
-let SETTINGS = { sound: false, autoRotate: true };
+<!-- ── SECTION BELOW HERO ────────────────────────────────────────── -->
+<div class="strip">
+  <span class="strip-label">Settlement rails</span>
+  <div class="strip-items">
+    <span class="strip-item">SWIFT</span><div class="strip-sep"></div>
+    <span class="strip-item">Fedwire</span><div class="strip-sep"></div>
+    <span class="strip-item">ACH Network</span><div class="strip-sep"></div>
+    <span class="strip-item">SEPA</span><div class="strip-sep"></div>
+    <span class="strip-item">Stablecoin Rails</span><div class="strip-sep"></div>
+    <span class="strip-item">135+ Currencies</span>
+  </div>
+</div>
 
+<script>
+// ── Theme toggle ───────────────────────────────────────────────────
+const toggleBtn = document.getElementById('theme-toggle');
+const themeLabel = document.getElementById('theme-label');
+const html = document.documentElement;
+
+toggleBtn.addEventListener('click', () => {
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  themeLabel.textContent = isDark ? 'Light' : 'Dark';
+  // Redraw page-bg for new theme
+  drawPageBg();
+  // Update globe disc color
+  if (world) {
+    try {
+      const isDarkNow = html.getAttribute('data-theme') === 'dark';
+      // Globe disc color is painted in the render loop via CSS var reading
+    } catch(e){}
+  }
+});
+
+// ── Number formatting: 3 sig-fig compact ──────────────────────────
+function fmtCompact(v) {
+  if (v >= 1e9)       return '$' + (v/1e9).toPrecision(3).replace(/\.?0+$/,'') + 'B';
+  if (v >= 1e6)       return '$' + (v/1e6).toPrecision(3).replace(/\.?0+$/,'') + 'M';
+  if (v >= 1e3)       return (v/1e3).toPrecision(3).replace(/\.?0+$/,'') + 'K';
+  return v.toLocaleString();
+}
+function fmtTx(v) {
+  if (v >= 1e6) return (v/1e6).toPrecision(3).replace(/\.?0+$/,'') + 'M';
+  if (v >= 1e3) return (v/1e3).toPrecision(3).replace(/\.?0+$/,'') + 'K';
+  return v.toLocaleString();
+}
+
+// ── Globe constants & state ───────────────────────────────────────
+const PC = {
+  swift:'#00b8a9',fedwire:'#00b8a9',stablecoin:'#00b8a9',ach:'#00b8a9',
+  withdrawal:'#e53e3e',internal:'#4a90d9',domestic:'#00b8a9',zenus_transfer:'#00b8a9',
+};
+let SETTINGS = { sound:false, autoRotate:true };
 const US_CITIES = {
   US_NYC:[40.71,-74.01,'New York'],US_LAX:[34.05,-118.24,'Los Angeles'],
   US_CHI:[41.88,-87.63,'Chicago'],US_HOU:[29.76,-95.37,'Houston'],
@@ -470,8 +638,7 @@ const US_CITIES = {
   US_SFO:[37.77,-122.42,'San Francisco'],US_NAS:[36.17,-86.78,'Nashville'],
 };
 const US_CODES = Object.keys(US_CITIES);
-const FADE_IN=600, HOLD=800, FADE_OUT=800;
-
+const FADE_IN=600,HOLD=800,FADE_OUT=800;
 const CITIES = {
   US:[37,-95,'United States'],GB:[51.5,-.1,'London'],DE:[50.1,8.7,'Frankfurt'],
   FR:[48.9,2.3,'Paris'],JP:[35.7,139.7,'Tokyo'],CN:[31.2,121.5,'Shanghai'],
@@ -489,52 +656,48 @@ const CITIES = {
   VN:[10.8,106.6,'Ho Chi Minh'],MY:[3.1,101.7,'Kuala Lumpur'],
 };
 const CODES = Object.keys(CITIES);
+let world,cv,ctx,ctxDots,CW,CH;
+let dotVecs=[],arcs=[],txAnims=[];
+let totalTx=0,totalVol=0,ztVol=0;
 
-let world, cv, ctx, ctxDots, CW, CH;
-let dotVecs = [];
-let arcs = [], txAnims = [];
-let totalTx = 0, totalVol = 0, ztVol = 0;
-
-const ease = t => t<.5 ? 2*t*t : -1+(4-2*t)*t;
-const H2R = h => ({r:parseInt(h.slice(1,3),16),g:parseInt(h.slice(3,5),16),b:parseInt(h.slice(5,7),16)});
-const toRgba = (h,a) => {const{r,g,b}=H2R(h);return `rgba(${r},${g},${b},${Math.max(0,Math.min(1,a)).toFixed(3)})`;};
-const fmtA = n => parseFloat(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-const fmtV = v => '$' + Math.round(v).toLocaleString('en-US');
+const ease=t=>t<.5?2*t*t:-1+(4-2*t)*t;
+const H2R=h=>({r:parseInt(h.slice(1,3),16),g:parseInt(h.slice(3,5),16),b:parseInt(h.slice(5,7),16)});
+const toRgba=(h,a)=>{const{r,g,b}=H2R(h);return`rgba(${r},${g},${b},${Math.max(0,Math.min(1,a)).toFixed(3)})`;};
+const fmtA=n=>parseFloat(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 
 function proj(lat,lng){
-  if(!world||!CW) return null;
-  const cam=world.camera(); if(!cam) return null;
+  if(!world||!CW)return null;
+  const cam=world.camera();if(!cam)return null;
   const phi=(90-lat)*Math.PI/180,theta=(lng+180)*Math.PI/180,R=100;
   const wx=R*Math.sin(phi)*Math.cos(theta),wy=R*Math.cos(phi),wz=-R*Math.sin(phi)*Math.sin(theta);
-  const cp=cam.position;
-  const v=cam.matrixWorldInverse.elements;
+  const cp=cam.position,v=cam.matrixWorldInverse.elements;
   const cx=v[0]*wx+v[4]*wy+v[8]*wz+v[12],cy=v[1]*wx+v[5]*wy+v[9]*wz+v[13],cz=v[2]*wx+v[6]*wy+v[10]*wz+v[14];
   const p=cam.projectionMatrix.elements;
   const rx=p[0]*cx+p[4]*cy+p[8]*cz+p[12],ry=p[1]*cx+p[5]*cy+p[9]*cz+p[13],rw=p[3]*cx+p[7]*cy+p[11]*cz+p[15];
-  if(rw<=0) return null;
+  if(rw<=0)return null;
   return{x:(rx/rw*.5+.5)*CW,y:(-ry/rw*.5+.5)*CH,front:(wx*cp.x+wy*cp.y+wz*cp.z)>0};
 }
-
 function projAlt(lat,lng,alt){
-  if(!world||!CW) return null;
-  const cam=world.camera(); if(!cam) return null;
+  if(!world||!CW)return null;
+  const cam=world.camera();if(!cam)return null;
   const phi=(90-lat)*Math.PI/180,theta=(lng+180)*Math.PI/180,R=100*(1+alt);
   const wx=R*Math.sin(phi)*Math.cos(theta),wy=R*Math.cos(phi),wz=-R*Math.sin(phi)*Math.sin(theta);
   const v=cam.matrixWorldInverse.elements;
   const cx=v[0]*wx+v[4]*wy+v[8]*wz+v[12],cy=v[1]*wx+v[5]*wy+v[9]*wz+v[13],cz=v[2]*wx+v[6]*wy+v[10]*wz+v[14];
   const p=cam.projectionMatrix.elements;
   const rx=p[0]*cx+p[4]*cy+p[8]*cz+p[12],ry=p[1]*cx+p[5]*cy+p[9]*cz+p[13],rw=p[3]*cx+p[7]*cy+p[11]*cz+p[15];
-  if(rw<=0) return null;
+  if(rw<=0)return null;
   return{x:(rx/rw*.5+.5)*CW,y:(-ry/rw*.5+.5)*CH};
 }
 
 function drawLabel(name,x,y,color,alpha){
+  const isDark=html.getAttribute('data-theme')==='dark';
   ctx.save();
-  ctx.font='500 8.5px "IBM Plex Mono",monospace';
-  const tw=ctx.measureText(name).width,pad=5,h=15;
+  ctx.font='500 8px "IBM Plex Mono",monospace';
+  const tw=ctx.measureText(name).width,pad=5,h=14;
   const lx=x-tw/2-pad,ly=y-h;
-  ctx.fillStyle=`rgba(4,8,15,${(alpha*.94).toFixed(2)})`;
-  ctx.strokeStyle=color;ctx.lineWidth=0.8;
+  ctx.fillStyle=isDark?`rgba(4,8,15,${(alpha*.94).toFixed(2)})`:`rgba(240,244,248,${(alpha*.94).toFixed(2)})`;
+  ctx.strokeStyle=color;ctx.lineWidth=0.7;
   ctx.beginPath();ctx.roundRect(lx,ly,tw+pad*2,h,2);ctx.fill();ctx.stroke();
   ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(name.toUpperCase(),x,ly+h/2);
@@ -542,29 +705,29 @@ function drawLabel(name,x,y,color,alpha){
 }
 
 function buildDots(){
-  const COLS=160,ROWS=80; dotVecs=[];
+  const COLS=160,ROWS=80;dotVecs=[];
   const fallback=()=>{
     const isLand=(lon,lat)=>{
-      if(lon>=-140&&lon<=-60&&lat>=25&&lat<=75) return true;
-      if(lon>=-82&&lon<=-34&&lat>=-56&&lat<=12) return true;
-      if(lon>=-10&&lon<=40&&lat>=35&&lat<=72) return true;
-      if(lon>=-18&&lon<=52&&lat>=-35&&lat<=38) return true;
-      if(lon>=30&&lon<=180&&lat>=50&&lat<=75) return true;
-      if(lon>=26&&lon<=60&&lat>=12&&lat<=42) return true;
-      if(lon>=60&&lon<=110&&lat>=5&&lat<=35) return true;
-      if(lon>=100&&lon<=145&&lat>=20&&lat<=55) return true;
-      if(lon>=95&&lon<=141&&lat>=-10&&lat<=20) return true;
-      if(lon>=113&&lon<=154&&lat>=-44&&lat<=-10) return true;
-      if(lon>=166&&lon<=178&&lat>=-47&&lat<=-34) return true;
-      if(lon>=-55&&lon<=-17&&lat>=60&&lat<=84) return true;
-      if(lon>=130&&lon<=146&&lat>=30&&lat<=46) return true;
-      if(lon>=-8&&lon<=2&&lat>=50&&lat<=59) return true;
-      if(lon>=4&&lon<=32&&lat>=55&&lat<=71) return true;
+      if(lon>=-140&&lon<=-60&&lat>=25&&lat<=75)return true;
+      if(lon>=-82&&lon<=-34&&lat>=-56&&lat<=12)return true;
+      if(lon>=-10&&lon<=40&&lat>=35&&lat<=72)return true;
+      if(lon>=-18&&lon<=52&&lat>=-35&&lat<=38)return true;
+      if(lon>=30&&lon<=180&&lat>=50&&lat<=75)return true;
+      if(lon>=26&&lon<=60&&lat>=12&&lat<=42)return true;
+      if(lon>=60&&lon<=110&&lat>=5&&lat<=35)return true;
+      if(lon>=100&&lon<=145&&lat>=20&&lat<=55)return true;
+      if(lon>=95&&lon<=141&&lat>=-10&&lat<=20)return true;
+      if(lon>=113&&lon<=154&&lat>=-44&&lat<=-10)return true;
+      if(lon>=166&&lon<=178&&lat>=-47&&lat<=-34)return true;
+      if(lon>=-55&&lon<=-17&&lat>=60&&lat<=84)return true;
+      if(lon>=130&&lon<=146&&lat>=30&&lat<=46)return true;
+      if(lon>=-8&&lon<=2&&lat>=50&&lat<=59)return true;
+      if(lon>=4&&lon<=32&&lat>=55&&lat<=71)return true;
       return false;
     };
-    for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
       const lon=(c/COLS)*360-180,lat=90-(r/ROWS)*180;
-      if(lat<-50||!isLand(lon,lat)) continue;
+      if(lat<-50||!isLand(lon,lat))continue;
       const phi=(90-lat)*Math.PI/180,theta=(lon+180)*Math.PI/180;
       dotVecs.push({x:Math.sin(phi)*Math.cos(theta),y:Math.cos(phi),z:-Math.sin(phi)*Math.sin(theta)});
     }
@@ -585,12 +748,12 @@ function buildDots(){
           const sx=SC.getContext('2d');sx.drawImage(img,0,0,SW,SH);
           const px=sx.getImageData(0,0,SW,SH).data;
           dotVecs=[];
-          for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+          for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
             const lon=(c/COLS)*360-180,lat=90-(r/ROWS)*180;
-            if(lat<-50) continue;
+            if(lat<-50)continue;
             const ix=Math.min(SW-1,Math.floor(((lon+180)/360)*SW));
             const iy=Math.min(SH-1,Math.floor(((90-lat)/180)*SH));
-            if(!test(px,(iy*SW+ix)*4)) continue;
+            if(!test(px,(iy*SW+ix)*4))continue;
             const phi=(90-lat)*Math.PI/180,theta=(lon+180)*Math.PI/180;
             dotVecs.push({x:Math.sin(phi)*Math.cos(theta),y:Math.cos(phi),z:-Math.sin(phi)*Math.sin(theta)});
           }
@@ -612,8 +775,7 @@ function loadScript(src){
 
 window.addEventListener('DOMContentLoaded',()=>{
   requestAnimationFrame(()=>requestAnimationFrame(async()=>{
-    const st=document.getElementById('gw-status');
-    st.textContent='Loading…';
+    document.getElementById('gw-status').textContent='Loading…';
     await buildDots();
     let ok=false;
     for(const url of[
@@ -622,28 +784,24 @@ window.addEventListener('DOMContentLoaded',()=>{
     ]){
       try{await loadScript(url);if(typeof Globe!=='undefined'){ok=true;break;}}catch(e){}
     }
-    if(!ok){st.textContent='Failed to load globe.';return;}
-    st.style.display='none';
+    if(!ok){document.getElementById('gw-status').textContent='Failed.';return;}
+    document.getElementById('gw-status').style.display='none';
     boot();
   }));
 });
 
 function boot(){
   const gw=document.getElementById('gw');
-  CW=gw.clientWidth; CH=gw.clientHeight;
-
+  CW=gw.clientWidth;CH=gw.clientHeight;
   world=new Globe(gw)
     .width(CW).height(CH)
-    .backgroundColor('rgba(0,0,0,0)')
-    .globeImageUrl('').showAtmosphere(false)
+    .backgroundColor('rgba(0,0,0,0)').globeImageUrl('').showAtmosphere(false)
     .arcsData([]).arcStartLat(d=>d.fLat).arcStartLng(d=>d.fLng)
     .arcEndLat(d=>d.tLat).arcEndLng(d=>d.tLng)
     .arcColor(d=>d.colors).arcAltitudeAutoScale(0.3).arcStroke(0.8)
     .arcDashLength(1).arcDashGap(0).arcDashAnimateTime(0).arcsTransitionDuration(0)
     .htmlElementsData([]).htmlLat(d=>d.lat).htmlLng(d=>d.lng)
-    .htmlAltitude(0.02).htmlElement(d=>d.el)
-    .enablePointerInteraction(true);
-
+    .htmlAltitude(0.02).htmlElement(d=>d.el).enablePointerInteraction(true);
   try{const m=world.globeMaterial();if(m){m.opacity=0;m.transparent=true;m.needsUpdate=true;}}catch(e){}
 
   cv=document.createElement('canvas');
@@ -656,7 +814,7 @@ function boot(){
   if(window.ResizeObserver){
     new ResizeObserver(()=>{
       CW=gw.clientWidth;CH=gw.clientHeight;
-      if(!CW||!CH) return;
+      if(!CW||!CH)return;
       const dpr=window.devicePixelRatio||1;
       cv.width=CW*dpr;cv.height=CH*dpr;
       ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -666,55 +824,43 @@ function boot(){
 
   world.controls().autoRotate=true;
   world.controls().autoRotateSpeed=0.35;
+  world.pointOfView({lat:20,lng:15,altitude:1.72});
 
-  // ── VIEW: look at Northern Hemisphere from slightly above the equator
-  //    lat: 50 = camera looks down toward the northern hemisphere
-  //    altitude: 1.85 = closer than default = larger globe = more arc visible
-  world.pointOfView({lat:50, lng:20, altitude:1.85});
+  // Tap to fire
+  gw.addEventListener('pointerdown',e=>{gw._ts={t:Date.now(),x:e.clientX,y:e.clientY};},{passive:true});
+  gw.addEventListener('pointerup',e=>{
+    if(!gw._ts)return;
+    const dt=Date.now()-gw._ts.t,dx=Math.abs(e.clientX-gw._ts.x),dy=Math.abs(e.clientY-gw._ts.y);
+    gw._ts=null;
+    if(dt<300&&dx<8&&dy<8)fireDemo();
+  },{passive:true});
 
   loop();
   fireDemo();
   setInterval(fireDemo,2200);
 }
 
-// Globe tap-to-fire
-(function(){
-  setTimeout(()=>{
-    const gw=document.getElementById('gw'); if(!gw) return;
-    let ts=null;
-    gw.addEventListener('pointerdown',e=>{ts={t:Date.now(),x:e.clientX,y:e.clientY};},{passive:true});
-    gw.addEventListener('pointerup',e=>{
-      if(!ts) return;
-      const dt=Date.now()-ts.t,dx=Math.abs(e.clientX-ts.x),dy=Math.abs(e.clientY-ts.y);
-      ts=null;
-      if(dt<300&&dx<8&&dy<8) fireDemo();
-    },{passive:true});
-  },1500);
-})();
-
 function loop(){
-  const now=Date.now(); let dirtyArcs=false;
+  const now=Date.now();let dirtyArcs=false;
   txAnims.forEach(tx=>{
-    if(tx.done||tx.isPulse) return;
-    const e=now-tx.t0; let al;
-    if(e<FADE_IN) al=ease(e/FADE_IN);
-    else if(e<FADE_IN+HOLD) al=1;
+    if(tx.done||tx.isPulse)return;
+    const e=now-tx.t0;let al;
+    if(e<FADE_IN)al=ease(e/FADE_IN);
+    else if(e<FADE_IN+HOLD)al=1;
     else{const f=(e-FADE_IN-HOLD)/FADE_OUT;if(f>=1){al=0;tx.done=true;}else al=ease(1-f);}
     tx.al=al;
     if(tx.arc){tx.arc.colors=[toRgba(tx.col,al),toRgba(tx.col,al*.4)];dirtyArcs=true;}
-    if(tx.lblEls) tx.lblEls.forEach(el=>el.style.opacity=al.toFixed(3));
   });
-  if(dirtyArcs) world&&world.arcsData([...arcs]);
+  if(dirtyArcs)world&&world.arcsData([...arcs]);
   txAnims=txAnims.filter(t=>!t.done);
   updateStats();
-
   if(!ctx||!CW||!CH){requestAnimationFrame(loop);return;}
   ctx.clearRect(0,0,CW,CH);
 
+  const isDark=html.getAttribute('data-theme')==='dark';
   const cam=world&&world.camera();
   if(cam&&ctxDots){
-    const R=100;
-    const v=cam.matrixWorldInverse.elements,p=cam.projectionMatrix.elements;
+    const R=100,v=cam.matrixWorldInverse.elements,p=cam.projectionMatrix.elements;
     {
       const gcx=v[12],gcy=v[13],gcz=v[14];
       const grx=p[0]*gcx+p[4]*gcy+p[8]*gcz+p[12];
@@ -723,42 +869,36 @@ function loop(){
       if(grw>0){
         const gscx=(grx/grw*.5+.5)*CW,gscy=(-gry/grw*.5+.5)*CH;
         const gsR=Math.abs((p[0]*R/grw)*CW*.5);
-
-        // Dark globe disc
         ctxDots.beginPath();ctxDots.arc(gscx,gscy,gsR*.995,0,6.2832);
-        ctxDots.fillStyle='rgba(4,8,15,0.94)';ctxDots.fill();
-
-        // Rim glow — kept but subtler for professional feel
+        ctxDots.fillStyle=isDark?'rgba(4,8,15,0.94)':'rgba(215,228,240,0.88)';
+        ctxDots.fill();
         const rimW=gsR*.03,glowR=gsR,sunAngle=Math.PI*.28,SEG=180;
         for(let i=0;i<SEG;i++){
           const angle=(i/SEG)*Math.PI*2;
           let diff=Math.abs(angle-sunAngle);
-          if(diff>Math.PI) diff=Math.PI*2-diff;
+          if(diff>Math.PI)diff=Math.PI*2-diff;
           const intensity=Math.max(0,1-diff/(Math.PI*.82));
           const eased=Math.pow(intensity,1.6);
-          if(eased<0.005) continue;
+          if(eased<.005)continue;
           const a1=angle-(Math.PI*2/SEG)*.55,a2=angle+(Math.PI*2/SEG)*.55;
-          // Outer halo
           ctxDots.beginPath();ctxDots.arc(gscx,gscy,glowR+rimW*3,a1,a2);
           ctxDots.strokeStyle=`rgba(0,184,169,${(eased*.12).toFixed(3)})`;
           ctxDots.lineWidth=rimW*3.5;ctxDots.stroke();
-          // Mid
           ctxDots.beginPath();ctxDots.arc(gscx,gscy,glowR+rimW*1.1,a1,a2);
           ctxDots.strokeStyle=`rgba(0,184,169,${(eased*.30).toFixed(3)})`;
           ctxDots.lineWidth=rimW*1.8;ctxDots.stroke();
-          // Bright rim
           ctxDots.beginPath();ctxDots.arc(gscx,gscy,glowR+rimW*.2,a1,a2);
           ctxDots.strokeStyle=`rgba(180,240,235,${(eased*.55).toFixed(3)})`;
           ctxDots.lineWidth=rimW*.7;ctxDots.stroke();
         }
       }
     }
-
     if(dotVecs.length>0){
       const cp=cam.position;
       const camDist=Math.sqrt(cp.x*cp.x+cp.y*cp.y+cp.z*cp.z);
       const baseDOT=1.55*(300/camDist);
-      ctxDots.fillStyle='rgba(74,144,226,1)';
+      // Dot color adapts to theme
+      ctxDots.fillStyle=isDark?'rgba(74,144,226,1)':'rgba(0,140,180,1)';
       for(let i=0;i<dotVecs.length;i++){
         const d=dotVecs[i],wx=R*d.x,wy=R*d.y,wz=R*d.z;
         const facing=(wx*cp.x+wy*cp.y+wz*cp.z)/(R*camDist);
@@ -766,61 +906,55 @@ function loop(){
         const cz2=v[2]*wx+v[6]*wy+v[10]*wz+v[14];
         const rx2=p[0]*cx2+p[4]*cy2+p[8]*cz2+p[12],ry2=p[1]*cx2+p[5]*cy2+p[9]*cz2+p[13];
         const rw2=p[3]*cx2+p[7]*cy2+p[11]*cz2+p[15];
-        if(rw2<=0) continue;
+        if(rw2<=0)continue;
         const sx=(rx2/rw2*.5+.5)*CW,sy=(-ry2/rw2*.5+.5)*CH;
         const t2=(facing+1)/2;
-        const dotR=Math.max(0.3,baseDOT*(.5+t2*.5));
         ctxDots.globalAlpha=.55+t2*.45;
-        ctxDots.beginPath();ctxDots.arc(sx,sy,dotR,0,6.2832);ctxDots.fill();
+        ctxDots.beginPath();ctxDots.arc(sx,sy,Math.max(.3,baseDOT*(.5+t2*.5)),0,6.2832);ctxDots.fill();
       }
       ctxDots.globalAlpha=1;
     }
   }
 
-  // Draw arcs & pulses
   txAnims.forEach(tx=>{
-    if(tx.done) return;
+    if(tx.done)return;
     if(tx.isPulse){
       const elapsed=Date.now()-tx.t0,progress=elapsed/tx.dur;
       if(progress>=1){tx.done=true;return;}
-      const pos=proj(tx.lat,tx.lng);if(!pos) return;
+      const pos=proj(tx.lat,tx.lng);if(!pos)return;
       const{r,g,b}=H2R(tx.col);
       const oa=progress<.3?progress/.3:1-(progress-.3)/.7;
       for(let ring=0;ring<2;ring++){
         const off=ring*.4,pp=Math.min((progress-off)/(1-off),1);
-        if(pp<=0) continue;
-        const radius=5+pp*26,alpha=oa*(1-pp)*.7;
-        if(alpha<.01) continue;
-        ctx.beginPath();ctx.arc(pos.x,pos.y,radius,0,6.2832);
-        ctx.strokeStyle=`rgba(${r},${g},${b},${alpha.toFixed(2)})`;
+        if(pp<=0)continue;
+        ctx.beginPath();ctx.arc(pos.x,pos.y,5+pp*26,0,6.2832);
+        ctx.strokeStyle=`rgba(${r},${g},${b},${(oa*(1-pp)*.7).toFixed(2)})`;
         ctx.lineWidth=1.2;ctx.stroke();
       }
       const amt2=tx.amount||1000;
-      const dotR2=.5+(Math.log10(Math.max(amt2,100))-Math.log10(100))/(Math.log10(1000000)-Math.log10(100))*5;
+      const dotR2=.5+(Math.log10(Math.max(amt2,100))-Math.log10(100))/(Math.log10(1e6)-Math.log10(100))*5;
       const g2=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,dotR2*4);
       g2.addColorStop(0,`rgba(255,255,255,${(oa*.3).toFixed(2)})`);g2.addColorStop(1,'rgba(255,255,255,0)');
       ctx.fillStyle=g2;ctx.beginPath();ctx.arc(pos.x,pos.y,dotR2*4,0,6.2832);ctx.fill();
-      ctx.fillStyle=`rgba(255,255,255,${oa.toFixed(2)})`;
-      ctx.beginPath();ctx.arc(pos.x,pos.y,dotR2,0,6.2832);ctx.fill();
+      ctx.fillStyle=`rgba(255,255,255,${oa.toFixed(2)})`;ctx.beginPath();ctx.arc(pos.x,pos.y,dotR2,0,6.2832);ctx.fill();
       return;
     }
-    if(tx.al<.01) return;
+    if(tx.al<.01)return;
     const{r,g,b}=H2R(tx.col),al=tx.al;
-    const PURPLE='#6d28d9',TEAL=tx.col;
-    const{r:pr,g:pg,b:pb}=H2R(PURPLE),{r:tr,g:tg,b:tb}=H2R(TEAL);
+    const{r:pr,g:pg,b:pb}=H2R('#6d28d9'),{r:tr,g:tg,b:tb}=H2R(tx.col);
     if(!tx.same){
       const pts=[];
       for(let t=0;t<=1;t+=.025){
         const lat=tx.fLat+(tx.tLat-tx.fLat)*t,lng=tx.fLng+(tx.tLng-tx.fLng)*t;
         const pp=projAlt(lat,lng,Math.sin(t*Math.PI)*.3);
-        if(pp) pts.push({...pp,t});
+        if(pp)pts.push({...pp,t});
       }
       if(pts.length>2){
         for(let i=1;i<pts.length;i++){
           const tm=(pts[i-1].t+pts[i].t)/2;
-          const ri=Math.round(pr+(tr-pr)*tm),gi=Math.round(pg+(tg-pg)*tm),bi=Math.round(pb+(tb-pb)*tm);
           ctx.beginPath();ctx.moveTo(pts[i-1].x,pts[i-1].y);ctx.lineTo(pts[i].x,pts[i].y);
-          ctx.strokeStyle=`rgba(${ri},${gi},${bi},${al.toFixed(2)})`;ctx.lineWidth=1.6;ctx.stroke();
+          ctx.strokeStyle=`rgba(${Math.round(pr+(tr-pr)*tm)},${Math.round(pg+(tg-pg)*tm)},${Math.round(pb+(tb-pb)*tm)},${al.toFixed(2)})`;
+          ctx.lineWidth=1.6;ctx.stroke();
         }
         const elapsed=Date.now()-tx.t0,tp=Math.min(elapsed/(FADE_IN+HOLD),1);
         const dotAl=tp<1?al:al*Math.max(0,1-(elapsed-FADE_IN-HOLD)/200);
@@ -832,15 +966,14 @@ function loop(){
               dotPt={x:pts[i].x+(pts[i+1].x-pts[i].x)*seg,y:pts[i].y+(pts[i+1].y-pts[i].y)*seg};break;
             }
           }
-          if(!dotPt) dotPt=pts[pts.length-1];
+          if(!dotPt)dotPt=pts[pts.length-1];
           if(dotPt){
             const amt=tx.amount||1000;
-            const dotR=.5+(Math.log10(Math.max(amt,100))-Math.log10(100))/(Math.log10(1000000)-Math.log10(100))*5;
+            const dotR=.5+(Math.log10(Math.max(amt,100))-Math.log10(100))/(Math.log10(1e6)-Math.log10(100))*5;
             const grd=ctx.createRadialGradient(dotPt.x,dotPt.y,0,dotPt.x,dotPt.y,dotR*4);
             grd.addColorStop(0,`rgba(255,255,255,${(dotAl*.3).toFixed(2)})`);grd.addColorStop(1,'rgba(255,255,255,0)');
             ctx.fillStyle=grd;ctx.beginPath();ctx.arc(dotPt.x,dotPt.y,dotR*4,0,6.2832);ctx.fill();
-            ctx.fillStyle=`rgba(255,255,255,${dotAl.toFixed(2)})`;
-            ctx.beginPath();ctx.arc(dotPt.x,dotPt.y,dotR,0,6.2832);ctx.fill();
+            ctx.fillStyle=`rgba(255,255,255,${dotAl.toFixed(2)})`;ctx.beginPath();ctx.arc(dotPt.x,dotPt.y,dotR,0,6.2832);ctx.fill();
           }
         }
       }
@@ -852,7 +985,7 @@ function loop(){
       const grd=ctx.createRadialGradient(op.x,op.y,1,op.x,op.y,16);
       grd.addColorStop(0,`rgba(${pr},${pg},${pb},${(al*.25).toFixed(2)})`);grd.addColorStop(1,`rgba(${pr},${pg},${pb},0)`);
       ctx.fillStyle=grd;ctx.beginPath();ctx.arc(op.x,op.y,16,0,6.2832);ctx.fill();
-      if(tx.fromName) drawLabel(tx.fromName,op.x,op.y-12,`rgba(${pr},${pg},${pb},${al.toFixed(2)})`,al);
+      if(tx.fromName)drawLabel(tx.fromName,op.x,op.y-12,`rgba(${pr},${pg},${pb},${al.toFixed(2)})`,al);
     }
     const dp=proj(tx.tLat,tx.tLng);
     if(dp){
@@ -861,28 +994,27 @@ function loop(){
       const grd=ctx.createRadialGradient(dp.x,dp.y,0,dp.x,dp.y,16);
       grd.addColorStop(0,`rgba(${tr},${tg},${tb},${(al*.25).toFixed(2)})`);grd.addColorStop(1,`rgba(${tr},${tg},${tb},0)`);
       ctx.fillStyle=grd;ctx.beginPath();ctx.arc(dp.x,dp.y,16,0,6.2832);ctx.fill();
-      if(tx.toName&&!tx.same) drawLabel(tx.toName,dp.x,dp.y-12,`rgba(${tr},${tg},${tb},${al.toFixed(2)})`,al);
+      if(tx.toName&&!tx.same)drawLabel(tx.toName,dp.x,dp.y-12,`rgba(${tr},${tg},${tb},${al.toFixed(2)})`,al);
     }
   });
   requestAnimationFrame(loop);
 }
 
 let _rotAnim=null;
-const FIXED_LAT=50, LNG_OFFSET=80;
-
-function rotateTo(targetLat,targetLng){
-  if(!world) return;
-  if(_rotAnim) _rotAnim.cancelled=true;
-  const pov=world.pointOfView(),startLat=pov.lat,startLng=pov.lng;
-  let dLng=((targetLng-startLng)+540)%360-180,dLat=targetLat-startLat;
-  const DURATION=2800,t0=Date.now(),anim={cancelled:false}; _rotAnim=anim;
+const FIXED_LAT=20,LNG_OFFSET=80;
+function rotateTo(tLat,tLng){
+  if(!world)return;
+  if(_rotAnim)_rotAnim.cancelled=true;
+  const pov=world.pointOfView(),sLat=pov.lat,sLng=pov.lng;
+  let dLng=((tLng-sLng)+540)%360-180,dLat=tLat-sLat;
+  const DUR=2800,t0=Date.now(),anim={cancelled:false};_rotAnim=anim;
   world.controls()&&(world.controls().autoRotate=false);
   const eo=t=>1-Math.pow(1-t,5);
   (function step(){
-    if(anim.cancelled||!world) return;
-    const raw=Math.min((Date.now()-t0)/DURATION,1),e=eo(raw);
-    world.pointOfView({lat:startLat+dLat*e,lng:startLng+dLng*e,altitude:world.pointOfView().altitude});
-    if(raw<1) requestAnimationFrame(step);
+    if(anim.cancelled||!world)return;
+    const raw=Math.min((Date.now()-t0)/DUR,1),e=eo(raw);
+    world.pointOfView({lat:sLat+dLat*e,lng:sLng+dLng*e,altitude:world.pointOfView().altitude});
+    if(raw<1)requestAnimationFrame(step);
     else{_rotAnim=null;world.controls()&&(world.controls().autoRotate=true);}
   })();
 }
@@ -891,10 +1023,10 @@ const Q_ZT_BASE=765231800,Q_TODAY_BASE=37920000,Q_BASE_VOL=1402819440,Q_BASE_TX=
 
 function updateStats(){
   const vol=Q_BASE_VOL+totalVol,tx=Q_BASE_TX+totalTx,zt=Q_ZT_BASE+ztVol,today=Q_TODAY_BASE+totalVol;
-  document.getElementById('sq-vol').textContent=fmtV(vol);
-  document.getElementById('sq-tx').textContent=tx.toLocaleString();
-  document.getElementById('sq-zt').textContent=fmtV(zt);
-  document.getElementById('sq-today').textContent=fmtV(today);
+  document.getElementById('sq-vol').textContent=fmtCompact(vol);
+  document.getElementById('sq-tx').textContent=fmtTx(tx);
+  document.getElementById('sq-zt').textContent=fmtCompact(zt);
+  document.getElementById('sq-today').textContent=fmtCompact(today);
 }
 
 function processTx(data){
@@ -903,7 +1035,7 @@ function processTx(data){
   const fc=type==='domestic'?(US_CITIES[from_country]||US_CITIES.US_NYC):(CITIES[from_country]||CITIES.US);
   const tc=type==='domestic'?(US_CITIES[to_country]||US_CITIES.US_LAX):(CITIES[to_country]||CITIES.GB);
   totalTx++;totalVol+=parseFloat(amount)||0;
-  if(type==='zenus_transfer') ztVol+=(parseFloat(amount)||0)*2;
+  if(type==='zenus_transfer')ztVol+=(parseFloat(amount)||0)*2;
   const same=from_country===to_country;
   txAnims.push({t0:Date.now(),col,al:0,done:false,same,fLat:fc[0],fLng:fc[1],tLat:tc[0],tLng:tc[1],fromName:fc[2],toName:tc[2],amount:parseFloat(amount)||0});
   if(same){
@@ -916,7 +1048,6 @@ function processTx(data){
   }
   addFeed(fc[2],tc[2],same,type,col,amount,currency);
   updateStats();
-  // SOUNDS REMOVED intentionally
 }
 
 function addFeed(from,to,same,type,col,amount,currency){
@@ -928,11 +1059,11 @@ function addFeed(from,to,same,type,col,amount,currency){
   const sign=type==='withdrawal'?'−':'';
   el.innerHTML=`<span class="fi-pre" style="color:${col}">▸</span><span class="fi-amt" style="color:${col}">${currency} ${sign}${fmtA(amount)}</span><span class="fi-route">${route}</span><span class="fi-time">${now}</span>`;
   feed.insertBefore(el,feed.firstChild);
-  while(feed.children.length>10){feed.lastChild&&feed.lastChild.remove();}
+  while(feed.children.length>10)feed.lastChild&&feed.lastChild.remove();
   setTimeout(()=>{
-    if(!el.parentNode) return;
+    if(!el.parentNode)return;
     el.classList.add('dying');
-    setTimeout(()=>{el.parentNode&&el.remove();},1300);
+    setTimeout(()=>el.parentNode&&el.remove(),1300);
   },6000);
 }
 
@@ -948,7 +1079,7 @@ function fireDemo(){
   }else{
     from=CODES[Math.floor(Math.random()*CODES.length)];
     to=CODES[Math.floor(Math.random()*CODES.length)];
-    if(type==='internal'?Math.random()<.6:Math.random()<.08) to=from;
+    if(type==='internal'?Math.random()<.6:Math.random()<.08)to=from;
   }
   const bigChance=(type==='withdrawal'||type==='internal')?.35:.12;
   const ar=Math.random();
@@ -956,39 +1087,40 @@ function fireDemo(){
   processTx({from_country:from,to_country:to,payment_type:type,amount,currency:'USD'});
 }
 
-window.addEventListener('message',e=>{if(e.data?.type==='transaction') processTx(e.data.payload);});
+window.addEventListener('message',e=>{if(e.data?.type==='transaction')processTx(e.data.payload);});
 
 // ── Page background canvas ─────────────────────────────────────────
-(function(){
-  const bg=document.getElementById('page-bg'),bx=bg.getContext('2d');
-  let BW,BH;
-  function size(){
-    BW=bg.width=window.innerWidth*(window.devicePixelRatio||1);
-    BH=bg.height=window.innerHeight*(window.devicePixelRatio||1);
-    bg.style.width=window.innerWidth+'px';bg.style.height=window.innerHeight+'px';
-    draw();
+const bgCanvas=document.getElementById('page-bg'),bx=bgCanvas.getContext('2d');
+let BW,BH;
+function drawPageBg(){
+  if(!BW)return;
+  bx.clearRect(0,0,BW,BH);
+  const isDark=html.getAttribute('data-theme')==='dark';
+  bx.fillStyle=isDark?'#04080f':'#f0f4f8';
+  bx.fillRect(0,0,BW,BH);
+  // Ambient teal glow
+  const g1=bx.createRadialGradient(BW*.72,BH*.45,0,BW*.72,BH*.45,BW*.55);
+  g1.addColorStop(0,isDark?'rgba(0,184,169,0.055)':'rgba(0,184,169,0.04)');
+  g1.addColorStop(1,'rgba(0,0,0,0)');
+  bx.fillStyle=g1;bx.fillRect(0,0,BW,BH);
+  // Stars / particles
+  const rng=(s,m)=>{let x=Math.sin(s)*43758.5453;return(x-Math.floor(x))*m;};
+  for(let i=0;i<160;i++){
+    const x=rng(i*1.7,BW),y=rng(i*2.3,BH*.65);
+    const r=rng(i*.9,1)<.08?1.0:.35;
+    const a=isDark?(.06+rng(i*3.1,1)*.22):(.03+rng(i*3.1,1)*.08);
+    bx.beginPath();bx.arc(x,y,r,0,6.28);
+    bx.fillStyle=isDark?`rgba(255,255,255,${a.toFixed(2)})`:`rgba(50,80,120,${a.toFixed(2)})`;
+    bx.fill();
   }
-  function draw(){
-    bx.clearRect(0,0,BW,BH);
-    bx.fillStyle='#04080f';bx.fillRect(0,0,BW,BH);
-
-    // Very subtle teal horizon glow (right side, where globe is)
-    const g1=bx.createRadialGradient(BW*.75,BH*.5,0,BW*.75,BH*.5,BW*.55);
-    g1.addColorStop(0,'rgba(0,184,169,0.055)');g1.addColorStop(1,'rgba(0,0,0,0)');
-    bx.fillStyle=g1;bx.fillRect(0,0,BW,BH);
-
-    // Sparse stars — only upper area
-    const rng=(s,m)=>{let x=Math.sin(s)*43758.5453;return(x-Math.floor(x))*m;};
-    for(let i=0;i<160;i++){
-      const x=rng(i*1.7,BW),y=rng(i*2.3,BH*.65);
-      const r=rng(i*.9,1)<.08?1.1:.4;
-      const a=.07+rng(i*3.1,1)*.25;
-      bx.beginPath();bx.arc(x,y,r,0,6.28);
-      bx.fillStyle=`rgba(255,255,255,${a.toFixed(2)})`;bx.fill();
-    }
-  }
-  size();window.addEventListener('resize',size);
-})();
+}
+function sizeBg(){
+  BW=bgCanvas.width=window.innerWidth*(window.devicePixelRatio||1);
+  BH=bgCanvas.height=window.innerHeight*(window.devicePixelRatio||1);
+  bgCanvas.style.width=window.innerWidth+'px';bgCanvas.style.height=window.innerHeight+'px';
+  drawPageBg();
+}
+sizeBg();window.addEventListener('resize',sizeBg);
 </script>
 </body>
 </html>
