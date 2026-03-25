@@ -16,15 +16,82 @@ html,body{height:100%;background:#020714;color:#e2e8f0;font-family:'Inter',sans-
 /* ── Header ── */
 header{
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 24px;height:62px;flex-shrink:0;
+  padding:0 24px;height:52px;flex-shrink:0;
   border-bottom:1px solid rgba(255,255,255,0.05);
   background:#020714;
 }
 .logo-title{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.5)}
-.hstats{display:flex;gap:28px}
-.stat{text-align:right}
-.stv{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:300;color:#fff}
-.stl{font-size:8px;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-top:3px;line-height:1.35}
+
+/* Settings button */
+.settings-btn{
+  background:none;border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.5);border-radius:6px;
+  padding:6px 12px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;font-weight:500;
+}
+.settings-btn:hover{border-color:rgba(255,255,255,0.3);color:#fff}
+
+/* Settings modal */
+.settings-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;
+  align-items:center;justify-content:center;
+}
+.settings-overlay.open{display:flex}
+.settings-panel{
+  background:#0a1230;border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;padding:28px;min-width:280px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.settings-title{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:20px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.setting-row:last-child{margin-bottom:0}
+.setting-label{font-size:13px;color:rgba(255,255,255,0.8)}
+.setting-sub{font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px}
+/* Toggle switch */
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{
+  position:absolute;inset:0;background:rgba(255,255,255,0.12);
+  border-radius:11px;cursor:pointer;transition:.25s;
+}
+.toggle-slider:before{
+  content:'';position:absolute;width:16px;height:16px;
+  left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;
+}
+.toggle input:checked + .toggle-slider{background:#00c2b2}
+.toggle input:checked + .toggle-slider:before{transform:translateX(18px)}
+.settings-close{
+  width:100%;margin-top:24px;padding:10px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.5);border-radius:6px;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  transition:all .15s;
+}
+.settings-close:hover{background:rgba(255,255,255,0.1);color:#fff}
+
+/* Metrics bar — landing page style below header */
+.metrics-bar{
+  display:flex;align-items:stretch;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  background:rgba(2,7,20,0.8);
+  flex-shrink:0;
+}
+.metric{
+  flex:1;padding:14px 20px;
+  border-right:1px solid rgba(255,255,255,0.04);
+}
+.metric:last-child{border-right:none}
+.metric-val{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:20px;font-weight:300;color:#fff;
+  letter-spacing:-.01em;line-height:1;
+}
+.metric-val.accent{color:#00c2b2}
+.metric-label{
+  font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,0.3);margin-top:5px;line-height:1.4;
+}
+.metric-label.accent{color:rgba(0,194,178,0.55)}
 
 /* ── Main ── */
 .main{flex:1;display:flex;min-height:0;position:relative}
@@ -39,21 +106,13 @@ header{
 /* ── Terminal-style notification rows ── */
 .fi{
   font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  line-height:1.4;
-  color:rgba(255,255,255,0.85);
-  padding:4px 0;
-  border-bottom:1px solid rgba(255,255,255,0.04);
-  animation:term-in .2s ease;
-  transition:opacity 1.2s ease;
-  flex-shrink:0;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  font-size:11px;line-height:1.4;color:rgba(255,255,255,0.85);
+  padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);
+  animation:term-in .2s ease;transition:opacity 1.2s ease;
+  flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .fi.dying{opacity:0}
 @keyframes term-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-/* Terminal prefix */
 .fi-pre{color:rgba(0,194,178,0.7);margin-right:6px}
 .fi-amt{color:#00c2b2;font-weight:500}
 .fi-route{color:rgba(255,255,255,0.4);font-size:10px;margin-left:8px}
@@ -61,16 +120,14 @@ header{
 
 /* ── Mobile ── */
 @media(max-width:640px){
-  header{padding:0 14px;height:56px}
+  header{padding:0 14px;height:48px}
   .logo-title{font-size:9px;letter-spacing:.1em}
-  .hstats{gap:10px}
-  .stv{font-size:11px}
-  .stl{font-size:6px}
-
+  .metrics-bar{overflow-x:auto;flex-wrap:nowrap}
+  .metric{min-width:120px;padding:10px 14px}
+  .metric-val{font-size:15px}
+  .metric-label{font-size:7px}
   .main{flex-direction:column}
   #gw{flex:1;width:100%}
-
-  /* Hide notifications on mobile */
   .sb{display:none}
 }
 </style>
@@ -80,13 +137,56 @@ header{
 <div class="shell">
   <header>
     <span class="logo-title">Zenus Bank Live</span>
-    <div class="hstats">
-      <div class="stat"><div class="stv" id="sq-vol">$4.2B</div><div class="stl">Q1'26 Volume</div></div>
-      <div class="stat"><div class="stv" style="color:#00c2b2" id="sq-zt">$2.3B</div><div class="stl" style="color:rgba(0,194,178,0.6)">Q1'26 Zenus<br>Transfers</div></div>
-      <div class="stat"><div class="stv" id="sq-tx">321,096</div><div class="stl">Q1'26 Transactions</div></div>
-      <div class="stat"><div class="stv" id="sq-today">$37.92M</div><div class="stl">Today's Volume</div></div>
-    </div>
+    <button class="settings-btn" id="settings-btn">⚙ Settings</button>
   </header>
+
+  <!-- Metrics bar -->
+  <div class="metrics-bar">
+    <div class="metric">
+      <div class="metric-val" id="sq-vol">$1,402,819,440</div>
+      <div class="metric-label">Jan '26 Volume</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val accent" id="sq-zt">$765,231,800</div>
+      <div class="metric-label accent">Jan '26 Zenus<br>Transfers</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val" id="sq-tx">107,032</div>
+      <div class="metric-label">Jan '26 Transactions</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val" id="sq-today">$37,920,000</div>
+      <div class="metric-label">Today's Volume</div>
+    </div>
+  </div>
+
+  <!-- Settings modal -->
+  <div class="settings-overlay" id="settings-overlay">
+    <div class="settings-panel">
+      <div class="settings-title">Settings</div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Sound</div>
+          <div class="setting-sub">Play tone on each transaction</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-sound" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Auto-rotate to payment</div>
+          <div class="setting-sub">Spin globe to show each transaction</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-rotate" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <button class="settings-close" id="settings-close">Done</button>
+    </div>
+  </div>
   <div class="main">
     <div id="gw">
       <div id="gw-status">Loading…</div>
@@ -101,15 +201,19 @@ header{
 // ── Constants ──────────────────────────────────────────────────────────────────
 const ACCENT = '#00c2b2';
 const PC = {
-  swift:      '#00c2b2',  // teal
-  fedwire:    '#00c2b2',  // teal
-  stablecoin: '#00c2b2',  // teal
-  ach:        '#00c2b2',  // teal
-  withdrawal: '#ff2052',  // punk red
-  internal:   '#3b82f6',  // blue
-  domestic:   '#00c2b2',  // teal — same as other transfers
+  swift:           '#00c2b2',
+  fedwire:         '#00c2b2',
+  stablecoin:      '#00c2b2',
+  ach:             '#00c2b2',
+  withdrawal:      '#ff2052',
+  internal:        '#3b82f6',
+  domestic:        '#00c2b2',
+  zenus_transfer:  '#00c2b2',  // teal→teal, counts double
 };
-const TYPES = ['swift','fedwire','stablecoin','ach','withdrawal','internal','domestic'];
+const TYPES = ['swift','fedwire','stablecoin','ach','withdrawal','internal','domestic','zenus_transfer'];
+
+// Settings state
+let SETTINGS = { sound: true, autoRotate: true };
 
 // US cities for domestic transactions
 const US_CITIES = {
@@ -168,15 +272,16 @@ let dotVecs = [];
 let arcs = [], txAnims = [];
 let totalTx = 0, totalVol = 0, demoIdx = 0;
 // Quarterly baseline — grows with every demo transaction
-const Q_BASE_VOL = 4.2e9;
-const Q_BASE_TX  = 321096;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const ease = t => t<.5 ? 2*t*t : -1+(4-2*t)*t;
 const H2R = h => ({ r:parseInt(h.slice(1,3),16), g:parseInt(h.slice(3,5),16), b:parseInt(h.slice(5,7),16) });
 const toRgba = (h,a) => { const{r,g,b}=H2R(h); return `rgba(${r},${g},${b},${Math.max(0,Math.min(1,a)).toFixed(3)})`; };
 const fmtA = n => parseFloat(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-const fmtV = v => v>=1e9?'$'+(v/1e9).toFixed(1)+'B':v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1e3?'$'+(v/1e3).toFixed(1)+'K':'$'+v.toFixed(0);
+const fmtV = v => {
+  // Full dollar amount with commas
+  return '$' + Math.round(v).toLocaleString('en-US');
+};
 
 // ── Project lat/lng → canvas px ───────────────────────────────────────────────
 function proj(lat, lng) {
@@ -833,6 +938,8 @@ function processTx(data) {
     ? (US_CITIES[to_country]   || US_CITIES.US_LAX)
     : (CITIES[to_country]      || CITIES.GB);
   totalTx++; totalVol += parseFloat(amount)||0;
+  // zenus_transfer counts double toward the Zenus Transfers metric
+  if (type === 'zenus_transfer') ztVol += (parseFloat(amount)||0) * 2;
 
   const same = from_country === to_country;
 
@@ -854,23 +961,21 @@ function processTx(data) {
     addPulse(fc[0], fc[1], col);
   }
 
-  // Rotate globe so arc midpoint is centered — offset +90° lng so it appears
-  // center-right of hemisphere, fixed lat so vertical always resets
-  const FIXED_LAT = 20; // always look from this latitude
-  const LNG_OFFSET = 90; // shift arc into center of visible face
-  if (!same) {
-    let dL = tc[1] - fc[1];
-    while (dL > 180) dL -= 360;
-    while (dL < -180) dL += 360;
-    const midLng = fc[1] + dL / 2;
-    rotateTo(FIXED_LAT, midLng - LNG_OFFSET);
-  } else {
-    rotateTo(FIXED_LAT, fc[1] - LNG_OFFSET);
+  if (SETTINGS.autoRotate) {
+    if (!same) {
+      let dL = tc[1] - fc[1];
+      while (dL > 180) dL -= 360;
+      while (dL < -180) dL += 360;
+      const midLng = fc[1] + dL / 2;
+      rotateTo(FIXED_LAT, midLng - LNG_OFFSET);
+    } else {
+      rotateTo(FIXED_LAT, fc[1] - LNG_OFFSET);
+    }
   }
 
   addFeed(fc[2], tc[2], same, type, col, amount, currency);
   updateStats();
-  triggerFeedback(parseFloat(amount)||0, type);
+  if (SETTINGS.sound) triggerFeedback(parseFloat(amount)||0, type);
 }
 
 function mkLabel(name, col, isOrigin) {
@@ -955,17 +1060,25 @@ function addFeed(from,to,same,type,col,amount,currency) {
   }, 5000);
 }
 
-const Q_ZT_BASE    = 2.3e9;
-const Q_TODAY_BASE = 37.92e6; // today's volume baseline
+const Q_ZT_BASE    = 765231800;   // Jan '26 Zenus Transfers
+const Q_TODAY_BASE = 37920000;    // Today baseline
+const Q_BASE_VOL   = 1402819440;  // Jan '26 volume
+const Q_BASE_TX    = 107032;      // Jan '26 transactions
+
+const FIXED_LAT = 20;
+const LNG_OFFSET = 90;
+
+// Zenus Transfer volume tracked separately (counts double)
+let ztVol = 0;
 
 function updateStats() {
-  const qVol  = Q_BASE_VOL  + totalVol;
-  const qTx   = Q_BASE_TX   + totalTx;
-  const qZT   = Q_ZT_BASE   + totalVol * 0.55;
+  const vol   = Q_BASE_VOL   + totalVol;
+  const tx    = Q_BASE_TX    + totalTx;
+  const zt    = Q_ZT_BASE    + ztVol;
   const today = Q_TODAY_BASE + totalVol;
-  document.getElementById('sq-vol').textContent   = fmtV(qVol);
-  document.getElementById('sq-tx').textContent    = qTx.toLocaleString();
-  document.getElementById('sq-zt').textContent    = fmtV(qZT);
+  document.getElementById('sq-vol').textContent   = fmtV(vol);
+  document.getElementById('sq-tx').textContent    = (tx).toLocaleString();
+  document.getElementById('sq-zt').textContent    = fmtV(zt);
   document.getElementById('sq-today').textContent = fmtV(today);
 }
 
@@ -1041,13 +1154,14 @@ function fireDemo() {
   // Weighted type distribution
   const r = Math.random();
   let type;
-  if      (r < 0.26) type = 'swift';
-  else if (r < 0.44) type = 'fedwire';
-  else if (r < 0.55) type = 'stablecoin';
-  else if (r < 0.63) type = 'ach';
-  else if (r < 0.75) type = 'withdrawal';
-  else if (r < 0.85) type = 'internal';
-  else               type = 'domestic';
+  if      (r < 0.22) type = 'swift';
+  else if (r < 0.38) type = 'fedwire';
+  else if (r < 0.48) type = 'stablecoin';
+  else if (r < 0.56) type = 'ach';
+  else if (r < 0.67) type = 'withdrawal';
+  else if (r < 0.76) type = 'internal';
+  else if (r < 0.88) type = 'domestic';
+  else               type = 'zenus_transfer';
 
   let from, to;
   if (type === 'domestic') {
@@ -1097,6 +1211,22 @@ function fireDemo() {
 
   gw.addEventListener('pointerdown', onDown, { passive: true });
   gw.addEventListener('pointerup',   onUp,   { passive: true });
+})();
+
+// ── Settings panel ────────────────────────────────────────────────────────────
+(function() {
+  const overlay = document.getElementById('settings-overlay');
+  const btn     = document.getElementById('settings-btn');
+  const close   = document.getElementById('settings-close');
+  const tSound  = document.getElementById('toggle-sound');
+  const tRotate = document.getElementById('toggle-rotate');
+
+  btn.addEventListener('click', () => overlay.classList.add('open'));
+  close.addEventListener('click', () => overlay.classList.remove('open'));
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+  tSound.addEventListener('change',  () => { SETTINGS.sound      = tSound.checked; });
+  tRotate.addEventListener('change', () => { SETTINGS.autoRotate = tRotate.checked; });
 })();
 </script>
 </body>
