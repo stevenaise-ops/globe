@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zenus Bank · One Infrastructure. Every Rail.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+/* ── DESIGN TOKENS ───────────────────────────────────────────────── */
+:root {
+  --teal:       #00b8a9;
+  --teal-light: #00cfc0;
+  --gold:       #c9a84c;
+  --gold-dim:   rgba(201,168,76,0.10);
+  --red:        #e05252;
+  --blue-tx:    #4a90d9;
+  --mono:       'IBM Plex Mono', monospace;
+  --sans:       'Inter', sans-serif;
+  --serif:      'Playfair Display', serif;
+}
+
+/* DARK (default) */
+[data-theme="dark"] {
+  --bg:        #04080f;
+  --bg-nav:    rgba(4,8,15,0.88);
+  --bg-glass:  rgba(4,8,15,0.38);
+  --bg-solid:  rgba(4,8,15,0.94);
+  --text:      #edf0f4;
+  --text-mid:  rgba(237,240,244,0.55);
+  --text-dim:  rgba(237,240,244,0.26);
+  --border:    rgba(255,255,255,0.07);
+  --border-m:  rgba(255,255,255,0.12);
+  --disc:      rgba(4,8,15,0.93);
+  /* gradient fade stops */
+  --f0: rgba(4,8,15,0.97);
+  --f1: rgba(4,8,15,0.82);
+  --f2: rgba(4,8,15,0.45);
+  --fb: rgba(4,8,15,1.0);
+  --fb1:rgba(4,8,15,0.84);
+  --pb: rgba(4,8,15,0.96);
+  --ptxt:  rgba(237,240,244,0.20);
+  --ptxt-h:rgba(237,240,244,0.55);
+}
+
+/* LIGHT */
+[data-theme="light"] {
+  --bg:        #f2f5f9;
+  --bg-nav:    rgba(242,245,249,0.92);
+  --bg-glass:  rgba(255,255,255,0.48);
+  --bg-solid:  rgba(242,245,249,0.96);
+  --text:      #0c1018;
+  --text-mid:  rgba(12,16,24,0.56);
+  --text-dim:  rgba(12,16,24,0.30);
+  --border:    rgba(0,0,0,0.07);
+  --border-m:  rgba(0,0,0,0.13);
+  --disc:      rgba(208,220,232,0.90);
+  --f0: rgba(242,245,249,0.97);
+  --f1: rgba(242,245,249,0.84);
+  --f2: rgba(242,245,249,0.44);
+  --fb: rgba(242,245,249,1.0);
+  --fb1:rgba(242,245,249,0.84);
+  --pb: rgba(242,245,249,0.97);
+  --ptxt:  rgba(12,16,24,0.22);
+  --ptxt-h:rgba(12,16,24,0.58);
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  transition: background .2s, color .2s;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   NAV
+───────────────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:400;
+  height: 60px; padding: 0 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg-nav);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  transition: background .2s, border-color .2s;
+}
+.nav-logo { display:flex; align-items:center; text-decoration:none; }
+.nav-logo img { height:21px; width:auto; }
+[data-theme="light"] .nav-logo img { filter:saturate(1.1) brightness(.9); }
+
+.nav-links { display:flex; gap:28px; list-style:none; }
+.nav-links a {
+  font-size:13px; font-weight:400; letter-spacing:.01em;
+  color:var(--text-mid); text-decoration:none; transition:color .15s;
+}
+.nav-links a:hover { color:var(--text); }
+
+.nav-right { display:flex; align-items:center; gap:14px; }
+
+/* Theme toggle */
+.tog-wrap { display:flex; align-items:center; gap:8px; }
+.tog-lbl {
+  font-family:var(--mono); font-size:8px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--text-dim);
+  user-select:none;
+}
+.tog {
+  width:36px; height:20px; border-radius:10px; cursor:pointer;
+  border:none; background:var(--border-m); position:relative;
+  flex-shrink:0; transition:background .25s;
+}
+.tog::after {
+  content:''; position:absolute; width:14px; height:14px;
+  border-radius:50%; top:3px; left:3px;
+  background:var(--text-dim); transition:transform .25s, background .25s;
+}
+[data-theme="light"] .tog { background:rgba(0,184,169,.22); }
+[data-theme="light"] .tog::after { transform:translateX(16px); background:var(--teal); }
+
+.btn-nav {
+  font-family:var(--sans); font-size:12px; font-weight:500; letter-spacing:.04em;
+  background:var(--teal); color:#04080f; border:none; border-radius:6px;
+  padding:9px 20px; cursor:pointer; transition:background .15s, box-shadow .15s;
+}
+.btn-nav:hover { background:var(--teal-light); box-shadow:0 0 18px rgba(0,184,169,.4); }
+
+/* ─────────────────────────────────────────────────────────────────
+   PAGE BACKGROUND CANVAS
+───────────────────────────────────────────────────────────────── */
+#page-bg { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+/* ─────────────────────────────────────────────────────────────────
+   HERO
+   Globe is positioned right-of-center: left:42%, large (96vw square).
+   Text overlays the left ~50% with gradient legibility.
+───────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  height: 100vh; min-height: 700px;
+  overflow: hidden;
+}
+
+/* Globe layer */
+.globe-layer { position:absolute; inset:0; z-index:1; overflow:hidden; }
+
+#gw-wrap {
+  position: absolute;
+  left: 42%;          /* biased right — globe center ~62% from left */
+  top: -8%;           /* top arc bleeds past nav for scale */
+  width: 96vw;
+  height: 96vw;
+  max-width: 1260px;
+  max-height: 1260px;
+}
+#gw {
+  width:100% !important; height:100% !important;
+  position:relative; cursor:grab; background:transparent;
+}
+#gw canvas { position:absolute; top:0; left:0; width:100% !important; height:100% !important; }
+#gw-status {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:var(--text-dim); z-index:5;
+}
+
+/* Gradient masks */
+.gf { position:absolute; pointer-events:none; z-index:10; }
+
+.gf-l {
+  top:0; left:0; bottom:0; width:54%;
+  background: linear-gradient(to right,
+    var(--f0) 0%, var(--f0) 14%,
+    var(--f1) 30%, var(--f2) 48%,
+    rgba(4,8,15,0.05) 60%, transparent 100%);
+}
+[data-theme="light"] .gf-l {
+  background: linear-gradient(to right,
+    var(--f0) 0%, var(--f0) 14%,
+    var(--f1) 30%, var(--f2) 48%,
+    rgba(242,245,249,0.05) 60%, transparent 100%);
+}
+.gf-t {
+  top:0; left:0; right:0; height:14%;
+  background: linear-gradient(to bottom, var(--f0) 0%, transparent 100%);
+}
+.gf-r {
+  top:0; right:0; bottom:0; width:6%;
+  background: linear-gradient(to left, var(--bg), transparent);
+}
+.gf-b {
+  bottom:0; left:0; right:0; height:46%;
+  background: linear-gradient(to top,
+    var(--fb) 0%, var(--fb1) 14%,
+    var(--f2) 36%, transparent 100%);
+}
+
+/* Hero text overlay */
+.hero-content {
+  position: absolute; z-index:20;
+  top: 50%; transform: translateY(-50%);
+  left: 0; padding-left: 52px;
+  max-width: 520px;
+  display: flex; flex-direction: column;
+}
+
+/* Credential pills */
+.cred-row {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  margin-bottom:18px;
+  opacity:0; animation:fadeUp .5s .05s forwards;
+}
+.cred {
+  font-family:var(--mono); font-size:8px; font-weight:500;
+  letter-spacing:.13em; text-transform:uppercase;
+  border:1px solid var(--border-m); border-radius:3px;
+  padding:3px 8px; color:var(--text-dim);
+  background:var(--bg-glass); backdrop-filter:blur(8px);
+  white-space:nowrap;
+}
+.cred.gold {
+  border-color:rgba(201,168,76,.35);
+  color:var(--gold); background:var(--gold-dim);
+}
+
+/* Eyebrow */
+.eyebrow {
+  font-family:var(--mono); font-size:9px; font-weight:500;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--teal); margin-bottom:16px;
+  display:flex; align-items:center; gap:10px;
+  opacity:0; animation:fadeUp .5s .12s forwards;
+}
+.eyebrow::before { content:''; width:16px; height:1px; background:var(--teal); opacity:.5; }
+
+/* Headline: serif for authority line, sans for the data line */
+.h1 {
+  margin-bottom:14px;
+  opacity:0; animation:fadeUp .55s .22s forwards;
+}
+.h1-main {
+  font-family:var(--serif); font-weight:600;
+  font-size:clamp(34px, 3.6vw, 58px);
+  line-height:1.1; letter-spacing:-.02em;
+  color:var(--text); display:block;
+}
+.h1-sub {
+  font-family:var(--sans); font-weight:400;
+  font-size:clamp(14px, 1.4vw, 20px);
+  line-height:1.55; letter-spacing:-.005em;
+  color:var(--text-mid); display:block; margin-top:8px;
+}
+.h1-sub em { font-style:normal; color:var(--teal); font-weight:500; }
+
+/* Body */
+.hero-body {
+  font-size:13.5px; font-weight:300; line-height:1.8;
+  color:var(--text-mid); max-width:360px; margin-bottom:28px;
+  opacity:0; animation:fadeUp .55s .32s forwards;
+}
+
+/* CTAs */
+.actions {
+  display:flex; gap:10px; margin-bottom:36px;
+  opacity:0; animation:fadeUp .55s .40s forwards;
+}
+.btn-p {
+  font-family:var(--sans); font-size:13px; font-weight:500; letter-spacing:.02em;
+  background:var(--teal); color:#04080f; border:none;
+  border-radius:6px; padding:11px 22px; cursor:pointer;
+  transition:background .15s, box-shadow .15s;
+}
+.btn-p:hover { background:var(--teal-light); box-shadow:0 4px 20px rgba(0,184,169,.38); }
+.btn-s {
+  font-family:var(--sans); font-size:13px; font-weight:400;
+  color:var(--text-mid); background:var(--bg-glass);
+  border:1px solid var(--border-m); border-radius:6px;
+  padding:11px 22px; cursor:pointer;
+  backdrop-filter:blur(10px); transition:all .15s;
+}
+.btn-s:hover { color:var(--text); }
+
+/* ── METRICS — Bloomberg-style horizontal data row ────────────────
+   Numbers large (38px on desktop), teal ONLY for live values.
+   Separated by a thin divider line, no card background.
+──────────────────────────────────────────────────────────────── */
+.metrics {
+  display:flex; gap:0; align-items:flex-start;
+  border-top:1px solid var(--border-m); padding-top:20px;
+  opacity:0; animation:fadeUp .55s .50s forwards;
+}
+.stat {
+  padding-right:22px; margin-right:22px;
+  border-right:1px solid var(--border);
+  flex-shrink:0;
+}
+.stat:last-child { border-right:none; margin-right:0; padding-right:0; }
+.sv {
+  font-family:var(--mono); font-weight:300;
+  font-size:clamp(26px, 2.7vw, 40px);
+  line-height:1; letter-spacing:-.02em;
+  color:var(--text); margin-bottom:5px; white-space:nowrap;
+}
+.sv.live { color:var(--teal); }
+.sl {
+  font-family:var(--mono); font-size:7.5px; font-weight:400;
+  letter-spacing:.13em; text-transform:uppercase;
+  color:var(--text-dim);
+  display:flex; align-items:center; gap:4px;
+}
+.dot {
+  width:4px; height:4px; border-radius:50%; background:var(--teal);
+  flex-shrink:0; animation:blink 2.4s ease-in-out infinite;
+}
+
+/* ── PARTNERS TICKER — bottom of hero ────────────────────────────── */
+.p-band {
+  position:absolute; bottom:0; left:0; right:0; z-index:25;
+  background:var(--pb); border-top:1px solid var(--border);
+  padding:13px 0; overflow:hidden;
+  transition:background .2s, border-color .2s;
+}
+.p-track {
+  display:flex; width:max-content;
+  animation:ticker 42s linear infinite;
+}
+.p-band:hover .p-track { animation-play-state:paused; }
+.p-item {
+  display:flex; align-items:center; gap:7px;
+  padding:0 28px; border-right:1px solid var(--border);
+  flex-shrink:0;
+}
+.p-item:last-child { border-right:none; }
+.p-name {
+  font-family:var(--sans); font-size:11px; font-weight:500;
+  letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ptxt); white-space:nowrap; transition:color .18s;
+}
+.p-band:hover .p-name { color:var(--ptxt-h); }
+.p-tag {
+  font-family:var(--mono); font-size:7.5px; letter-spacing:.05em;
+  padding:2px 5px; border-radius:3px; white-space:nowrap;
+  background:rgba(0,184,169,.08); color:var(--teal);
+}
+.p-tag.gtag { background:var(--gold-dim); color:var(--gold); }
+
+/* ── LIVE FEED PANEL ─────────────────────────────────────────────── */
+.feed-panel {
+  position:fixed; bottom:24px; right:24px; z-index:200;
+  background:var(--bg-solid); backdrop-filter:blur(20px);
+  border:1px solid var(--border); border-radius:10px;
+  width:268px; overflow:hidden;
+  transition:background .2s, border-color .2s;
+}
+.feed-hd {
+  padding:9px 14px 8px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:7px;
+}
+.feed-lbl {
+  font-family:var(--mono); font-size:7.5px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--text-dim);
+}
+#feed {
+  padding:4px 0; display:flex; flex-direction:column;
+  max-height:160px; overflow:hidden;
+}
+.fi {
+  font-family:var(--mono); font-size:9.5px; line-height:1.5;
+  color:var(--text-mid); padding:3px 14px;
+  border-bottom:1px solid var(--border);
+  animation:slideIn .18s ease; transition:opacity 1.2s;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.fi.dying { opacity:0; }
+.fi-amt { font-weight:500; }
+.fi-route { color:var(--text-dim); font-size:9px; margin-left:5px; }
+.fi-time { color:var(--text-dim); font-size:8.5px; float:right; opacity:.55; }
+.fi-pre { margin-right:4px; }
+
+/* ── BELOW HERO SECTIONS ─────────────────────────────────────────── */
+.section {
+  position:relative; z-index:50;
+  background:var(--bg); border-top:1px solid var(--border);
+  padding:60px 52px;
+  transition:background .2s, border-color .2s;
+}
+.sec-label {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--teal);
+  margin-bottom:36px; display:flex; align-items:center; gap:10px;
+}
+.sec-label::before { content:''; width:16px; height:1px; background:var(--teal); }
+
+/* Three pillars */
+.pillars {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; background:var(--border);
+  border:1px solid var(--border); border-radius:10px; overflow:hidden;
+}
+.pillar {
+  background:var(--bg); padding:32px 28px;
+  transition:background .2s;
+}
+.pillar:hover { background:var(--bg-glass); }
+.p-icon {
+  width:30px; height:30px; border-radius:7px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; margin-bottom:18px;
+}
+.p-icon.t { background:rgba(0,184,169,.1); }
+.p-icon.g { background:var(--gold-dim); }
+.p-num {
+  font-family:var(--mono); font-weight:300;
+  font-size:36px; line-height:1; letter-spacing:-.02em;
+  color:var(--text); margin-bottom:6px;
+}
+.p-num em { font-style:normal; color:var(--teal); }
+.p-num.gn em { color:var(--gold); }
+.p-title { font-size:14px; font-weight:500; color:var(--text); margin-bottom:10px; }
+.p-body { font-size:13px; font-weight:300; line-height:1.75; color:var(--text-mid); }
+
+/* Partner grid */
+.partner-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:1px; background:var(--border);
+  border:1px solid var(--border); border-radius:10px; overflow:hidden;
+}
+.pc {
+  background:var(--bg); padding:22px 20px;
+  display:flex; flex-direction:column; gap:5px;
+  transition:background .15s;
+}
+.pc:hover { background:var(--bg-glass); }
+.pc-name { font-size:13px; font-weight:500; color:var(--text); }
+.pc-type {
+  font-family:var(--mono); font-size:8px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--text-dim);
+}
+.pc-type.g { color:var(--gold); }
+
+/* ── KEYFRAMES ────────────────────────────────────────────────────── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:none;} }
+@keyframes blink  { 0%,100%{opacity:1;} 50%{opacity:.18;} }
+@keyframes slideIn{ from{opacity:0;transform:translateY(-3px);} to{opacity:1;transform:none;} }
+@keyframes ticker { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────── */
+@media(max-width:1100px){
+  .metrics { flex-wrap:wrap; gap:16px 0; }
+  .stat:nth-child(odd)  { border-right:1px solid var(--border); }
+  .stat:nth-child(even) { border-right:none; }
+  .stat:nth-child(3),.stat:nth-child(4) {
+    border-top:1px solid var(--border); padding-top:16px;
+  }
+  .pillars { grid-template-columns:1fr; }
+}
+@media(max-width:900px){
+  nav { padding:0 20px; }
+  .nav-links { display:none; }
+  .hero-content { padding-left:24px; max-width:100%; }
+  #gw-wrap { left:50%; top:0; width:145vw; height:145vw; transform:translateX(-50%); }
+  .gf-l {
+    width:100%;
+    background:linear-gradient(to right,var(--f0) 0%,var(--f1) 35%,var(--f2) 65%,transparent 100%);
+  }
+  .section { padding:36px 20px; }
+  .p-band { display:none; }
+  .feed-panel { display:none; }
+}
+@media(max-width:600px){
+  .h1-main { font-size:clamp(26px,8vw,36px); }
+  .metrics { flex-direction:column; }
+  .stat { border-right:none !important; border-bottom:1px solid var(--border); padding-bottom:14px; margin-bottom:14px; }
+  .stat:last-child { border-bottom:none; }
+  .partner-grid { grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+<canvas id="page-bg"></canvas>
+
+<!-- ── NAV ────────────────────────────────────────────────────────── -->
+<nav>
+  <a href="https://zenus.com" class="nav-logo">
+    <img src="https://zenus.com/media/rpjl0yaw/zenus-bank-logo-turquoise-v2.svg?rmode=max&width=400&quality=85&rnd=133857463896170000" alt="Zenus Bank">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Network</a></li>
+    <li><a href="#">Infrastructure</a></li>
+    <li><a href="#">API</a></li>
+    <li><a href="#">Partners</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="tog-wrap">
+      <span class="tog-lbl" id="tlbl">Dark</span>
+      <button class="tog" id="tog" aria-label="Toggle light/dark mode"></button>
+    </div>
+    <button class="btn-nav">Get Started</button>
+  </div>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────────────────────────── -->
+<div class="hero">
+
+  <!-- Globe: right-biased, large, interactive -->
+  <div class="globe-layer">
+    <div id="gw-wrap">
+      <div id="gw"><div id="gw-status">Loading globe…</div></div>
+    </div>
+    <div class="gf gf-l"></div>
+    <div class="gf gf-t"></div>
+    <div class="gf gf-r"></div>
+    <div class="gf gf-b"></div>
+  </div>
+
+  <!-- Editorial left column -->
+  <div class="hero-content">
+
+    <div class="cred-row">
+      <span class="cred">FDIC Insured</span>
+      <span class="cred">US Federal Charter</span>
+      <span class="cred gold">Visa Principal Member</span>
+    </div>
+
+    <div class="eyebrow">One Infrastructure. Every Rail.</div>
+
+    <div class="h1">
+      <span class="h1-main">Banking infrastructure<br>for emerging markets</span>
+      <span class="h1-sub">Traditional rails + stablecoin onramp —<br>powering <em>650+ institutions</em> worldwide</span>
+    </div>
+
+    <p class="hero-body">
+      Zenus connects fintechs and financial institutions to SWIFT, Fedwire,
+      ACH, SEPA, and stablecoin liquidity through a single API — with Visa
+      card issuance and JP Morgan correspondence built in.
+    </p>
+
+    <div class="actions">
+      <button class="btn-p">Get Started</button>
+      <button class="btn-s">View Network Stats</button>
+    </div>
+
+    <!-- Live metrics: Bloomberg-style data row -->
+    <div class="metrics">
+      <div class="stat">
+        <div class="sv live" id="sq-vol">$1.4B</div>
+        <div class="sl">Jan '26 Volume</div>
+      </div>
+      <div class="stat">
+        <div class="sv live" id="sq-zt">$765M</div>
+        <div class="sl"><span class="dot"></span>Zenus Transfers</div>
+      </div>
+      <div class="stat">
+        <div class="sv" id="sq-tx">107K</div>
+        <div class="sl">Transactions</div>
+      </div>
+      <div class="stat">
+        <div class="sv live" id="sq-today">$37.9M</div>
+        <div class="sl"><span class="dot"></span>Today</div>
+      </div>
+    </div>
+
+  </div><!-- /hero-content -->
+
+  <!-- Partners ticker -->
+  <div class="p-band">
+    <div class="p-track">
+      <div class="p-item"><span class="p-name">Conduit</span><span class="p-tag">FX Corridor</span></div>
+      <div class="p-item"><span class="p-name">Ripple</span><span class="p-tag">Blockchain</span></div>
+      <div class="p-item"><span class="p-name">Tether</span><span class="p-tag">Stablecoin</span></div>
+      <div class="p-item"><span class="p-name">Nexo</span><span class="p-tag">Digital Lending</span></div>
+      <div class="p-item"><span class="p-name">CoinZoom</span><span class="p-tag">Crypto Exchange</span></div>
+      <div class="p-item"><span class="p-name">Lulu</span><span class="p-tag">Remittance</span></div>
+      <div class="p-item"><span class="p-name">Fuse</span><span class="p-tag">Embedded Finance</span></div>
+      <div class="p-item"><span class="p-name">JP Morgan</span><span class="p-tag gtag">Correspondent</span></div>
+      <div class="p-item"><span class="p-name">Visa</span><span class="p-tag gtag">Principal Member</span></div>
+      <div class="p-item"><span class="p-name">SWIFT</span><span class="p-tag">Global Wire</span></div>
+      <div class="p-item"><span class="p-name">Fedwire</span><span class="p-tag">USD RTGS</span></div>
+      <div class="p-item"><span class="p-name">ACH Network</span><span class="p-tag">Batch</span></div>
+      <div class="p-item"><span class="p-name">SEPA</span><span class="p-tag">EUR Rails</span></div>
+      <div class="p-item"><span class="p-name">CHIPS</span><span class="p-tag">USD Clearing</span></div>
+      <div class="p-item"><span class="p-name">650+ Institutions</span><span class="p-tag">Global Network</span></div>
+      <!-- duplicate set for seamless loop -->
+      <div class="p-item"><span class="p-name">Conduit</span><span class="p-tag">FX Corridor</span></div>
+      <div class="p-item"><span class="p-name">Ripple</span><span class="p-tag">Blockchain</span></div>
+      <div class="p-item"><span class="p-name">Tether</span><span class="p-tag">Stablecoin</span></div>
+      <div class="p-item"><span class="p-name">Nexo</span><span class="p-tag">Digital Lending</span></div>
+      <div class="p-item"><span class="p-name">CoinZoom</span><span class="p-tag">Crypto Exchange</span></div>
+      <div class="p-item"><span class="p-name">Lulu</span><span class="p-tag">Remittance</span></div>
+      <div class="p-item"><span class="p-name">Fuse</span><span class="p-tag">Embedded Finance</span></div>
+      <div class="p-item"><span class="p-name">JP Morgan</span><span class="p-tag gtag">Correspondent</span></div>
+      <div class="p-item"><span class="p-name">Visa</span><span class="p-tag gtag">Principal Member</span></div>
+      <div class="p-item"><span class="p-name">SWIFT</span><span class="p-tag">Global Wire</span></div>
+      <div class="p-item"><span class="p-name">Fedwire</span><span class="p-tag">USD RTGS</span></div>
+      <div class="p-item"><span class="p-name">ACH Network</span><span class="p-tag">Batch</span></div>
+      <div class="p-item"><span class="p-name">SEPA</span><span class="p-tag">EUR Rails</span></div>
+      <div class="p-item"><span class="p-name">CHIPS</span><span class="p-tag">USD Clearing</span></div>
+      <div class="p-item"><span class="p-name">650+ Institutions</span><span class="p-tag">Global Network</span></div>
+    </div>
+  </div>
+
+</div><!-- /hero -->
+
+<!-- Live feed -->
+<div class="feed-panel">
+  <div class="feed-hd">
+    <span class="dot"></span>
+    <span class="feed-lbl">Live Transactions</span>
+  </div>
+  <div id="feed"></div>
+</div>
+
+<!-- ── NETWORK PILLARS ────────────────────────────────────────────── -->
+<div class="section">
+  <div class="sec-label">What sets us apart</div>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="p-icon t">🌐</div>
+      <div class="p-num"><em>650+</em></div>
+      <div class="p-title">Financial institution network</div>
+      <div class="p-body">Fintechs and institutions across emerging markets rely on Zenus as their US banking partner — accessing USD clearing, card issuance, and cross-border settlement through a single relationship.</div>
+    </div>
+    <div class="pillar">
+      <div class="p-icon g">🏦</div>
+      <div class="p-num gn"><em>Visa</em> + JP Morgan</div>
+      <div class="p-title">Tier-1 infrastructure backbone</div>
+      <div class="p-body">As a Visa Principal Member, we sponsor BIN ranges for card issuance. JP Morgan correspondence means your settlements clear on the most robust USD correspondent network on earth.</div>
+    </div>
+    <div class="pillar">
+      <div class="p-icon t">⚡</div>
+      <div class="p-num"><em>1</em> API</div>
+      <div class="p-title">All rails. Stablecoin onramp included.</div>
+      <div class="p-body">SWIFT, Fedwire, ACH, SEPA — and native stablecoin onramp/offramp via Tether and Circle. One integration gives your clients every settlement option their end customers need.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PARTNER GRID ────────────────────────────────────────────────── -->
+<div class="section">
+  <div class="sec-label">Our network</div>
+  <div class="partner-grid">
+    <div class="pc"><div class="pc-name">Conduit</div><div class="pc-type">FX corridor infrastructure</div></div>
+    <div class="pc"><div class="pc-name">Ripple</div><div class="pc-type">Blockchain settlement</div></div>
+    <div class="pc"><div class="pc-name">Tether</div><div class="pc-type">USDT stablecoin</div></div>
+    <div class="pc"><div class="pc-name">Nexo</div><div class="pc-type">Digital asset lending</div></div>
+    <div class="pc"><div class="pc-name">CoinZoom</div><div class="pc-type">Crypto exchange</div></div>
+    <div class="pc"><div class="pc-name">Lulu</div><div class="pc-type">Remittance network</div></div>
+    <div class="pc"><div class="pc-name">Fuse</div><div class="pc-type">Embedded finance</div></div>
+    <div class="pc"><div class="pc-name">JP Morgan</div><div class="pc-type g">USD correspondent</div></div>
+    <div class="pc"><div class="pc-name">Visa</div><div class="pc-type g">Card network — principal member</div></div>
+    <div class="pc"><div class="pc-name">SWIFT</div><div class="pc-type">International wire</div></div>
+    <div class="pc"><div class="pc-name">Fedwire</div><div class="pc-type">USD real-time gross settlement</div></div>
+    <div class="pc"><div class="pc-name">ACH Network</div><div class="pc-type">Batch payments</div></div>
+    <div class="pc"><div class="pc-name">SEPA</div><div class="pc-type">EUR rail access</div></div>
+    <div class="pc"><div class="pc-name">CHIPS</div><div class="pc-type">USD clearing house</div></div>
+  </div>
+</div>
+
+<script>
+// ── Theme toggle ──────────────────────────────────────────────────
+const html = document.documentElement;
+document.getElementById('tog').addEventListener('click', () => {
+  const dark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('tlbl').textContent = dark ? 'Light' : 'Dark';
+  drawPageBg();
+});
+
+// ── Compact number format ─────────────────────────────────────────
+function fmtCompact(v) {
+  if (v >= 1e9) return '$' + (v/1e9).toPrecision(3).replace(/\.?0+$/,'') + 'B';
+  if (v >= 1e6) return '$' + (v/1e6).toPrecision(3).replace(/\.?0+$/,'') + 'M';
+  if (v >= 1e3) return '$' + (v/1e3).toPrecision(3).replace(/\.?0+$/,'') + 'K';
+  return '$' + v.toLocaleString();
+}
+function fmtTx(v) {
+  if (v >= 1e6) return (v/1e6).toPrecision(3).replace(/\.?0+$/,'') + 'M';
+  if (v >= 1e3) return (v/1e3).toPrecision(3).replace(/\.?0+$/,'') + 'K';
+  return v.toLocaleString();
+}
+
+// ── Globe: constants & state ──────────────────────────────────────
+const PC = {
+  swift:'#00b8a9', fedwire:'#00b8a9', stablecoin:'#00b8a9', ach:'#00b8a9',
+  withdrawal:'#e05252', internal:'#4a90d9', domestic:'#00b8a9', zenus_transfer:'#00b8a9',
+};
+let SETTINGS = { sound:false, autoRotate:true };
+
+const US_CITIES = {
+  US_NYC:[40.71,-74.01,'New York'],   US_LAX:[34.05,-118.24,'Los Angeles'],
+  US_CHI:[41.88,-87.63,'Chicago'],    US_HOU:[29.76,-95.37,'Houston'],
+  US_PHX:[33.45,-112.07,'Phoenix'],   US_PHI:[39.95,-75.17,'Philadelphia'],
+  US_SAN:[29.42,-98.49,'San Antonio'],US_DAL:[32.78,-96.8,'Dallas'],
+  US_MIA:[25.77,-80.19,'Miami'],      US_ATL:[33.75,-84.39,'Atlanta'],
+  US_SEA:[47.61,-122.33,'Seattle'],   US_BOS:[42.36,-71.06,'Boston'],
+  US_DEN:[39.74,-104.98,'Denver'],    US_LAS:[36.17,-115.14,'Las Vegas'],
+  US_DC:[38.91,-77.04,'Washington DC'],US_SJO:[37.34,-121.89,'San Jose'],
+  US_AUS:[30.27,-97.74,'Austin'],     US_POR:[45.52,-122.68,'Portland'],
+  US_SFO:[37.77,-122.42,'San Francisco'],US_NAS:[36.17,-86.78,'Nashville'],
+};
+const US_CODES = Object.keys(US_CITIES);
+const FADE_IN=600, HOLD=800, FADE_OUT=800;
+
+const CITIES = {
+  US:[37,-95,'United States'],    GB:[51.5,-.1,'London'],
+  DE:[50.1,8.7,'Frankfurt'],      FR:[48.9,2.3,'Paris'],
+  JP:[35.7,139.7,'Tokyo'],        CN:[31.2,121.5,'Shanghai'],
+  AU:[-33.9,151.2,'Sydney'],      BR:[-23.5,-46.6,'São Paulo'],
+  IN:[19.1,72.9,'Mumbai'],        CA:[43.7,-79.4,'Toronto'],
+  MX:[19.4,-99.1,'Mexico City'],  SG:[1.35,103.8,'Singapore'],
+  AE:[25.2,55.3,'Dubai'],         ZA:[-26.2,28,'Johannesburg'],
+  AR:[-34.6,-58.4,'Buenos Aires'],NG:[6.5,3.4,'Lagos'],
+  KR:[37.6,127,'Seoul'],          RU:[55.8,37.6,'Moscow'],
+  ES:[40.4,-3.7,'Madrid'],        IT:[45.5,9.2,'Milan'],
+  NL:[52.4,4.9,'Amsterdam'],      SE:[59.3,18.1,'Stockholm'],
+  CH:[47.4,8.5,'Zurich'],         HK:[22.3,114.2,'Hong Kong'],
+  ID:[-6.2,106.8,'Jakarta'],      TR:[41,29,'Istanbul'],
+  SA:[24.7,46.7,'Riyadh'],        PL:[52.2,21,'Warsaw'],
+  TH:[13.8,100.5,'Bangkok'],      PH:[14.6,121,'Manila'],
+  PR:[18.5,-66.1,'San Juan'],     NZ:[-36.9,174.8,'Auckland'],
+  CL:[-33.5,-70.7,'Santiago'],    EG:[30,31.2,'Cairo'],
+  KE:[-1.3,36.8,'Nairobi'],       MA:[34,-6.8,'Casablanca'],
+  GH:[5.5,-.2,'Accra'],           PK:[24.9,67,'Karachi'],
+  BD:[23.7,90.4,'Dhaka'],         VN:[10.8,106.6,'Ho Chi Minh'],
+  MY:[3.1,101.7,'Kuala Lumpur'],
+};
+const CODES = Object.keys(CITIES);
+
+let world, cv, ctx, ctxDots, CW, CH;
+let dotVecs = [], arcs = [], txAnims = [];
+let totalTx = 0, totalVol = 0, ztVol = 0;
+
+const ease = t => t<.5 ? 2*t*t : -1+(4-2*t)*t;
+const H2R = h => ({ r:parseInt(h.slice(1,3),16), g:parseInt(h.slice(3,5),16), b:parseInt(h.slice(5,7),16) });
+const toRgba = (h,a) => { const{r,g,b}=H2R(h); return `rgba(${r},${g},${b},${Math.max(0,Math.min(1,a)).toFixed(3)})`; };
+const fmtA = n => parseFloat(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function proj(lat,lng) {
+  if(!world||!CW) return null;
+  const cam=world.camera(); if(!cam) return null;
+  const phi=(90-lat)*Math.PI/180, theta=(lng+180)*Math.PI/180, R=100;
+  const wx=R*Math.sin(phi)*Math.cos(theta), wy=R*Math.cos(phi), wz=-R*Math.sin(phi)*Math.sin(theta);
+  const cp=cam.position, v=cam.matrixWorldInverse.elements;
+  const cx=v[0]*wx+v[4]*wy+v[8]*wz+v[12], cy=v[1]*wx+v[5]*wy+v[9]*wz+v[13], cz=v[2]*wx+v[6]*wy+v[10]*wz+v[14];
+  const p=cam.projectionMatrix.elements;
+  const rx=p[0]*cx+p[4]*cy+p[8]*cz+p[12], ry=p[1]*cx+p[5]*cy+p[9]*cz+p[13], rw=p[3]*cx+p[7]*cy+p[11]*cz+p[15];
+  if(rw<=0) return null;
+  return { x:(rx/rw*.5+.5)*CW, y:(-ry/rw*.5+.5)*CH, front:(wx*cp.x+wy*cp.y+wz*cp.z)>0 };
+}
+
+function projAlt(lat,lng,alt) {
+  if(!world||!CW) return null;
+  const cam=world.camera(); if(!cam) return null;
+  const phi=(90-lat)*Math.PI/180, theta=(lng+180)*Math.PI/180, R=100*(1+alt);
+  const wx=R*Math.sin(phi)*Math.cos(theta), wy=R*Math.cos(phi), wz=-R*Math.sin(phi)*Math.sin(theta);
+  const v=cam.matrixWorldInverse.elements;
+  const cx=v[0]*wx+v[4]*wy+v[8]*wz+v[12], cy=v[1]*wx+v[5]*wy+v[9]*wz+v[13], cz=v[2]*wx+v[6]*wy+v[10]*wz+v[14];
+  const p=cam.projectionMatrix.elements;
+  const rx=p[0]*cx+p[4]*cy+p[8]*cz+p[12], ry=p[1]*cx+p[5]*cy+p[9]*cz+p[13], rw=p[3]*cx+p[7]*cy+p[11]*cz+p[15];
+  if(rw<=0) return null;
+  return { x:(rx/rw*.5+.5)*CW, y:(-ry/rw*.5+.5)*CH };
+}
+
+function drawLabel(name,x,y,color,alpha) {
+  const isDark = html.getAttribute('data-theme')==='dark';
+  ctx.save();
+  ctx.font='500 8px "IBM Plex Mono",monospace';
+  const tw=ctx.measureText(name).width, pad=5, h=14;
+  const lx=x-tw/2-pad, ly=y-h;
+  ctx.fillStyle=isDark?`rgba(4,8,15,${(alpha*.94).toFixed(2)})`:`rgba(242,245,249,${(alpha*.94).toFixed(2)})`;
+  ctx.strokeStyle=color; ctx.lineWidth=0.7;
+  ctx.beginPath(); ctx.roundRect(lx,ly,tw+pad*2,h,2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle=color; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(name.toUpperCase(),x,ly+h/2);
+  ctx.restore();
+}
+
+function buildDots() {
+  const COLS=160, ROWS=80; dotVecs=[];
+  const fallback=()=>{
+    const isLand=(lon,lat)=>{
+      if(lon>=-140&&lon<=-60&&lat>=25&&lat<=75) return true;
+      if(lon>=-82&&lon<=-34&&lat>=-56&&lat<=12) return true;
+      if(lon>=-10&&lon<=40&&lat>=35&&lat<=72) return true;
+      if(lon>=-18&&lon<=52&&lat>=-35&&lat<=38) return true;
+      if(lon>=30&&lon<=180&&lat>=50&&lat<=75) return true;
+      if(lon>=26&&lon<=60&&lat>=12&&lat<=42) return true;
+      if(lon>=60&&lon<=110&&lat>=5&&lat<=35) return true;
+      if(lon>=100&&lon<=145&&lat>=20&&lat<=55) return true;
+      if(lon>=95&&lon<=141&&lat>=-10&&lat<=20) return true;
+      if(lon>=113&&lon<=154&&lat>=-44&&lat<=-10) return true;
+      if(lon>=166&&lon<=178&&lat>=-47&&lat<=-34) return true;
+      if(lon>=-55&&lon<=-17&&lat>=60&&lat<=84) return true;
+      if(lon>=130&&lon<=146&&lat>=30&&lat<=46) return true;
+      if(lon>=-8&&lon<=2&&lat>=50&&lat<=59) return true;
+      if(lon>=4&&lon<=32&&lat>=55&&lat<=71) return true;
+      return false;
+    };
+    for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+      const lon=(c/COLS)*360-180, lat=90-(r/ROWS)*180;
+      if(lat<-50||!isLand(lon,lat)) continue;
+      const phi=(90-lat)*Math.PI/180, theta=(lon+180)*Math.PI/180;
+      dotVecs.push({x:Math.sin(phi)*Math.cos(theta),y:Math.cos(phi),z:-Math.sin(phi)*Math.sin(theta)});
+    }
+  };
+  return new Promise(resolve=>{
+    const sources=[
+      {url:'https://unpkg.com/three-globe@2.33.0/example/img/earth-water.png', test:(px,i)=>px[i+2]<128},
+      {url:'https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png', test:(px,i)=>px[i]>12},
+    ];
+    const try_=(idx)=>{
+      if(idx>=sources.length){fallback();resolve();return;}
+      const{url,test}=sources[idx];
+      const img=new Image(); img.crossOrigin='anonymous';
+      img.onload=()=>{
+        try{
+          const SW=720,SH=360,SC=document.createElement('canvas');
+          SC.width=SW; SC.height=SH;
+          const sx=SC.getContext('2d'); sx.drawImage(img,0,0,SW,SH);
+          const px=sx.getImageData(0,0,SW,SH).data;
+          dotVecs=[];
+          for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+            const lon=(c/COLS)*360-180, lat=90-(r/ROWS)*180;
+            if(lat<-50) continue;
+            const ix=Math.min(SW-1,Math.floor(((lon+180)/360)*SW));
+            const iy=Math.min(SH-1,Math.floor(((90-lat)/180)*SH));
+            if(!test(px,(iy*SW+ix)*4)) continue;
+            const phi=(90-lat)*Math.PI/180, theta=(lon+180)*Math.PI/180;
+            dotVecs.push({x:Math.sin(phi)*Math.cos(theta),y:Math.cos(phi),z:-Math.sin(phi)*Math.sin(theta)});
+          }
+          if(dotVecs.length<500){dotVecs=[];try_(idx+1);}
+          else resolve();
+        }catch(e){try_(idx+1);}
+      };
+      img.onerror=()=>try_(idx+1);
+      img.src=url;
+    };
+    try_(0);
+  });
+}
+
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script'); s.src=src;
+    s.onload=res; s.onerror=rej; document.head.appendChild(s);
+  });
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  requestAnimationFrame(()=>requestAnimationFrame(async()=>{
+    document.getElementById('gw-status').textContent='Loading globe…';
+    await buildDots();
+    let ok=false;
+    for(const url of[
+      'https://cdn.jsdelivr.net/npm/globe.gl@2.41.5/dist/globe.gl.min.js',
+      'https://unpkg.com/globe.gl@2.41.5/dist/globe.gl.min.js',
+    ]){
+      try{await loadScript(url);if(typeof Globe!=='undefined'){ok=true;break;}}catch(e){}
+    }
+    if(!ok){document.getElementById('gw-status').textContent='Failed to load globe.';return;}
+    document.getElementById('gw-status').style.display='none';
+    boot();
+  }));
+});
+
+function boot(){
+  const gw=document.getElementById('gw');
+  CW=gw.clientWidth; CH=gw.clientHeight;
+
+  world=new Globe(gw)
+    .width(CW).height(CH)
+    .backgroundColor('rgba(0,0,0,0)').globeImageUrl('').showAtmosphere(false)
+    .arcsData([]).arcStartLat(d=>d.fLat).arcStartLng(d=>d.fLng)
+    .arcEndLat(d=>d.tLat).arcEndLng(d=>d.tLng)
+    .arcColor(d=>d.colors).arcAltitudeAutoScale(0.3).arcStroke(0.8)
+    .arcDashLength(1).arcDashGap(0).arcDashAnimateTime(0).arcsTransitionDuration(0)
+    .htmlElementsData([]).htmlLat(d=>d.lat).htmlLng(d=>d.lng)
+    .htmlAltitude(0.02).htmlElement(d=>d.el)
+    .enablePointerInteraction(true);
+
+  try{const m=world.globeMaterial();if(m){m.opacity=0;m.transparent=true;m.needsUpdate=true;}}catch(e){}
+
+  cv=document.createElement('canvas');
+  const DPR=window.devicePixelRatio||1;
+  cv.style.cssText='position:absolute;top:0;left:0;pointer-events:none;z-index:999;width:100%;height:100%;';
+  cv.width=CW*DPR; cv.height=CH*DPR;
+  ctx=cv.getContext('2d'); ctx.scale(DPR,DPR); ctxDots=ctx;
+  gw.appendChild(cv);
+
+  if(window.ResizeObserver){
+    new ResizeObserver(()=>{
+      CW=gw.clientWidth; CH=gw.clientHeight;
+      if(!CW||!CH) return;
+      const dpr=window.devicePixelRatio||1;
+      cv.width=CW*dpr; cv.height=CH*dpr;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      world&&world.width(CW).height(CH);
+    }).observe(gw);
+  }
+
+  world.controls().autoRotate=true;
+  world.controls().autoRotateSpeed=0.35;
+  world.pointOfView({lat:18, lng:0, altitude:1.65});
+
+  gw.addEventListener('pointerdown',e=>{gw._ts={t:Date.now(),x:e.clientX,y:e.clientY};},{passive:true});
+  gw.addEventListener('pointerup',e=>{
+    if(!gw._ts) return;
+    const dt=Date.now()-gw._ts.t, dx=Math.abs(e.clientX-gw._ts.x), dy=Math.abs(e.clientY-gw._ts.y);
+    gw._ts=null;
+    if(dt<300&&dx<8&&dy<8) fireDemo();
+  },{passive:true});
+
+  loop();
+  fireDemo();
+  setInterval(fireDemo,2200);
+}
+
+function loop(){
+  const now=Date.now(); let dirtyArcs=false;
+  txAnims.forEach(tx=>{
+    if(tx.done||tx.isPulse) return;
+    const e=now-tx.t0; let al;
+    if(e<FADE_IN) al=ease(e/FADE_IN);
+    else if(e<FADE_IN+HOLD) al=1;
+    else{const f=(e-FADE_IN-HOLD)/FADE_OUT;if(f>=1){al=0;tx.done=true;}else al=ease(1-f);}
+    tx.al=al;
+    if(tx.arc){tx.arc.colors=[toRgba(tx.col,al),toRgba(tx.col,al*.4)];dirtyArcs=true;}
+  });
+  if(dirtyArcs) world&&world.arcsData([...arcs]);
+  txAnims=txAnims.filter(t=>!t.done);
+  updateStats();
+  if(!ctx||!CW||!CH){requestAnimationFrame(loop);return;}
+  ctx.clearRect(0,0,CW,CH);
+
+  const isDark=html.getAttribute('data-theme')==='dark';
+  const cam=world&&world.camera();
+  if(cam&&ctxDots){
+    const R=100, v=cam.matrixWorldInverse.elements, p=cam.projectionMatrix.elements;
+    {
+      const gcx=v[12],gcy=v[13],gcz=v[14];
+      const grx=p[0]*gcx+p[4]*gcy+p[8]*gcz+p[12];
+      const gry=p[1]*gcx+p[5]*gcy+p[9]*gcz+p[13];
+      const grw=p[3]*gcx+p[7]*gcy+p[11]*gcz+p[15];
+      if(grw>0){
+        const gscx=(grx/grw*.5+.5)*CW, gscy=(-gry/grw*.5+.5)*CH;
+        const gsR=Math.abs((p[0]*R/grw)*CW*.5);
+        ctxDots.beginPath(); ctxDots.arc(gscx,gscy,gsR*.995,0,6.2832);
+        ctxDots.fillStyle=isDark?'rgba(4,8,15,0.93)':'rgba(208,220,232,0.90)';
+        ctxDots.fill();
+        const rimW=gsR*.03, glowR=gsR, sunAngle=Math.PI*.28, SEG=180;
+        for(let i=0;i<SEG;i++){
+          const angle=(i/SEG)*Math.PI*2;
+          let diff=Math.abs(angle-sunAngle);
+          if(diff>Math.PI) diff=Math.PI*2-diff;
+          const intensity=Math.max(0,1-diff/(Math.PI*.82));
+          const eased=Math.pow(intensity,1.6);
+          if(eased<.005) continue;
+          const a1=angle-(Math.PI*2/SEG)*.55, a2=angle+(Math.PI*2/SEG)*.55;
+          ctxDots.beginPath(); ctxDots.arc(gscx,gscy,glowR+rimW*3,a1,a2);
+          ctxDots.strokeStyle=`rgba(0,184,169,${(eased*.12).toFixed(3)})`;
+          ctxDots.lineWidth=rimW*3.5; ctxDots.stroke();
+          ctxDots.beginPath(); ctxDots.arc(gscx,gscy,glowR+rimW*1.1,a1,a2);
+          ctxDots.strokeStyle=`rgba(0,184,169,${(eased*.30).toFixed(3)})`;
+          ctxDots.lineWidth=rimW*1.8; ctxDots.stroke();
+          ctxDots.beginPath(); ctxDots.arc(gscx,gscy,glowR+rimW*.2,a1,a2);
+          ctxDots.strokeStyle=`rgba(180,240,235,${(eased*.55).toFixed(3)})`;
+          ctxDots.lineWidth=rimW*.7; ctxDots.stroke();
+        }
+      }
+    }
+    if(dotVecs.length>0){
+      const cp=cam.position;
+      const camDist=Math.sqrt(cp.x*cp.x+cp.y*cp.y+cp.z*cp.z);
+      const baseDOT=1.55*(300/camDist);
+      ctxDots.fillStyle=isDark?'rgba(74,144,226,1)':'rgba(0,130,180,1)';
+      for(let i=0;i<dotVecs.length;i++){
+        const d=dotVecs[i], wx=R*d.x, wy=R*d.y, wz=R*d.z;
+        const facing=(wx*cp.x+wy*cp.y+wz*cp.z)/(R*camDist);
+        const cx2=v[0]*wx+v[4]*wy+v[8]*wz+v[12], cy2=v[1]*wx+v[5]*wy+v[9]*wz+v[13];
+        const cz2=v[2]*wx+v[6]*wy+v[10]*wz+v[14];
+        const rx2=p[0]*cx2+p[4]*cy2+p[8]*cz2+p[12], ry2=p[1]*cx2+p[5]*cy2+p[9]*cz2+p[13];
+        const rw2=p[3]*cx2+p[7]*cy2+p[11]*cz2+p[15];
+        if(rw2<=0) continue;
+        const sx=(rx2/rw2*.5+.5)*CW, sy=(-ry2/rw2*.5+.5)*CH;
+        const t2=(facing+1)/2;
+        ctxDots.globalAlpha=.55+t2*.45;
+        ctxDots.beginPath(); ctxDots.arc(sx,sy,Math.max(.3,baseDOT*(.5+t2*.5)),0,6.2832); ctxDots.fill();
+      }
+      ctxDots.globalAlpha=1;
+    }
+  }
+
+  txAnims.forEach(tx=>{
+    if(tx.done) return;
+    if(tx.isPulse){
+      const elapsed=Date.now()-tx.t0, progress=elapsed/tx.dur;
+      if(progress>=1){tx.done=true;return;}
+      const pos=proj(tx.lat,tx.lng); if(!pos) return;
+      const{r,g,b}=H2R(tx.col);
+      const oa=progress<.3?progress/.3:1-(progress-.3)/.7;
+      for(let ring=0;ring<2;ring++){
+        const off=ring*.4, pp=Math.min((progress-off)/(1-off),1);
+        if(pp<=0) continue;
+        ctx.beginPath(); ctx.arc(pos.x,pos.y,5+pp*26,0,6.2832);
+        ctx.strokeStyle=`rgba(${r},${g},${b},${(oa*(1-pp)*.7).toFixed(2)})`;
+        ctx.lineWidth=1.2; ctx.stroke();
+      }
+      const amt2=tx.amount||1000;
+      const dotR2=.5+(Math.log10(Math.max(amt2,100))-Math.log10(100))/(Math.log10(1e6)-Math.log10(100))*5;
+      const g2=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,dotR2*4);
+      g2.addColorStop(0,`rgba(255,255,255,${(oa*.3).toFixed(2)})`); g2.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(pos.x,pos.y,dotR2*4,0,6.2832); ctx.fill();
+      ctx.fillStyle=`rgba(255,255,255,${oa.toFixed(2)})`; ctx.beginPath(); ctx.arc(pos.x,pos.y,dotR2,0,6.2832); ctx.fill();
+      return;
+    }
+    if(tx.al<.01) return;
+    const{r,g,b}=H2R(tx.col), al=tx.al;
+    const{r:pr,g:pg,b:pb}=H2R('#6d28d9'), {r:tr,g:tg,b:tb}=H2R(tx.col);
+    if(!tx.same){
+      const pts=[];
+      for(let t=0;t<=1;t+=.025){
+        const lat=tx.fLat+(tx.tLat-tx.fLat)*t, lng=tx.fLng+(tx.tLng-tx.fLng)*t;
+        const pp=projAlt(lat,lng,Math.sin(t*Math.PI)*.3);
+        if(pp) pts.push({...pp,t});
+      }
+      if(pts.length>2){
+        for(let i=1;i<pts.length;i++){
+          const tm=(pts[i-1].t+pts[i].t)/2;
+          ctx.beginPath(); ctx.moveTo(pts[i-1].x,pts[i-1].y); ctx.lineTo(pts[i].x,pts[i].y);
+          ctx.strokeStyle=`rgba(${Math.round(pr+(tr-pr)*tm)},${Math.round(pg+(tg-pg)*tm)},${Math.round(pb+(tb-pb)*tm)},${al.toFixed(2)})`;
+          ctx.lineWidth=1.6; ctx.stroke();
+        }
+        const elapsed=Date.now()-tx.t0, tp=Math.min(elapsed/(FADE_IN+HOLD),1);
+        const dotAl=tp<1?al:al*Math.max(0,1-(elapsed-FADE_IN-HOLD)/200);
+        if(dotAl>.01){
+          let dotPt=null;
+          for(let i=0;i<pts.length-1;i++){
+            if(pts[i].t<=tp&&pts[i+1].t>=tp){
+              const seg=(tp-pts[i].t)/(pts[i+1].t-pts[i].t);
+              dotPt={x:pts[i].x+(pts[i+1].x-pts[i].x)*seg,y:pts[i].y+(pts[i+1].y-pts[i].y)*seg};
+              break;
+            }
+          }
+          if(!dotPt) dotPt=pts[pts.length-1];
+          if(dotPt){
+            const amt=tx.amount||1000;
+            const dotR=.5+(Math.log10(Math.max(amt,100))-Math.log10(100))/(Math.log10(1e6)-Math.log10(100))*5;
+            const grd=ctx.createRadialGradient(dotPt.x,dotPt.y,0,dotPt.x,dotPt.y,dotR*4);
+            grd.addColorStop(0,`rgba(255,255,255,${(dotAl*.3).toFixed(2)})`); grd.addColorStop(1,'rgba(255,255,255,0)');
+            ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(dotPt.x,dotPt.y,dotR*4,0,6.2832); ctx.fill();
+            ctx.fillStyle=`rgba(255,255,255,${dotAl.toFixed(2)})`; ctx.beginPath(); ctx.arc(dotPt.x,dotPt.y,dotR,0,6.2832); ctx.fill();
+          }
+        }
+      }
+    }
+    const op=proj(tx.fLat,tx.fLng);
+    if(op){
+      ctx.beginPath(); ctx.arc(op.x,op.y,5.5,0,6.2832);
+      ctx.strokeStyle=`rgba(${pr},${pg},${pb},${al.toFixed(2)})`; ctx.lineWidth=1.5; ctx.stroke();
+      const grd=ctx.createRadialGradient(op.x,op.y,1,op.x,op.y,16);
+      grd.addColorStop(0,`rgba(${pr},${pg},${pb},${(al*.25).toFixed(2)})`); grd.addColorStop(1,`rgba(${pr},${pg},${pb},0)`);
+      ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(op.x,op.y,16,0,6.2832); ctx.fill();
+      if(tx.fromName) drawLabel(tx.fromName,op.x,op.y-12,`rgba(${pr},${pg},${pb},${al.toFixed(2)})`,al);
+    }
+    const dp=proj(tx.tLat,tx.tLng);
+    if(dp){
+      ctx.fillStyle=`rgba(${tr},${tg},${tb},${al.toFixed(2)})`;
+      ctx.beginPath(); ctx.arc(dp.x,dp.y,4.5,0,6.2832); ctx.fill();
+      const grd=ctx.createRadialGradient(dp.x,dp.y,0,dp.x,dp.y,16);
+      grd.addColorStop(0,`rgba(${tr},${tg},${tb},${(al*.25).toFixed(2)})`); grd.addColorStop(1,`rgba(${tr},${tg},${tb},0)`);
+      ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(dp.x,dp.y,16,0,6.2832); ctx.fill();
+      if(tx.toName&&!tx.same) drawLabel(tx.toName,dp.x,dp.y-12,`rgba(${tr},${tg},${tb},${al.toFixed(2)})`,al);
+    }
+  });
+  requestAnimationFrame(loop);
+}
+
+let _rotAnim=null;
+const FIXED_LAT=18, LNG_OFFSET=80;
+
+function rotateTo(tLat,tLng){
+  if(!world) return;
+  if(_rotAnim) _rotAnim.cancelled=true;
+  const pov=world.pointOfView(), sLat=pov.lat, sLng=pov.lng;
+  let dLng=((tLng-sLng)+540)%360-180, dLat=tLat-sLat;
+  const DUR=2800, t0=Date.now(), anim={cancelled:false}; _rotAnim=anim;
+  world.controls()&&(world.controls().autoRotate=false);
+  const eo=t=>1-Math.pow(1-t,5);
+  (function step(){
+    if(anim.cancelled||!world) return;
+    const raw=Math.min((Date.now()-t0)/DUR,1), e=eo(raw);
+    world.pointOfView({lat:sLat+dLat*e,lng:sLng+dLng*e,altitude:world.pointOfView().altitude});
+    if(raw<1) requestAnimationFrame(step);
+    else{_rotAnim=null; world.controls()&&(world.controls().autoRotate=true);}
+  })();
+}
+
+const Q_ZT_BASE=765231800, Q_TODAY_BASE=37920000, Q_BASE_VOL=1402819440, Q_BASE_TX=107032;
+
+function updateStats(){
+  const vol=Q_BASE_VOL+totalVol, tx=Q_BASE_TX+totalTx, zt=Q_ZT_BASE+ztVol, today=Q_TODAY_BASE+totalVol;
+  document.getElementById('sq-vol').textContent=fmtCompact(vol);
+  document.getElementById('sq-tx').textContent=fmtTx(tx);
+  document.getElementById('sq-zt').textContent=fmtCompact(zt);
+  document.getElementById('sq-today').textContent=fmtCompact(today);
+}
+
+function processTx(data){
+  const{from_country='US',to_country='GB',payment_type='swift',amount=1000,currency='USD'}=data;
+  const type=(payment_type||'swift').toLowerCase(), col=PC[type]||PC.swift;
+  const fc=type==='domestic'?(US_CITIES[from_country]||US_CITIES.US_NYC):(CITIES[from_country]||CITIES.US);
+  const tc=type==='domestic'?(US_CITIES[to_country]||US_CITIES.US_LAX):(CITIES[to_country]||CITIES.GB);
+  totalTx++; totalVol+=parseFloat(amount)||0;
+  if(type==='zenus_transfer') ztVol+=(parseFloat(amount)||0)*2;
+  const same=from_country===to_country;
+  txAnims.push({t0:Date.now(),col,al:0,done:false,same,fLat:fc[0],fLng:fc[1],tLat:tc[0],tLng:tc[1],fromName:fc[2],toName:tc[2],amount:parseFloat(amount)||0});
+  if(same){
+    const arcDur=FADE_IN+HOLD+FADE_OUT;
+    txAnims.push({isPulse:true,t0:Date.now(),dur:arcDur,lat:fc[0],lng:fc[1],col,done:false,amount:parseFloat(amount)||0});
+  }
+  if(SETTINGS.autoRotate){
+    if(!same){let dL=tc[1]-fc[1];while(dL>180)dL-=360;while(dL<-180)dL+=360;rotateTo(FIXED_LAT,fc[1]+dL/2-LNG_OFFSET);}
+    else rotateTo(FIXED_LAT,fc[1]-LNG_OFFSET);
+  }
+  addFeed(fc[2],tc[2],same,type,col,amount,currency);
+  updateStats();
+}
+
+function addFeed(from,to,same,type,col,amount,currency){
+  const feed=document.getElementById('feed');
+  const el=document.createElement('div'); el.className='fi';
+  const now=new Date().toLocaleTimeString('en-US',{hour12:false});
+  const arrow=type==='withdrawal'?'↓':type==='internal'?'↔':'→';
+  const route=same?`◎ ${from}`:`${from} ${arrow} ${to}`;
+  const sign=type==='withdrawal'?'−':'';
+  el.innerHTML=`<span class="fi-pre" style="color:${col}">▸</span><span class="fi-amt" style="color:${col}">${currency} ${sign}${fmtA(amount)}</span><span class="fi-route">${route}</span><span class="fi-time">${now}</span>`;
+  feed.insertBefore(el,feed.firstChild);
+  while(feed.children.length>10) feed.lastChild&&feed.lastChild.remove();
+  setTimeout(()=>{
+    if(!el.parentNode) return;
+    el.classList.add('dying');
+    setTimeout(()=>el.parentNode&&el.remove(),1300);
+  },6000);
+}
+
+function fireDemo(){
+  const r=Math.random(); let type;
+  if(r<.22) type='swift'; else if(r<.38) type='fedwire'; else if(r<.48) type='stablecoin';
+  else if(r<.56) type='ach'; else if(r<.67) type='withdrawal'; else if(r<.76) type='internal';
+  else if(r<.88) type='domestic'; else type='zenus_transfer';
+  let from, to;
+  if(type==='domestic'){
+    from=US_CODES[Math.floor(Math.random()*US_CODES.length)];
+    do{to=US_CODES[Math.floor(Math.random()*US_CODES.length)];}while(to===from);
+  }else{
+    from=CODES[Math.floor(Math.random()*CODES.length)];
+    to=CODES[Math.floor(Math.random()*CODES.length)];
+    if(type==='internal'?Math.random()<.6:Math.random()<.08) to=from;
+  }
+  const bigChance=(type==='withdrawal'||type==='internal')?.35:.12;
+  const ar=Math.random();
+  const amount=ar<bigChance?(Math.random()*4800000+100000).toFixed(2):ar<bigChance+.3?(Math.random()*48000+5000).toFixed(2):(Math.random()*4800+50).toFixed(2);
+  processTx({from_country:from,to_country:to,payment_type:type,amount,currency:'USD'});
+}
+
+window.addEventListener('message',e=>{if(e.data?.type==='transaction')processTx(e.data.payload);});
+
+// ── Page background canvas ────────────────────────────────────────
+const bgCanvas=document.getElementById('page-bg'), bx=bgCanvas.getContext('2d');
+let BW, BH;
+
+function drawPageBg(){
+  if(!BW) return;
+  bx.clearRect(0,0,BW,BH);
+  const isDark=html.getAttribute('data-theme')==='dark';
+  bx.fillStyle=isDark?'#04080f':'#f2f5f9';
+  bx.fillRect(0,0,BW,BH);
+  // Subtle ambient glow right-of-center where globe is
+  const g1=bx.createRadialGradient(BW*.68,BH*.42,0,BW*.68,BH*.42,BW*.58);
+  g1.addColorStop(0,isDark?'rgba(0,184,169,0.05)':'rgba(0,184,169,0.035)');
+  g1.addColorStop(1,'rgba(0,0,0,0)');
+  bx.fillStyle=g1; bx.fillRect(0,0,BW,BH);
+  // Sparse stars (dark mode only)
+  if(isDark){
+    const rng=(s,m)=>{let x=Math.sin(s)*43758.5453;return(x-Math.floor(x))*m;};
+    for(let i=0;i<160;i++){
+      const x=rng(i*1.7,BW), y=rng(i*2.3,BH*.65);
+      const sr=rng(i*.9,1)<.08?1.0:.35;
+      const a=.06+rng(i*3.1,1)*.22;
+      bx.beginPath(); bx.arc(x,y,sr,0,6.28);
+      bx.fillStyle=`rgba(255,255,255,${a.toFixed(2)})`; bx.fill();
+    }
+  }
+}
+
+function sizeBg(){
+  BW=bgCanvas.width=window.innerWidth*(window.devicePixelRatio||1);
+  BH=bgCanvas.height=window.innerHeight*(window.devicePixelRatio||1);
+  bgCanvas.style.width=window.innerWidth+'px';
+  bgCanvas.style.height=window.innerHeight+'px';
+  drawPageBg();
+}
+sizeBg();
+window.addEventListener('resize',sizeBg);
+</script>
+</body>
+</html>
