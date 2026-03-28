@@ -3,145 +3,193 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zenus Bank · One Infrastructure. Every Rail.</title>
+<title>Zenus Bank · Banking Beyond Borders</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-/* ── DESIGN TOKENS ───────────────────────────────────────────────── */
 :root {
   --teal:       #00b8a9;
-  --teal-light: #00cfc0;
+  --teal-lt:    #00cfc0;
   --gold:       #c9a84c;
   --gold-dim:   rgba(201,168,76,0.10);
-  --red:        #e05252;
-  --blue-tx:    #4a90d9;
   --mono:       'IBM Plex Mono', monospace;
   --sans:       'Inter', sans-serif;
   --serif:      'Playfair Display', serif;
 }
-
-/* DARK (default) */
 [data-theme="dark"] {
-  --bg:        #04080f;
-  --bg-nav:    rgba(4,8,15,0.88);
-  --bg-glass:  rgba(4,8,15,0.38);
-  --bg-solid:  rgba(4,8,15,0.94);
-  --text:      #edf0f4;
-  --text-mid:  rgba(237,240,244,0.55);
-  --text-dim:  rgba(237,240,244,0.26);
-  --border:    rgba(255,255,255,0.07);
-  --border-m:  rgba(255,255,255,0.12);
-  --disc:      rgba(4,8,15,0.93);
-  /* gradient fade stops */
-  --f0: rgba(4,8,15,0.97);
-  --f1: rgba(4,8,15,0.82);
-  --f2: rgba(4,8,15,0.45);
-  --fb: rgba(4,8,15,1.0);
-  --fb1:rgba(4,8,15,0.84);
-  --pb: rgba(4,8,15,0.96);
-  --ptxt:  rgba(237,240,244,0.20);
-  --ptxt-h:rgba(237,240,244,0.55);
+  --bg:      #04080f;
+  --bg-nav:  rgba(4,8,15,0.90);
+  --bg-menu: rgba(6,12,24,0.98);
+  --bg-glass:rgba(4,8,15,0.36);
+  --bg-solid:rgba(4,8,15,0.94);
+  --text:    #edf0f4;
+  --tmid:    rgba(237,240,244,0.52);
+  --tdim:    rgba(237,240,244,0.24);
+  --bdr:     rgba(255,255,255,0.07);
+  --bdrm:    rgba(255,255,255,0.11);
+  --disc:    rgba(4,8,15,0.93);
+  --f0: rgba(4,8,15,0.97); --f1: rgba(4,8,15,0.80);
+  --f2: rgba(4,8,15,0.42); --fb: rgba(4,8,15,1.0);
+  --fb1:rgba(4,8,15,0.82);
+  --ptxt: rgba(237,240,244,0.30);
+  --ptxt-h:rgba(237,240,244,0.70);
+  --section-bg: rgba(255,255,255,0.02);
 }
-
-/* LIGHT */
 [data-theme="light"] {
-  --bg:        #f2f5f9;
-  --bg-nav:    rgba(242,245,249,0.92);
-  --bg-glass:  rgba(255,255,255,0.48);
-  --bg-solid:  rgba(242,245,249,0.96);
-  --text:      #0c1018;
-  --text-mid:  rgba(12,16,24,0.56);
-  --text-dim:  rgba(12,16,24,0.30);
-  --border:    rgba(0,0,0,0.07);
-  --border-m:  rgba(0,0,0,0.13);
-  --disc:      rgba(208,220,232,0.90);
-  --f0: rgba(242,245,249,0.97);
-  --f1: rgba(242,245,249,0.84);
-  --f2: rgba(242,245,249,0.44);
-  --fb: rgba(242,245,249,1.0);
-  --fb1:rgba(242,245,249,0.84);
-  --pb: rgba(242,245,249,0.97);
-  --ptxt:  rgba(12,16,24,0.22);
-  --ptxt-h:rgba(12,16,24,0.58);
+  --bg:      #f2f5f9;
+  --bg-nav:  rgba(242,245,249,0.92);
+  --bg-menu: rgba(248,250,253,0.98);
+  --bg-glass:rgba(255,255,255,0.50);
+  --bg-solid:rgba(242,245,249,0.96);
+  --text:    #0c1018;
+  --tmid:    rgba(12,16,24,0.54);
+  --tdim:    rgba(12,16,24,0.28);
+  --bdr:     rgba(0,0,0,0.07);
+  --bdrm:    rgba(0,0,0,0.12);
+  --disc:    rgba(208,220,234,0.90);
+  --f0: rgba(242,245,249,0.97); --f1: rgba(242,245,249,0.82);
+  --f2: rgba(242,245,249,0.40); --fb: rgba(242,245,249,1.0);
+  --fb1:rgba(242,245,249,0.82);
+  --ptxt: rgba(12,16,24,0.30);
+  --ptxt-h:rgba(12,16,24,0.70);
+  --section-bg: rgba(0,0,0,0.02);
 }
 
 html, body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  overflow-x: hidden;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
+  background: var(--bg); color: var(--text);
+  font-family: var(--sans); overflow-x: hidden;
+  min-height: 100vh; -webkit-font-smoothing: antialiased;
   transition: background .2s, color .2s;
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   NAV
-───────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   NAV — logo left, hamburger right only
+════════════════════════════════════════════════════════════════ */
 nav {
-  position: fixed; top:0; left:0; right:0; z-index:400;
-  height: 60px; padding: 0 48px;
+  position: fixed; top:0; left:0; right:0; z-index:500;
+  height: 60px; padding: 0 36px;
   display: flex; align-items: center; justify-content: space-between;
   background: var(--bg-nav);
   backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--bdr);
   transition: background .2s, border-color .2s;
 }
 .nav-logo { display:flex; align-items:center; text-decoration:none; }
-.nav-logo img { height:21px; width:auto; }
-[data-theme="light"] .nav-logo img { filter:saturate(1.1) brightness(.9); }
+.nav-logo img { height:20px; width:auto; }
+[data-theme="light"] .nav-logo img { filter:saturate(1.1) brightness(.88); }
 
 .nav-links { display:flex; gap:28px; list-style:none; }
 .nav-links a {
   font-size:13px; font-weight:400; letter-spacing:.01em;
-  color:var(--text-mid); text-decoration:none; transition:color .15s;
+  color:var(--tmid); text-decoration:none; transition:color .15s;
 }
 .nav-links a:hover { color:var(--text); }
 
-.nav-right { display:flex; align-items:center; gap:14px; }
-
-/* Theme toggle */
-.tog-wrap { display:flex; align-items:center; gap:8px; }
-.tog-lbl {
-  font-family:var(--mono); font-size:8px; letter-spacing:.16em;
-  text-transform:uppercase; color:var(--text-dim);
-  user-select:none;
+/* Hamburger */
+.menu-btn {
+  width:36px; height:36px; border:1px solid var(--bdrm);
+  border-radius:8px; background:none; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:5px; transition:border-color .15s;
+  flex-shrink:0;
 }
+.menu-btn:hover { border-color:var(--teal); }
+.menu-btn span {
+  display:block; width:16px; height:1.5px;
+  background:var(--tmid); border-radius:1px;
+  transition:background .15s, transform .2s, opacity .2s;
+}
+.menu-btn.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); background:var(--text); }
+.menu-btn.open span:nth-child(2) { opacity:0; }
+.menu-btn.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); background:var(--text); }
+
+/* Slide-in menu panel */
+.menu-panel {
+  position: fixed; top:60px; right:0; z-index:490;
+  width: 280px;
+  background: var(--bg-menu);
+  border-left: 1px solid var(--bdr);
+  border-bottom: 1px solid var(--bdr);
+  border-radius: 0 0 0 12px;
+  padding: 24px;
+  transform: translateX(110%);
+  transition: transform .25s cubic-bezier(.4,0,.2,1);
+  backdrop-filter: blur(24px);
+}
+.menu-panel.open { transform: translateX(0); }
+
+.menu-section { margin-bottom:24px; }
+.menu-section:last-child { margin-bottom:0; }
+.menu-sec-label {
+  font-family:var(--mono); font-size:7.5px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--tdim); margin-bottom:14px;
+}
+
+/* Nav links in menu (mobile) */
+.menu-nav-links { display:none; flex-direction:column; gap:2px; }
+.menu-nav-links a {
+  font-size:14px; font-weight:400; color:var(--tmid);
+  text-decoration:none; padding:8px 0;
+  border-bottom:1px solid var(--bdr);
+  transition:color .15s;
+}
+.menu-nav-links a:last-child { border-bottom:none; }
+.menu-nav-links a:hover { color:var(--text); }
+
+/* Toggle row */
+.tog-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 0; border-bottom:1px solid var(--bdr);
+}
+.tog-row:last-child { border-bottom:none; }
+.tog-label {
+  font-size:13px; color:var(--tmid);
+}
+.tog-sub { font-family:var(--mono); font-size:8px; color:var(--tdim); margin-top:2px; }
+
+/* Toggle switch */
 .tog {
   width:36px; height:20px; border-radius:10px; cursor:pointer;
-  border:none; background:var(--border-m); position:relative;
+  border:none; background:var(--bdrm); position:relative;
   flex-shrink:0; transition:background .25s;
 }
 .tog::after {
   content:''; position:absolute; width:14px; height:14px;
   border-radius:50%; top:3px; left:3px;
-  background:var(--text-dim); transition:transform .25s, background .25s;
+  background:var(--tdim); transition:transform .25s, background .25s;
 }
-[data-theme="light"] .tog { background:rgba(0,184,169,.22); }
-[data-theme="light"] .tog::after { transform:translateX(16px); background:var(--teal); }
+.tog.on { background:rgba(0,184,169,.3); }
+.tog.on::after { transform:translateX(16px); background:var(--teal); }
 
-.btn-nav {
-  font-family:var(--sans); font-size:12px; font-weight:500; letter-spacing:.04em;
+.btn-started {
+  display:block; width:100%; margin-top:20px;
+  font-family:var(--sans); font-size:13px; font-weight:500; letter-spacing:.02em;
   background:var(--teal); color:#04080f; border:none; border-radius:6px;
-  padding:9px 20px; cursor:pointer; transition:background .15s, box-shadow .15s;
+  padding:11px 0; text-align:center; cursor:pointer;
+  transition:background .15s, box-shadow .15s;
 }
-.btn-nav:hover { background:var(--teal-light); box-shadow:0 0 18px rgba(0,184,169,.4); }
+.btn-started:hover { background:var(--teal-lt); box-shadow:0 0 18px rgba(0,184,169,.4); }
 
-/* ─────────────────────────────────────────────────────────────────
-   PAGE BACKGROUND CANVAS
-───────────────────────────────────────────────────────────────── */
+/* Overlay when menu open */
+.menu-overlay {
+  position:fixed; inset:0; z-index:480;
+  display:none;
+}
+.menu-overlay.open { display:block; }
+
+/* ════════════════════════════════════════════════════════════════
+   PAGE BG
+════════════════════════════════════════════════════════════════ */
 #page-bg { position:fixed; inset:0; z-index:0; pointer-events:none; }
 
-/* ─────────────────────────────────────────────────────────────────
+/* ════════════════════════════════════════════════════════════════
    HERO
-   Globe is positioned right-of-center: left:42%, large (96vw square).
-   Text overlays the left ~50% with gradient legibility.
-───────────────────────────────────────────────────────────────── */
+════════════════════════════════════════════════════════════════ */
 .hero {
   position: relative;
-  height: 100vh; min-height: 700px;
+  height: 100vh; min-height: 680px;
   overflow: hidden;
 }
 
@@ -150,12 +198,9 @@ nav {
 
 #gw-wrap {
   position: absolute;
-  left: 42%;          /* biased right — globe center ~62% from left */
-  top: -8%;           /* top arc bleeds past nav for scale */
-  width: 96vw;
-  height: 96vw;
-  max-width: 1260px;
-  max-height: 1260px;
+  left: 42%; top: -8%;
+  width: 96vw; height: 96vw;
+  max-width: 1260px; max-height: 1260px;
 }
 #gw {
   width:100% !important; height:100% !important;
@@ -164,33 +209,29 @@ nav {
 #gw canvas { position:absolute; top:0; left:0; width:100% !important; height:100% !important; }
 #gw-status {
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:var(--text-dim); z-index:5;
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+  color:var(--tdim); z-index:5;
 }
 
 /* Gradient masks */
 .gf { position:absolute; pointer-events:none; z-index:10; }
-
 .gf-l {
   top:0; left:0; bottom:0; width:54%;
   background: linear-gradient(to right,
     var(--f0) 0%, var(--f0) 14%,
     var(--f1) 30%, var(--f2) 48%,
-    rgba(4,8,15,0.05) 60%, transparent 100%);
+    rgba(4,8,15,.04) 60%, transparent 100%);
 }
 [data-theme="light"] .gf-l {
   background: linear-gradient(to right,
     var(--f0) 0%, var(--f0) 14%,
     var(--f1) 30%, var(--f2) 48%,
-    rgba(242,245,249,0.05) 60%, transparent 100%);
+    rgba(242,245,249,.04) 60%, transparent 100%);
 }
-.gf-t {
-  top:0; left:0; right:0; height:14%;
-  background: linear-gradient(to bottom, var(--f0) 0%, transparent 100%);
-}
-.gf-r {
-  top:0; right:0; bottom:0; width:6%;
-  background: linear-gradient(to left, var(--bg), transparent);
-}
+.gf-t { top:0; left:0; right:0; height:14%;
+  background: linear-gradient(to bottom, var(--f0) 0%, transparent 100%); }
+.gf-r { top:0; right:0; bottom:0; width:5%;
+  background: linear-gradient(to left, var(--bg), transparent); }
 .gf-b {
   bottom:0; left:0; right:0; height:46%;
   background: linear-gradient(to top,
@@ -203,187 +244,151 @@ nav {
   position: absolute; z-index:20;
   top: 50%; transform: translateY(-50%);
   left: 0; padding-left: 52px;
-  max-width: 520px;
+  max-width: 500px;
   display: flex; flex-direction: column;
 }
 
-/* Credential pills */
-.cred-row {
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  margin-bottom:18px;
-  opacity:0; animation:fadeUp .5s .05s forwards;
-}
-.cred {
-  font-family:var(--mono); font-size:8px; font-weight:500;
-  letter-spacing:.13em; text-transform:uppercase;
-  border:1px solid var(--border-m); border-radius:3px;
-  padding:3px 8px; color:var(--text-dim);
-  background:var(--bg-glass); backdrop-filter:blur(8px);
-  white-space:nowrap;
-}
-.cred.gold {
-  border-color:rgba(201,168,76,.35);
-  color:var(--gold); background:var(--gold-dim);
-}
-
-/* Eyebrow */
 .eyebrow {
   font-family:var(--mono); font-size:9px; font-weight:500;
   letter-spacing:.22em; text-transform:uppercase;
-  color:var(--teal); margin-bottom:16px;
+  color:var(--teal); margin-bottom:14px;
   display:flex; align-items:center; gap:10px;
-  opacity:0; animation:fadeUp .5s .12s forwards;
+  opacity:0; animation:fadeUp .5s .08s forwards;
 }
 .eyebrow::before { content:''; width:16px; height:1px; background:var(--teal); opacity:.5; }
 
-/* Headline: serif for authority line, sans for the data line */
 .h1 {
-  margin-bottom:14px;
-  opacity:0; animation:fadeUp .55s .22s forwards;
+  margin-bottom:16px;
+  opacity:0; animation:fadeUp .5s .18s forwards;
 }
 .h1-main {
   font-family:var(--serif); font-weight:600;
-  font-size:clamp(34px, 3.6vw, 58px);
-  line-height:1.1; letter-spacing:-.02em;
+  font-size:clamp(36px, 3.8vw, 62px);
+  line-height:1.08; letter-spacing:-.02em;
   color:var(--text); display:block;
 }
 .h1-sub {
   font-family:var(--sans); font-weight:400;
-  font-size:clamp(14px, 1.4vw, 20px);
-  line-height:1.55; letter-spacing:-.005em;
-  color:var(--text-mid); display:block; margin-top:8px;
+  font-size:clamp(14px, 1.4vw, 19px);
+  line-height:1.55; color:var(--tmid);
+  display:block; margin-top:10px;
 }
 .h1-sub em { font-style:normal; color:var(--teal); font-weight:500; }
 
-/* Body */
 .hero-body {
   font-size:13.5px; font-weight:300; line-height:1.8;
-  color:var(--text-mid); max-width:360px; margin-bottom:28px;
-  opacity:0; animation:fadeUp .55s .32s forwards;
+  color:var(--tmid); max-width:340px; margin-bottom:28px;
+  opacity:0; animation:fadeUp .5s .28s forwards;
 }
 
-/* CTAs */
 .actions {
-  display:flex; gap:10px; margin-bottom:36px;
-  opacity:0; animation:fadeUp .55s .40s forwards;
+  display:flex; gap:10px; margin-bottom:40px;
+  opacity:0; animation:fadeUp .5s .36s forwards;
 }
 .btn-p {
-  font-family:var(--sans); font-size:13px; font-weight:500; letter-spacing:.02em;
+  font-family:var(--sans); font-size:13px; font-weight:500;
   background:var(--teal); color:#04080f; border:none;
   border-radius:6px; padding:11px 22px; cursor:pointer;
   transition:background .15s, box-shadow .15s;
 }
-.btn-p:hover { background:var(--teal-light); box-shadow:0 4px 20px rgba(0,184,169,.38); }
+.btn-p:hover { background:var(--teal-lt); box-shadow:0 4px 20px rgba(0,184,169,.38); }
 .btn-s {
   font-family:var(--sans); font-size:13px; font-weight:400;
-  color:var(--text-mid); background:var(--bg-glass);
-  border:1px solid var(--border-m); border-radius:6px;
+  color:var(--tmid); background:var(--bg-glass);
+  border:1px solid var(--bdrm); border-radius:6px;
   padding:11px 22px; cursor:pointer;
   backdrop-filter:blur(10px); transition:all .15s;
 }
 .btn-s:hover { color:var(--text); }
 
-/* ── METRICS — Bloomberg-style horizontal data row ────────────────
-   Numbers large (38px on desktop), teal ONLY for live values.
-   Separated by a thin divider line, no card background.
+/* ── STATS — clean, no borders, just spacing ──────────────────────
+   Numbers speak for themselves. No card, no dividers.
+   Teal for live values only.
 ──────────────────────────────────────────────────────────────── */
-.metrics {
-  display:flex; gap:0; align-items:flex-start;
-  border-top:1px solid var(--border-m); padding-top:20px;
-  opacity:0; animation:fadeUp .55s .50s forwards;
+.stats {
+  display:flex; gap:32px; flex-wrap:wrap;
+  opacity:0; animation:fadeUp .5s .44s forwards;
 }
-.stat {
-  padding-right:22px; margin-right:22px;
-  border-right:1px solid var(--border);
-  flex-shrink:0;
-}
-.stat:last-child { border-right:none; margin-right:0; padding-right:0; }
+.stat { flex-shrink:0; }
 .sv {
   font-family:var(--mono); font-weight:300;
-  font-size:clamp(26px, 2.7vw, 40px);
-  line-height:1; letter-spacing:-.02em;
-  color:var(--text); margin-bottom:5px; white-space:nowrap;
+  font-size:clamp(28px, 2.8vw, 42px);
+  line-height:1; letter-spacing:-.025em;
+  color:var(--text); margin-bottom:4px; white-space:nowrap;
 }
 .sv.live { color:var(--teal); }
 .sl {
   font-family:var(--mono); font-size:7.5px; font-weight:400;
   letter-spacing:.13em; text-transform:uppercase;
-  color:var(--text-dim);
-  display:flex; align-items:center; gap:4px;
+  color:var(--tdim); display:flex; align-items:center; gap:4px;
 }
 .dot {
   width:4px; height:4px; border-radius:50%; background:var(--teal);
   flex-shrink:0; animation:blink 2.4s ease-in-out infinite;
 }
 
-/* ── PARTNERS TICKER — bottom of hero ────────────────────────────── */
-.p-band {
-  position:absolute; bottom:0; left:0; right:0; z-index:25;
-  background:var(--pb); border-top:1px solid var(--border);
-  padding:13px 0; overflow:hidden;
-  transition:background .2s, border-color .2s;
+/* ════════════════════════════════════════════════════════════════
+   PARTNERS SECTION — large logos, slow CSS pan
+   Lives directly below the hero fold, not inside it.
+   Two rows of partners pan in opposite directions.
+════════════════════════════════════════════════════════════════ */
+.partners-section {
+  position: relative; z-index:50;
+  background: var(--bg);
+  border-top: 1px solid var(--bdr);
+  padding: 52px 0;
+  overflow: hidden;
+  transition: background .2s, border-color .2s;
 }
-.p-track {
-  display:flex; width:max-content;
-  animation:ticker 42s linear infinite;
+.partners-header {
+  padding: 0 52px 36px;
+  display: flex; align-items: center; gap: 10px;
 }
-.p-band:hover .p-track { animation-play-state:paused; }
-.p-item {
-  display:flex; align-items:center; gap:7px;
-  padding:0 28px; border-right:1px solid var(--border);
-  flex-shrink:0;
+.partners-label {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--teal);
 }
-.p-item:last-child { border-right:none; }
-.p-name {
-  font-family:var(--sans); font-size:11px; font-weight:500;
-  letter-spacing:.06em; text-transform:uppercase;
-  color:var(--ptxt); white-space:nowrap; transition:color .18s;
-}
-.p-band:hover .p-name { color:var(--ptxt-h); }
-.p-tag {
-  font-family:var(--mono); font-size:7.5px; letter-spacing:.05em;
-  padding:2px 5px; border-radius:3px; white-space:nowrap;
-  background:rgba(0,184,169,.08); color:var(--teal);
-}
-.p-tag.gtag { background:var(--gold-dim); color:var(--gold); }
+.partners-label::before { content:'—— '; opacity:.5; }
 
-/* ── LIVE FEED PANEL ─────────────────────────────────────────────── */
-.feed-panel {
-  position:fixed; bottom:24px; right:24px; z-index:200;
-  background:var(--bg-solid); backdrop-filter:blur(20px);
-  border:1px solid var(--border); border-radius:10px;
-  width:268px; overflow:hidden;
-  transition:background .2s, border-color .2s;
+/* Two rows panning in opposite directions */
+.prow { overflow:hidden; margin-bottom:0; }
+.prow:first-of-type { margin-bottom:8px; }
+.prow-track {
+  display:flex; width:max-content; gap:0;
+  animation: panL 45s linear infinite;
 }
-.feed-hd {
-  padding:9px 14px 8px; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; gap:7px;
-}
-.feed-lbl {
-  font-family:var(--mono); font-size:7.5px; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--text-dim);
-}
-#feed {
-  padding:4px 0; display:flex; flex-direction:column;
-  max-height:160px; overflow:hidden;
-}
-.fi {
-  font-family:var(--mono); font-size:9.5px; line-height:1.5;
-  color:var(--text-mid); padding:3px 14px;
-  border-bottom:1px solid var(--border);
-  animation:slideIn .18s ease; transition:opacity 1.2s;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.fi.dying { opacity:0; }
-.fi-amt { font-weight:500; }
-.fi-route { color:var(--text-dim); font-size:9px; margin-left:5px; }
-.fi-time { color:var(--text-dim); font-size:8.5px; float:right; opacity:.55; }
-.fi-pre { margin-right:4px; }
+.prow:nth-of-type(2) .prow-track { animation: panR 55s linear infinite; }
+.partners-section:hover .prow-track { animation-play-state: paused; }
 
-/* ── BELOW HERO SECTIONS ─────────────────────────────────────────── */
-.section {
+.pcard {
+  display: flex; flex-direction:column; align-items:flex-start;
+  padding: 20px 36px;
+  border-right: 1px solid var(--bdr);
+  flex-shrink:0; cursor:default;
+  transition: background .2s;
+}
+.pcard:last-child { border-right:none; }
+.pcard:hover { background: var(--section-bg); }
+.pcard-name {
+  font-family:var(--sans); font-weight:600;
+  font-size:16px; letter-spacing:-.01em;
+  color:var(--ptxt); white-space:nowrap;
+  transition:color .2s;
+}
+.pcard:hover .pcard-name { color:var(--ptxt-h); }
+.pcard-type {
+  font-family:var(--mono); font-size:8px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--tdim);
+  margin-top:4px; white-space:nowrap;
+}
+.pcard-type.g { color:var(--gold); }
+
+/* ════════════════════════════════════════════════════════════════
+   BELOW HERO — PILLAR SECTION
+════════════════════════════════════════════════════════════════ */
+.pillars-section {
   position:relative; z-index:50;
-  background:var(--bg); border-top:1px solid var(--border);
+  background:var(--bg); border-top:1px solid var(--bdr);
   padding:60px 52px;
   transition:background .2s, border-color .2s;
 }
@@ -393,96 +398,157 @@ nav {
   margin-bottom:36px; display:flex; align-items:center; gap:10px;
 }
 .sec-label::before { content:''; width:16px; height:1px; background:var(--teal); }
-
-/* Three pillars */
 .pillars {
-  display:grid; grid-template-columns:repeat(3,1fr);
-  gap:1px; background:var(--border);
-  border:1px solid var(--border); border-radius:10px; overflow:hidden;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:40px;
 }
-.pillar {
-  background:var(--bg); padding:32px 28px;
-  transition:background .2s;
-}
-.pillar:hover { background:var(--bg-glass); }
-.p-icon {
-  width:30px; height:30px; border-radius:7px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:14px; margin-bottom:18px;
-}
-.p-icon.t { background:rgba(0,184,169,.1); }
-.p-icon.g { background:var(--gold-dim); }
+.pillar {}
 .p-num {
   font-family:var(--mono); font-weight:300;
-  font-size:36px; line-height:1; letter-spacing:-.02em;
-  color:var(--text); margin-bottom:6px;
+  font-size:38px; line-height:1; letter-spacing:-.02em;
+  color:var(--text); margin-bottom:8px;
 }
 .p-num em { font-style:normal; color:var(--teal); }
 .p-num.gn em { color:var(--gold); }
-.p-title { font-size:14px; font-weight:500; color:var(--text); margin-bottom:10px; }
-.p-body { font-size:13px; font-weight:300; line-height:1.75; color:var(--text-mid); }
+.p-title { font-size:14px; font-weight:500; color:var(--text); margin-bottom:10px; line-height:1.3; }
+.p-body { font-size:13px; font-weight:300; line-height:1.75; color:var(--tmid); }
 
-/* Partner grid */
-.partner-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:1px; background:var(--border);
-  border:1px solid var(--border); border-radius:10px; overflow:hidden;
+/* ════════════════════════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════════════════════════ */
+footer {
+  position:relative; z-index:50;
+  background:var(--bg); border-top:1px solid var(--bdr);
+  padding:32px 52px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:24px; flex-wrap:wrap;
+  transition:background .2s, border-color .2s;
 }
-.pc {
-  background:var(--bg); padding:22px 20px;
-  display:flex; flex-direction:column; gap:5px;
-  transition:background .15s;
+.footer-logo img { height:16px; width:auto; opacity:.5; }
+.footer-creds {
+  display:flex; gap:16px; align-items:center; flex-wrap:wrap;
 }
-.pc:hover { background:var(--bg-glass); }
-.pc-name { font-size:13px; font-weight:500; color:var(--text); }
-.pc-type {
+.footer-cred {
   font-family:var(--mono); font-size:8px; letter-spacing:.12em;
-  text-transform:uppercase; color:var(--text-dim);
+  text-transform:uppercase; color:var(--tdim);
 }
-.pc-type.g { color:var(--gold); }
+.footer-links {
+  display:flex; gap:20px; list-style:none;
+}
+.footer-links a {
+  font-size:12px; color:var(--tdim); text-decoration:none; transition:color .15s;
+}
+.footer-links a:hover { color:var(--tmid); }
 
-/* ── KEYFRAMES ────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   LIVE FEED
+════════════════════════════════════════════════════════════════ */
+.feed-panel {
+  position:fixed; bottom:24px; right:24px; z-index:200;
+  background:var(--bg-solid); backdrop-filter:blur(20px);
+  border:1px solid var(--bdr); border-radius:10px;
+  width:264px; overflow:hidden;
+  transition:background .2s, border-color .2s, opacity .3s;
+}
+.feed-panel.hidden { opacity:0; pointer-events:none; }
+.feed-hd {
+  padding:9px 14px 8px; border-bottom:1px solid var(--bdr);
+  display:flex; align-items:center; gap:7px;
+}
+.feed-lbl {
+  font-family:var(--mono); font-size:7.5px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--tdim);
+}
+#feed {
+  padding:4px 0; display:flex; flex-direction:column;
+  max-height:160px; overflow:hidden;
+}
+.fi {
+  font-family:var(--mono); font-size:9.5px; line-height:1.5;
+  color:var(--tmid); padding:3px 14px;
+  border-bottom:1px solid var(--bdr);
+  animation:slideIn .18s ease; transition:opacity 1.2s;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.fi.dying { opacity:0; }
+.fi-amt { font-weight:500; }
+.fi-route { color:var(--tdim); font-size:9px; margin-left:5px; }
+.fi-time { color:var(--tdim); font-size:8.5px; float:right; opacity:.5; }
+.fi-pre { margin-right:4px; }
+
+/* ════════════════════════════════════════════════════════════════
+   KEYFRAMES
+════════════════════════════════════════════════════════════════ */
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:none;} }
 @keyframes blink  { 0%,100%{opacity:1;} 50%{opacity:.18;} }
 @keyframes slideIn{ from{opacity:0;transform:translateY(-3px);} to{opacity:1;transform:none;} }
-@keyframes ticker { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+@keyframes panL   { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+@keyframes panR   { from{transform:translateX(-50%);} to{transform:translateX(0);} }
 
-/* ── RESPONSIVE ───────────────────────────────────────────────────── */
-@media(max-width:1100px){
-  .metrics { flex-wrap:wrap; gap:16px 0; }
-  .stat:nth-child(odd)  { border-right:1px solid var(--border); }
-  .stat:nth-child(even) { border-right:none; }
-  .stat:nth-child(3),.stat:nth-child(4) {
-    border-top:1px solid var(--border); padding-top:16px;
-  }
-  .pillars { grid-template-columns:1fr; }
-}
+/* ════════════════════════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════════════════════════ */
 @media(max-width:900px){
-  nav { padding:0 20px; }
+  /* On mobile: nav links collapse into menu */
   .nav-links { display:none; }
-  .hero-content { padding-left:24px; max-width:100%; }
-  #gw-wrap { left:50%; top:0; width:145vw; height:145vw; transform:translateX(-50%); }
-  .gf-l {
-    width:100%;
-    background:linear-gradient(to right,var(--f0) 0%,var(--f1) 35%,var(--f2) 65%,transparent 100%);
+  .menu-nav-links { display:flex; }
+
+  /* Globe: smaller, pushed to right, text left side readable */
+  #gw-wrap {
+    left: auto;
+    right: -30%;        /* bleeds off right edge */
+    top: 5%;
+    width: 115vw;
+    height: 115vw;
+    max-width: none;
+    max-height: none;
+    transform: none;
   }
-  .section { padding:36px 20px; }
-  .p-band { display:none; }
+  /* Left fade needs to be strong enough to read text over globe */
+  .gf-l {
+    width: 75%;
+    background: linear-gradient(to right,
+      var(--f0) 0%, var(--f0) 30%,
+      var(--f1) 52%, var(--f2) 70%,
+      transparent 100%);
+  }
+  /* Bottom crop: less aggressive so globe is visible */
+  .gf-b { height: 35%; }
+
+  .hero-content {
+    padding-left: 24px;
+    padding-right: 20px;
+    max-width: 72%;   /* leaves room for globe on right */
+    top: 48%; transform: translateY(-50%);
+  }
+
+  .stats { gap: 20px; }
+  .sv { font-size: clamp(22px, 6vw, 32px); }
+
+  .pillars { grid-template-columns:1fr; gap:28px; }
+  .pillars-section { padding:36px 24px; }
+  .partners-section { padding:36px 0; }
+  .partners-header { padding:0 24px 24px; }
+  footer { padding:24px; flex-direction:column; align-items:flex-start; gap:16px; }
   .feed-panel { display:none; }
+  nav { padding:0 20px; }
+  .hero-content { max-width: 68%; }
 }
-@media(max-width:600px){
-  .h1-main { font-size:clamp(26px,8vw,36px); }
-  .metrics { flex-direction:column; }
-  .stat { border-right:none !important; border-bottom:1px solid var(--border); padding-bottom:14px; margin-bottom:14px; }
-  .stat:last-child { border-bottom:none; }
-  .partner-grid { grid-template-columns:repeat(2,1fr); }
+
+@media(max-width:480px){
+  .hero-content { max-width:85%; }
+  .gf-l { width:90%; }
+  #gw-wrap { right:-45%; width:130vw; height:130vw; }
+  .h1-main { font-size:clamp(28px,8vw,40px); }
+  .stats { flex-direction:column; gap:14px; }
 }
 </style>
 </head>
 <body>
 <canvas id="page-bg"></canvas>
 
-<!-- ── NAV ────────────────────────────────────────────────────────── -->
+<!-- ════════════════════════════════════════════════════════════════
+     NAV
+════════════════════════════════════════════════════════════════ -->
 <nav>
   <a href="https://zenus.com" class="nav-logo">
     <img src="https://zenus.com/media/rpjl0yaw/zenus-bank-logo-turquoise-v2.svg?rmode=max&width=400&quality=85&rnd=133857463896170000" alt="Zenus Bank">
@@ -494,19 +560,52 @@ nav {
     <li><a href="#">Partners</a></li>
     <li><a href="#">About</a></li>
   </ul>
-  <div class="nav-right">
-    <div class="tog-wrap">
-      <span class="tog-lbl" id="tlbl">Dark</span>
-      <button class="tog" id="tog" aria-label="Toggle light/dark mode"></button>
-    </div>
-    <button class="btn-nav">Get Started</button>
-  </div>
+  <button class="menu-btn" id="menu-btn" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
-<!-- ── HERO ────────────────────────────────────────────────────────── -->
-<div class="hero">
+<!-- Menu overlay -->
+<div class="menu-overlay" id="menu-overlay"></div>
 
-  <!-- Globe: right-biased, large, interactive -->
+<!-- Slide-in menu panel -->
+<div class="menu-panel" id="menu-panel">
+  <!-- Nav links (visible only on mobile) -->
+  <div class="menu-section menu-nav-links-wrap">
+    <div class="menu-sec-label">Menu</div>
+    <nav class="menu-nav-links">
+      <a href="#">Network</a>
+      <a href="#">Infrastructure</a>
+      <a href="#">API</a>
+      <a href="#">Partners</a>
+      <a href="#">About</a>
+    </nav>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-sec-label">Display</div>
+    <div class="tog-row">
+      <div>
+        <div class="tog-label">Dark mode</div>
+      </div>
+      <button class="tog on" id="tog-theme" aria-label="Toggle theme"></button>
+    </div>
+    <div class="tog-row">
+      <div>
+        <div class="tog-label">Live transactions</div>
+        <div class="tog-sub">Show real-time flow</div>
+      </div>
+      <button class="tog on" id="tog-tx" aria-label="Toggle transactions"></button>
+    </div>
+  </div>
+
+  <button class="btn-started" id="btn-started">Get Started</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════════════════ -->
+<div class="hero">
   <div class="globe-layer">
     <div id="gw-wrap">
       <div id="gw"><div id="gw-status">Loading globe…</div></div>
@@ -517,35 +616,25 @@ nav {
     <div class="gf gf-b"></div>
   </div>
 
-  <!-- Editorial left column -->
   <div class="hero-content">
-
-    <div class="cred-row">
-      <span class="cred">FDIC Insured</span>
-      <span class="cred">US Federal Charter</span>
-      <span class="cred gold">Visa Principal Member</span>
-    </div>
-
-    <div class="eyebrow">One Infrastructure. Every Rail.</div>
+    <div class="eyebrow">Banking Beyond Borders</div>
 
     <div class="h1">
-      <span class="h1-main">Banking infrastructure<br>for emerging markets</span>
-      <span class="h1-sub">Traditional rails + stablecoin onramp —<br>powering <em>650+ institutions</em> worldwide</span>
+      <span class="h1-main">One infrastructure.<br>Every rail.</span>
+      <span class="h1-sub">Powering <em>650+ institutions</em> across emerging markets</span>
     </div>
 
     <p class="hero-body">
-      Zenus connects fintechs and financial institutions to SWIFT, Fedwire,
-      ACH, SEPA, and stablecoin liquidity through a single API — with Visa
-      card issuance and JP Morgan correspondence built in.
+      SWIFT, Fedwire, ACH, SEPA, and stablecoin — with Visa card issuance
+      and JP Morgan correspondence. One API, all settlement.
     </p>
 
     <div class="actions">
       <button class="btn-p">Get Started</button>
-      <button class="btn-s">View Network Stats</button>
+      <button class="btn-s">Get APIs</button>
     </div>
 
-    <!-- Live metrics: Bloomberg-style data row -->
-    <div class="metrics">
+    <div class="stats">
       <div class="stat">
         <div class="sv live" id="sq-vol">$1.4B</div>
         <div class="sl">Jan '26 Volume</div>
@@ -563,50 +652,117 @@ nav {
         <div class="sl"><span class="dot"></span>Today</div>
       </div>
     </div>
+  </div>
+</div>
 
-  </div><!-- /hero-content -->
+<!-- ════════════════════════════════════════════════════════════════
+     PARTNERS — large, slow-panning
+════════════════════════════════════════════════════════════════ -->
+<div class="partners-section">
+  <div class="partners-header">
+    <span class="partners-label">Network &amp; Partners</span>
+  </div>
 
-  <!-- Partners ticker -->
-  <div class="p-band">
-    <div class="p-track">
-      <div class="p-item"><span class="p-name">Conduit</span><span class="p-tag">FX Corridor</span></div>
-      <div class="p-item"><span class="p-name">Ripple</span><span class="p-tag">Blockchain</span></div>
-      <div class="p-item"><span class="p-name">Tether</span><span class="p-tag">Stablecoin</span></div>
-      <div class="p-item"><span class="p-name">Nexo</span><span class="p-tag">Digital Lending</span></div>
-      <div class="p-item"><span class="p-name">CoinZoom</span><span class="p-tag">Crypto Exchange</span></div>
-      <div class="p-item"><span class="p-name">Lulu</span><span class="p-tag">Remittance</span></div>
-      <div class="p-item"><span class="p-name">Fuse</span><span class="p-tag">Embedded Finance</span></div>
-      <div class="p-item"><span class="p-name">JP Morgan</span><span class="p-tag gtag">Correspondent</span></div>
-      <div class="p-item"><span class="p-name">Visa</span><span class="p-tag gtag">Principal Member</span></div>
-      <div class="p-item"><span class="p-name">SWIFT</span><span class="p-tag">Global Wire</span></div>
-      <div class="p-item"><span class="p-name">Fedwire</span><span class="p-tag">USD RTGS</span></div>
-      <div class="p-item"><span class="p-name">ACH Network</span><span class="p-tag">Batch</span></div>
-      <div class="p-item"><span class="p-name">SEPA</span><span class="p-tag">EUR Rails</span></div>
-      <div class="p-item"><span class="p-name">CHIPS</span><span class="p-tag">USD Clearing</span></div>
-      <div class="p-item"><span class="p-name">650+ Institutions</span><span class="p-tag">Global Network</span></div>
-      <!-- duplicate set for seamless loop -->
-      <div class="p-item"><span class="p-name">Conduit</span><span class="p-tag">FX Corridor</span></div>
-      <div class="p-item"><span class="p-name">Ripple</span><span class="p-tag">Blockchain</span></div>
-      <div class="p-item"><span class="p-name">Tether</span><span class="p-tag">Stablecoin</span></div>
-      <div class="p-item"><span class="p-name">Nexo</span><span class="p-tag">Digital Lending</span></div>
-      <div class="p-item"><span class="p-name">CoinZoom</span><span class="p-tag">Crypto Exchange</span></div>
-      <div class="p-item"><span class="p-name">Lulu</span><span class="p-tag">Remittance</span></div>
-      <div class="p-item"><span class="p-name">Fuse</span><span class="p-tag">Embedded Finance</span></div>
-      <div class="p-item"><span class="p-name">JP Morgan</span><span class="p-tag gtag">Correspondent</span></div>
-      <div class="p-item"><span class="p-name">Visa</span><span class="p-tag gtag">Principal Member</span></div>
-      <div class="p-item"><span class="p-name">SWIFT</span><span class="p-tag">Global Wire</span></div>
-      <div class="p-item"><span class="p-name">Fedwire</span><span class="p-tag">USD RTGS</span></div>
-      <div class="p-item"><span class="p-name">ACH Network</span><span class="p-tag">Batch</span></div>
-      <div class="p-item"><span class="p-name">SEPA</span><span class="p-tag">EUR Rails</span></div>
-      <div class="p-item"><span class="p-name">CHIPS</span><span class="p-tag">USD Clearing</span></div>
-      <div class="p-item"><span class="p-name">650+ Institutions</span><span class="p-tag">Global Network</span></div>
+  <!-- Row 1: pans left -->
+  <div class="prow">
+    <div class="prow-track">
+      <div class="pcard"><span class="pcard-name">Conduit</span><span class="pcard-type">FX Corridor</span></div>
+      <div class="pcard"><span class="pcard-name">Ripple</span><span class="pcard-type">Blockchain Settlement</span></div>
+      <div class="pcard"><span class="pcard-name">Tether</span><span class="pcard-type">USDT Stablecoin</span></div>
+      <div class="pcard"><span class="pcard-name">Nexo</span><span class="pcard-type">Digital Lending</span></div>
+      <div class="pcard"><span class="pcard-name">CoinZoom</span><span class="pcard-type">Crypto Exchange</span></div>
+      <div class="pcard"><span class="pcard-name">Lulu</span><span class="pcard-type">Remittance</span></div>
+      <div class="pcard"><span class="pcard-name">Fuse</span><span class="pcard-type">Embedded Finance</span></div>
+      <div class="pcard"><span class="pcard-name">SWIFT</span><span class="pcard-type">Global Wire</span></div>
+      <div class="pcard"><span class="pcard-name">Fedwire</span><span class="pcard-type">USD RTGS</span></div>
+      <div class="pcard"><span class="pcard-name">ACH</span><span class="pcard-type">Batch Payments</span></div>
+      <!-- duplicate for seamless loop -->
+      <div class="pcard"><span class="pcard-name">Conduit</span><span class="pcard-type">FX Corridor</span></div>
+      <div class="pcard"><span class="pcard-name">Ripple</span><span class="pcard-type">Blockchain Settlement</span></div>
+      <div class="pcard"><span class="pcard-name">Tether</span><span class="pcard-type">USDT Stablecoin</span></div>
+      <div class="pcard"><span class="pcard-name">Nexo</span><span class="pcard-type">Digital Lending</span></div>
+      <div class="pcard"><span class="pcard-name">CoinZoom</span><span class="pcard-type">Crypto Exchange</span></div>
+      <div class="pcard"><span class="pcard-name">Lulu</span><span class="pcard-type">Remittance</span></div>
+      <div class="pcard"><span class="pcard-name">Fuse</span><span class="pcard-type">Embedded Finance</span></div>
+      <div class="pcard"><span class="pcard-name">SWIFT</span><span class="pcard-type">Global Wire</span></div>
+      <div class="pcard"><span class="pcard-name">Fedwire</span><span class="pcard-type">USD RTGS</span></div>
+      <div class="pcard"><span class="pcard-name">ACH</span><span class="pcard-type">Batch Payments</span></div>
     </div>
   </div>
 
-</div><!-- /hero -->
+  <!-- Row 2: pans right (tier-1 + more rails) -->
+  <div class="prow">
+    <div class="prow-track">
+      <div class="pcard"><span class="pcard-name">JP Morgan</span><span class="pcard-type g">USD Correspondent</span></div>
+      <div class="pcard"><span class="pcard-name">Visa</span><span class="pcard-type g">Principal Member</span></div>
+      <div class="pcard"><span class="pcard-name">SEPA</span><span class="pcard-type">EUR Rail</span></div>
+      <div class="pcard"><span class="pcard-name">CHIPS</span><span class="pcard-type">USD Clearing</span></div>
+      <div class="pcard"><span class="pcard-name">Circle</span><span class="pcard-type">USDC Stablecoin</span></div>
+      <div class="pcard"><span class="pcard-name">Target2</span><span class="pcard-type">EUR RTGS</span></div>
+      <div class="pcard"><span class="pcard-name">CHAPS</span><span class="pcard-type">GBP Same-Day</span></div>
+      <div class="pcard"><span class="pcard-name">135+ Currencies</span><span class="pcard-type">FX Settlement</span></div>
+      <div class="pcard"><span class="pcard-name">650+ Institutions</span><span class="pcard-type">Global Network</span></div>
+      <!-- duplicate -->
+      <div class="pcard"><span class="pcard-name">JP Morgan</span><span class="pcard-type g">USD Correspondent</span></div>
+      <div class="pcard"><span class="pcard-name">Visa</span><span class="pcard-type g">Principal Member</span></div>
+      <div class="pcard"><span class="pcard-name">SEPA</span><span class="pcard-type">EUR Rail</span></div>
+      <div class="pcard"><span class="pcard-name">CHIPS</span><span class="pcard-type">USD Clearing</span></div>
+      <div class="pcard"><span class="pcard-name">Circle</span><span class="pcard-type">USDC Stablecoin</span></div>
+      <div class="pcard"><span class="pcard-name">Target2</span><span class="pcard-type">EUR RTGS</span></div>
+      <div class="pcard"><span class="pcard-name">CHAPS</span><span class="pcard-type">GBP Same-Day</span></div>
+      <div class="pcard"><span class="pcard-name">135+ Currencies</span><span class="pcard-type">FX Settlement</span></div>
+      <div class="pcard"><span class="pcard-name">650+ Institutions</span><span class="pcard-type">Global Network</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     PILLARS
+════════════════════════════════════════════════════════════════ -->
+<div class="pillars-section">
+  <div class="sec-label">What sets us apart</div>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="p-num"><em>650+</em></div>
+      <div class="p-title">Financial institution network</div>
+      <div class="p-body">Fintechs and institutions in emerging markets access USD clearing, card issuance, and cross-border settlement through a single Zenus relationship.</div>
+    </div>
+    <div class="pillar">
+      <div class="p-num gn"><em>Visa</em> + JP Morgan</div>
+      <div class="p-title">Tier-1 infrastructure backbone</div>
+      <div class="p-body">Visa Principal Member for BIN sponsorship and card issuance. JP Morgan correspondence for the most robust USD settlement network on earth.</div>
+    </div>
+    <div class="pillar">
+      <div class="p-num"><em>1</em> API</div>
+      <div class="p-title">All rails. Stablecoin included.</div>
+      <div class="p-body">SWIFT, Fedwire, ACH, SEPA — plus native stablecoin onramp and offramp. Every settlement option your clients need, through one integration.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo">
+    <img src="https://zenus.com/media/rpjl0yaw/zenus-bank-logo-turquoise-v2.svg?rmode=max&width=400&quality=85&rnd=133857463896170000" alt="Zenus Bank">
+  </div>
+  <div class="footer-creds">
+    <span class="footer-cred">FDIC Insured</span>
+    <span class="footer-cred" style="color:var(--bdrm)">·</span>
+    <span class="footer-cred">US Federal Charter</span>
+    <span class="footer-cred" style="color:var(--bdrm)">·</span>
+    <span class="footer-cred" style="color:var(--gold)">Visa Principal Member</span>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</footer>
 
 <!-- Live feed -->
-<div class="feed-panel">
+<div class="feed-panel" id="feed-panel">
   <div class="feed-hd">
     <span class="dot"></span>
     <span class="feed-lbl">Live Transactions</span>
@@ -614,63 +770,46 @@ nav {
   <div id="feed"></div>
 </div>
 
-<!-- ── NETWORK PILLARS ────────────────────────────────────────────── -->
-<div class="section">
-  <div class="sec-label">What sets us apart</div>
-  <div class="pillars">
-    <div class="pillar">
-      <div class="p-icon t">🌐</div>
-      <div class="p-num"><em>650+</em></div>
-      <div class="p-title">Financial institution network</div>
-      <div class="p-body">Fintechs and institutions across emerging markets rely on Zenus as their US banking partner — accessing USD clearing, card issuance, and cross-border settlement through a single relationship.</div>
-    </div>
-    <div class="pillar">
-      <div class="p-icon g">🏦</div>
-      <div class="p-num gn"><em>Visa</em> + JP Morgan</div>
-      <div class="p-title">Tier-1 infrastructure backbone</div>
-      <div class="p-body">As a Visa Principal Member, we sponsor BIN ranges for card issuance. JP Morgan correspondence means your settlements clear on the most robust USD correspondent network on earth.</div>
-    </div>
-    <div class="pillar">
-      <div class="p-icon t">⚡</div>
-      <div class="p-num"><em>1</em> API</div>
-      <div class="p-title">All rails. Stablecoin onramp included.</div>
-      <div class="p-body">SWIFT, Fedwire, ACH, SEPA — and native stablecoin onramp/offramp via Tether and Circle. One integration gives your clients every settlement option their end customers need.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ── PARTNER GRID ────────────────────────────────────────────────── -->
-<div class="section">
-  <div class="sec-label">Our network</div>
-  <div class="partner-grid">
-    <div class="pc"><div class="pc-name">Conduit</div><div class="pc-type">FX corridor infrastructure</div></div>
-    <div class="pc"><div class="pc-name">Ripple</div><div class="pc-type">Blockchain settlement</div></div>
-    <div class="pc"><div class="pc-name">Tether</div><div class="pc-type">USDT stablecoin</div></div>
-    <div class="pc"><div class="pc-name">Nexo</div><div class="pc-type">Digital asset lending</div></div>
-    <div class="pc"><div class="pc-name">CoinZoom</div><div class="pc-type">Crypto exchange</div></div>
-    <div class="pc"><div class="pc-name">Lulu</div><div class="pc-type">Remittance network</div></div>
-    <div class="pc"><div class="pc-name">Fuse</div><div class="pc-type">Embedded finance</div></div>
-    <div class="pc"><div class="pc-name">JP Morgan</div><div class="pc-type g">USD correspondent</div></div>
-    <div class="pc"><div class="pc-name">Visa</div><div class="pc-type g">Card network — principal member</div></div>
-    <div class="pc"><div class="pc-name">SWIFT</div><div class="pc-type">International wire</div></div>
-    <div class="pc"><div class="pc-name">Fedwire</div><div class="pc-type">USD real-time gross settlement</div></div>
-    <div class="pc"><div class="pc-name">ACH Network</div><div class="pc-type">Batch payments</div></div>
-    <div class="pc"><div class="pc-name">SEPA</div><div class="pc-type">EUR rail access</div></div>
-    <div class="pc"><div class="pc-name">CHIPS</div><div class="pc-type">USD clearing house</div></div>
-  </div>
-</div>
-
 <script>
-// ── Theme toggle ──────────────────────────────────────────────────
-const html = document.documentElement;
-document.getElementById('tog').addEventListener('click', () => {
+// ════════════════════════════════════════════════════════════════
+// MENU
+// ════════════════════════════════════════════════════════════════
+const html    = document.documentElement;
+const menuBtn = document.getElementById('menu-btn');
+const menuPanel = document.getElementById('menu-panel');
+const menuOverlay = document.getElementById('menu-overlay');
+
+function toggleMenu(force) {
+  const open = force !== undefined ? force : !menuPanel.classList.contains('open');
+  menuPanel.classList.toggle('open', open);
+  menuOverlay.classList.toggle('open', open);
+  menuBtn.classList.toggle('open', open);
+}
+menuBtn.addEventListener('click', () => toggleMenu());
+menuOverlay.addEventListener('click', () => toggleMenu(false));
+
+// Theme toggle
+const togTheme = document.getElementById('tog-theme');
+togTheme.addEventListener('click', () => {
   const dark = html.getAttribute('data-theme') === 'dark';
   html.setAttribute('data-theme', dark ? 'light' : 'dark');
-  document.getElementById('tlbl').textContent = dark ? 'Light' : 'Dark';
+  togTheme.classList.toggle('on', !dark);
   drawPageBg();
 });
 
-// ── Compact number format ─────────────────────────────────────────
+// Transaction flow toggle
+let showFeed = true;
+const togTx = document.getElementById('tog-tx');
+const feedPanel = document.getElementById('feed-panel');
+togTx.addEventListener('click', () => {
+  showFeed = !showFeed;
+  togTx.classList.toggle('on', showFeed);
+  feedPanel.classList.toggle('hidden', !showFeed);
+});
+
+// ════════════════════════════════════════════════════════════════
+// COMPACT FORMAT
+// ════════════════════════════════════════════════════════════════
 function fmtCompact(v) {
   if (v >= 1e9) return '$' + (v/1e9).toPrecision(3).replace(/\.?0+$/,'') + 'B';
   if (v >= 1e6) return '$' + (v/1e6).toPrecision(3).replace(/\.?0+$/,'') + 'M';
@@ -683,7 +822,9 @@ function fmtTx(v) {
   return v.toLocaleString();
 }
 
-// ── Globe: constants & state ──────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
+// GLOBE ENGINE
+// ════════════════════════════════════════════════════════════════
 const PC = {
   swift:'#00b8a9', fedwire:'#00b8a9', stablecoin:'#00b8a9', ach:'#00b8a9',
   withdrawal:'#e05252', internal:'#4a90d9', domestic:'#00b8a9', zenus_transfer:'#00b8a9',
@@ -870,7 +1011,6 @@ window.addEventListener('DOMContentLoaded',()=>{
 function boot(){
   const gw=document.getElementById('gw');
   CW=gw.clientWidth; CH=gw.clientHeight;
-
   world=new Globe(gw)
     .width(CW).height(CH)
     .backgroundColor('rgba(0,0,0,0)').globeImageUrl('').showAtmosphere(false)
@@ -881,7 +1021,6 @@ function boot(){
     .htmlElementsData([]).htmlLat(d=>d.lat).htmlLng(d=>d.lng)
     .htmlAltitude(0.02).htmlElement(d=>d.el)
     .enablePointerInteraction(true);
-
   try{const m=world.globeMaterial();if(m){m.opacity=0;m.transparent=true;m.needsUpdate=true;}}catch(e){}
 
   cv=document.createElement('canvas');
@@ -949,7 +1088,7 @@ function loop(){
         const gscx=(grx/grw*.5+.5)*CW, gscy=(-gry/grw*.5+.5)*CH;
         const gsR=Math.abs((p[0]*R/grw)*CW*.5);
         ctxDots.beginPath(); ctxDots.arc(gscx,gscy,gsR*.995,0,6.2832);
-        ctxDots.fillStyle=isDark?'rgba(4,8,15,0.93)':'rgba(208,220,232,0.90)';
+        ctxDots.fillStyle=isDark?'rgba(4,8,15,0.93)':'rgba(208,220,234,0.90)';
         ctxDots.fill();
         const rimW=gsR*.03, glowR=gsR, sunAngle=Math.PI*.28, SEG=180;
         for(let i=0;i<SEG;i++){
@@ -1169,7 +1308,7 @@ function fireDemo(){
 
 window.addEventListener('message',e=>{if(e.data?.type==='transaction')processTx(e.data.payload);});
 
-// ── Page background canvas ────────────────────────────────────────
+// Page background
 const bgCanvas=document.getElementById('page-bg'), bx=bgCanvas.getContext('2d');
 let BW, BH;
 
@@ -1179,12 +1318,10 @@ function drawPageBg(){
   const isDark=html.getAttribute('data-theme')==='dark';
   bx.fillStyle=isDark?'#04080f':'#f2f5f9';
   bx.fillRect(0,0,BW,BH);
-  // Subtle ambient glow right-of-center where globe is
   const g1=bx.createRadialGradient(BW*.68,BH*.42,0,BW*.68,BH*.42,BW*.58);
-  g1.addColorStop(0,isDark?'rgba(0,184,169,0.05)':'rgba(0,184,169,0.035)');
+  g1.addColorStop(0,isDark?'rgba(0,184,169,0.05)':'rgba(0,184,169,0.03)');
   g1.addColorStop(1,'rgba(0,0,0,0)');
   bx.fillStyle=g1; bx.fillRect(0,0,BW,BH);
-  // Sparse stars (dark mode only)
   if(isDark){
     const rng=(s,m)=>{let x=Math.sin(s)*43758.5453;return(x-Math.floor(x))*m;};
     for(let i=0;i<160;i++){
