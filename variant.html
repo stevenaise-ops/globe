@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zenus Bank · Banking Beyond Borders</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
@@ -16,7 +16,7 @@
   --gold-dim:   rgba(201,168,76,0.10);
   --mono:       'IBM Plex Mono', monospace;
   --sans:       'Inter', sans-serif;
-  --serif:      'Playfair Display', serif;
+  --serif:      'Fraunces', serif;
 }
 [data-theme="dark"] {
   --bg:      #04080f;
@@ -38,23 +38,24 @@
   --section-bg: rgba(255,255,255,0.02);
 }
 [data-theme="light"] {
-  --bg:      #f2f5f9;
-  --bg-nav:  rgba(242,245,249,0.92);
-  --bg-menu: rgba(248,250,253,0.98);
-  --bg-glass:rgba(255,255,255,0.50);
-  --bg-solid:rgba(242,245,249,0.96);
-  --text:    #0c1018;
-  --tmid:    rgba(12,16,24,0.54);
-  --tdim:    rgba(12,16,24,0.28);
-  --bdr:     rgba(0,0,0,0.07);
-  --bdrm:    rgba(0,0,0,0.12);
-  --disc:    rgba(208,220,234,0.90);
-  --f0: rgba(242,245,249,0.97); --f1: rgba(242,245,249,0.82);
-  --f2: rgba(242,245,249,0.40); --fb: rgba(242,245,249,1.0);
-  --fb1:rgba(242,245,249,0.82);
-  --ptxt: rgba(12,16,24,0.30);
-  --ptxt-h:rgba(12,16,24,0.70);
-  --section-bg: rgba(0,0,0,0.02);
+  /* Warm off-white — not sterile grey, feels premium */
+  --bg:      #f7f5f0;
+  --bg-nav:  rgba(247,245,240,0.94);
+  --bg-menu: rgba(247,245,240,0.98);
+  --bg-glass:rgba(255,253,248,0.55);
+  --bg-solid:rgba(247,245,240,0.97);
+  --text:    #0f0e0c;
+  --tmid:    rgba(15,14,12,0.52);
+  --tdim:    rgba(15,14,12,0.26);
+  --bdr:     rgba(15,14,12,0.08);
+  --bdrm:    rgba(15,14,12,0.14);
+  --disc:    rgba(195,188,175,0.72);  /* warm grey disc */
+  --f0: rgba(247,245,240,0.97); --f1: rgba(247,245,240,0.84);
+  --f2: rgba(247,245,240,0.40); --fb: rgba(247,245,240,1.0);
+  --fb1:rgba(247,245,240,0.84);
+  --ptxt: rgba(15,14,12,0.28);
+  --ptxt-h:rgba(15,14,12,0.68);
+  --section-bg: rgba(15,14,12,0.025);
 }
 
 html, body {
@@ -242,53 +243,61 @@ nav {
 /* Hero text overlay */
 .hero-content {
   position: absolute; z-index:20;
-  top: 50%; transform: translateY(-50%);
+  top: 48%; transform: translateY(-50%);
   left: 0; padding-left: 52px;
   max-width: 500px;
   display: flex; flex-direction: column;
 }
 
-.eyebrow {
-  font-family:var(--mono); font-size:9px; font-weight:500;
-  letter-spacing:.22em; text-transform:uppercase;
-  color:var(--teal); margin-bottom:14px;
-  display:flex; align-items:center; gap:10px;
-  opacity:0; animation:fadeUp .5s .08s forwards;
+/* Live indicator line — Stripe-style, sits above headline */
+.hero-signal {
+  font-family: var(--mono); font-size: 11px; font-weight: 400;
+  letter-spacing: .04em; color: var(--tmid);
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+  opacity:0; animation:fadeUp .5s .05s forwards;
 }
-.eyebrow::before { content:''; width:16px; height:1px; background:var(--teal); opacity:.5; }
+.hero-signal strong { color: var(--text); font-weight: 500; }
+.hero-signal .sig-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--teal); flex-shrink: 0;
+  animation: blink 2.4s ease-in-out infinite;
+}
 
+/* Headline: Fraunces, large, two-line.
+   Line 1: white, authoritative.
+   Line 2: teal at 45% opacity — elaborate but restrained, like Stripe's muted line.
+*/
 .h1 {
-  margin-bottom:16px;
-  opacity:0; animation:fadeUp .5s .18s forwards;
+  margin-bottom: 20px;
+  opacity:0; animation:fadeUp .55s .14s forwards;
 }
 .h1-main {
-  font-family:var(--serif); font-weight:600;
-  font-size:clamp(36px, 3.8vw, 62px);
-  line-height:1.08; letter-spacing:-.02em;
-  color:var(--text); display:block;
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(48px, 5.5vw, 84px);
+  line-height: 1.02; letter-spacing: -.03em;
+  color: var(--text); display: block;
 }
-.h1-sub {
-  font-family:var(--sans); font-weight:400;
-  font-size:clamp(14px, 1.4vw, 19px);
-  line-height:1.55; color:var(--tmid);
-  display:block; margin-top:10px;
-}
-.h1-sub em { font-style:normal; color:var(--teal); font-weight:500; }
 
-.hero-body {
-  font-size:13.5px; font-weight:300; line-height:1.8;
-  color:var(--tmid); max-width:340px; margin-bottom:28px;
-  opacity:0; animation:fadeUp .5s .28s forwards;
+/* Description — sits between title and CTAs, different style from h1 */
+.hero-desc {
+  font-family: var(--sans); font-size: 14px; font-weight: 300;
+  line-height: 1.75; color: var(--tmid);
+  max-width: 320px; margin-bottom: 28px;
+  opacity:0; animation:fadeUp .5s .22s forwards;
 }
+.hero-desc em { font-style:normal; color:var(--teal); font-weight:500; }
 
 .actions {
-  display:flex; gap:10px; margin-bottom:40px;
-  opacity:0; animation:fadeUp .5s .36s forwards;
+  display:flex; gap:10px; margin-bottom:0;
+  max-width: 340px; width: 100%;
+  opacity:0; animation:fadeUp .5s .26s forwards;
 }
 .btn-p {
   font-family:var(--sans); font-size:13px; font-weight:500;
   background:var(--teal); color:#04080f; border:none;
-  border-radius:6px; padding:11px 22px; cursor:pointer;
+  border-radius:6px; padding:12px 0; cursor:pointer;
+  flex:1; min-width:100px; text-align:center;
   transition:background .15s, box-shadow .15s;
 }
 .btn-p:hover { background:var(--teal-lt); box-shadow:0 4px 20px rgba(0,184,169,.38); }
@@ -296,7 +305,8 @@ nav {
   font-family:var(--sans); font-size:13px; font-weight:400;
   color:var(--tmid); background:var(--bg-glass);
   border:1px solid var(--bdrm); border-radius:6px;
-  padding:11px 22px; cursor:pointer;
+  padding:12px 0; cursor:pointer;
+  flex:1; min-width:100px; text-align:center;
   backdrop-filter:blur(10px); transition:all .15s;
 }
 .btn-s:hover { color:var(--text); }
@@ -306,13 +316,16 @@ nav {
    Teal for live values only.
 ──────────────────────────────────────────────────────────────── */
 .stats {
-  display:flex; gap:32px; flex-wrap:wrap;
+  display:grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 0 36px;
   opacity:0; animation:fadeUp .5s .44s forwards;
+  width: fit-content;
 }
-.stat { flex-shrink:0; }
+.stat { }
 .sv {
   font-family:var(--mono); font-weight:300;
-  font-size:clamp(28px, 2.8vw, 42px);
+  font-size:clamp(26px, 2.6vw, 40px);
   line-height:1; letter-spacing:-.025em;
   color:var(--text); margin-bottom:4px; white-space:nowrap;
 }
@@ -413,8 +426,46 @@ nav {
 .p-body { font-size:13px; font-weight:300; line-height:1.75; color:var(--tmid); }
 
 /* ════════════════════════════════════════════════════════════════
+   FULL STATS MODULE
+════════════════════════════════════════════════════════════════ */
+.stats-section {
+  position:relative; z-index:50;
+  background:var(--bg); border-top:1px solid var(--bdr);
+  padding:60px 52px;
+  transition:background .2s, border-color .2s;
+}
+.stats-section-label {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--teal);
+  margin-bottom:40px; display:flex; align-items:center; gap:10px;
+}
+.stats-section-label::before { content:''; width:16px; height:1px; background:var(--teal); }
+.stats-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:48px 0;
+  border-top:1px solid var(--bdr);
+  padding-top:40px;
+}
+.sg-item { padding-right:40px; }
+.sg-val {
+  font-family:var(--mono); font-weight:300;
+  font-size:clamp(36px,3.4vw,52px);
+  line-height:1; letter-spacing:-.03em;
+  color:var(--text); margin-bottom:8px;
+}
+.sg-val.live { color:var(--teal); }
+.sg-lbl {
+  font-family:var(--mono); font-size:8px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--tdim);
+  display:flex; align-items:center; gap:5px;
+}
+
+/* ════════════════════════════════════════════════════════════════
    FOOTER
 ════════════════════════════════════════════════════════════════ */
+/* ── FULL STATS MODULE ─────────────────────────────────────────── */
+
 footer {
   position:relative; z-index:50;
   background:var(--bg); border-top:1px solid var(--bdr);
@@ -488,58 +539,91 @@ footer {
    RESPONSIVE
 ════════════════════════════════════════════════════════════════ */
 @media(max-width:900px){
-  /* On mobile: nav links collapse into menu */
   .nav-links { display:none; }
   .menu-nav-links { display:flex; }
 
-  /* Globe: smaller, pushed to right, text left side readable */
+  nav { padding:0 20px; }
+
+  /*
+    Globe: pushed hard to the right so only the left arc
+    is visible behind the text. Center of globe sits off-screen right.
+    This gives text a clean dark column, globe is a dramatic backdrop.
+  */
   #gw-wrap {
     left: auto;
-    right: -30%;        /* bleeds off right edge */
-    top: 5%;
-    width: 115vw;
-    height: 115vw;
+    right: -38%;
+    top: 2%;
+    width: 108vw;
+    height: 108vw;
     max-width: none;
     max-height: none;
     transform: none;
   }
-  /* Left fade needs to be strong enough to read text over globe */
+
+  /* Strong left gradient — fully opaque for first 40%, then fade */
   .gf-l {
-    width: 75%;
+    width: 82%;
     background: linear-gradient(to right,
-      var(--f0) 0%, var(--f0) 30%,
-      var(--f1) 52%, var(--f2) 70%,
+      var(--f0) 0%, var(--f0) 38%,
+      var(--f1) 58%, var(--f2) 74%,
       transparent 100%);
   }
-  /* Bottom crop: less aggressive so globe is visible */
-  .gf-b { height: 35%; }
-
-  .hero-content {
-    padding-left: 24px;
-    padding-right: 20px;
-    max-width: 72%;   /* leaves room for globe on right */
-    top: 48%; transform: translateY(-50%);
+  /* Bottom: hard fade — no dead zone */
+  .gf-b {
+    height: 30%;
+    background: linear-gradient(to top,
+      var(--fb) 0%, var(--fb1) 20%,
+      var(--f2) 55%, transparent 100%);
   }
 
-  .stats { gap: 20px; }
-  .sv { font-size: clamp(22px, 6vw, 32px); }
+  /* Content: left-aligned, constrained width, vertically pushed up slightly */
+  .hero-content {
+    padding-left: 24px;
+    padding-right: 0;
+    max-width: 62%;
+    top: 44%;
+    transform: translateY(-50%);
+  }
 
+  /* Reduce margins on mobile */
+  .h1 { margin-bottom: 10px; }
+  .hero-body { margin-bottom: 20px; max-width: 260px; }
+  .actions { margin-bottom: 28px; gap:8px; }
+
+  /* Buttons: smaller padding on mobile */
+  .btn-p { padding:10px 0; font-size:12px; }
+  .btn-s { padding:10px 0; font-size:12px; }
+
+  /* Stats: 3 items, single row */
+  .stats {
+    grid-template-columns: repeat(3, auto);
+    gap: 0 16px;
+  }
+  .sv { font-size: clamp(22px, 5.5vw, 30px); }
+
+  .stats-grid { grid-template-columns:repeat(2,1fr); gap:32px 0; padding-top:28px; }
+  .stats-section { padding:36px 24px; }
+  .sg-val { font-size:clamp(28px,7vw,40px); }
+  .stats-grid { grid-template-columns:repeat(2,1fr); gap:32px 0; padding-top:28px; }
   .pillars { grid-template-columns:1fr; gap:28px; }
   .pillars-section { padding:36px 24px; }
   .partners-section { padding:36px 0; }
   .partners-header { padding:0 24px 24px; }
   footer { padding:24px; flex-direction:column; align-items:flex-start; gap:16px; }
   .feed-panel { display:none; }
-  nav { padding:0 20px; }
-  .hero-content { max-width: 68%; }
 }
 
-@media(max-width:480px){
-  .hero-content { max-width:85%; }
-  .gf-l { width:90%; }
-  #gw-wrap { right:-45%; width:130vw; height:130vw; }
-  .h1-main { font-size:clamp(28px,8vw,40px); }
-  .stats { flex-direction:column; gap:14px; }
+/* Small phones: tighten further */
+@media(max-width:430px){
+  #gw-wrap { right:-48%; width:116vw; height:116vw; }
+  .gf-l { width:88%; }
+  .hero-content { max-width:72%; }
+  .h1-main { font-size:clamp(30px,8vw,40px); }
+  .hero-body { font-size:13px; max-width:230px; }
+  .stats { gap:12px 20px; }
+  .sv { font-size:clamp(18px,5vw,24px); }
+  .stats { grid-template-columns: repeat(3, auto); gap:0 12px; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
 }
 </style>
 </head>
@@ -617,40 +701,28 @@ footer {
   </div>
 
   <div class="hero-content">
-    <div class="eyebrow">Banking Beyond Borders</div>
 
-    <div class="h1">
-      <span class="h1-main">One infrastructure.<br>Every rail.</span>
-      <span class="h1-sub">Powering <em>650+ institutions</em> across emerging markets</span>
+    <!-- Live signal line — replaces eyebrow -->
+    <div class="hero-signal">
+      <span class="sig-dot"></span>
+      <span>Processing <strong id="sq-vol-signal">$1.4B</strong> · Jan '26</span>
     </div>
 
-    <p class="hero-body">
-      SWIFT, Fedwire, ACH, SEPA, and stablecoin — with Visa card issuance
-      and JP Morgan correspondence. One API, all settlement.
+    <!-- Headline: single strong line -->
+    <div class="h1">
+      <span class="h1-main">Banking<br>beyond borders.</span>
+    </div>
+
+    <!-- Description: distinct style, compact -->
+    <p class="hero-desc">
+      One infrastructure connecting <em>650+ institutions</em> to every
+      major rail — SWIFT, Fedwire, ACH, SEPA, and stablecoin — with
+      Visa card issuance and JP Morgan correspondence.
     </p>
 
     <div class="actions">
       <button class="btn-p">Get Started</button>
-      <button class="btn-s">Get APIs</button>
-    </div>
-
-    <div class="stats">
-      <div class="stat">
-        <div class="sv live" id="sq-vol">$1.4B</div>
-        <div class="sl">Jan '26 Volume</div>
-      </div>
-      <div class="stat">
-        <div class="sv live" id="sq-zt">$765M</div>
-        <div class="sl"><span class="dot"></span>Zenus Transfers</div>
-      </div>
-      <div class="stat">
-        <div class="sv" id="sq-tx">107K</div>
-        <div class="sl">Transactions</div>
-      </div>
-      <div class="stat">
-        <div class="sv live" id="sq-today">$37.9M</div>
-        <div class="sl"><span class="dot"></span>Today</div>
-      </div>
+      <button class="btn-s">Explore APIs</button>
     </div>
   </div>
 </div>
@@ -741,8 +813,42 @@ footer {
 </div>
 
 <!-- ════════════════════════════════════════════════════════════════
+     FULL STATS MODULE
+════════════════════════════════════════════════════════════════ -->
+
+<!-- ════════════════════════════════════════════════════════════════
      FOOTER
 ════════════════════════════════════════════════════════════════ -->
+<div class="stats-section">
+  <div class="stats-section-label">Network performance</div>
+  <div class="stats-grid">
+    <div class="sg-item">
+      <div class="sg-val" id="ss-vol">$1.4B</div>
+      <div class="sg-lbl">Jan '26 settlement volume</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-val live" id="ss-zt">$765M</div>
+      <div class="sg-lbl"><span class="dot"></span>Zenus transfers processed</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-val" id="ss-tx">107K</div>
+      <div class="sg-lbl">Transactions this month</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-val live" id="ss-today">$37.9M</div>
+      <div class="sg-lbl"><span class="dot"></span>Volume today</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-val">650+</div>
+      <div class="sg-lbl">Financial institutions</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-val">135+</div>
+      <div class="sg-lbl">Currencies supported</div>
+    </div>
+  </div>
+</div>
+
 <footer>
   <div class="footer-logo">
     <img src="https://zenus.com/media/rpjl0yaw/zenus-bank-logo-turquoise-v2.svg?rmode=max&width=400&quality=85&rnd=133857463896170000" alt="Zenus Bank">
@@ -1088,7 +1194,7 @@ function loop(){
         const gscx=(grx/grw*.5+.5)*CW, gscy=(-gry/grw*.5+.5)*CH;
         const gsR=Math.abs((p[0]*R/grw)*CW*.5);
         ctxDots.beginPath(); ctxDots.arc(gscx,gscy,gsR*.995,0,6.2832);
-        ctxDots.fillStyle=isDark?'rgba(4,8,15,0.93)':'rgba(208,220,234,0.90)';
+        ctxDots.fillStyle=isDark?'rgba(4,8,15,0.93)':'rgba(230,226,218,0.90)';
         ctxDots.fill();
         const rimW=gsR*.03, glowR=gsR, sunAngle=Math.PI*.28, SEG=180;
         for(let i=0;i<SEG;i++){
@@ -1115,7 +1221,7 @@ function loop(){
       const cp=cam.position;
       const camDist=Math.sqrt(cp.x*cp.x+cp.y*cp.y+cp.z*cp.z);
       const baseDOT=1.55*(300/camDist);
-      ctxDots.fillStyle=isDark?'rgba(74,144,226,1)':'rgba(0,130,180,1)';
+      ctxDots.fillStyle=isDark?'rgba(74,144,226,1)':'rgba(55,55,58,0.85)';
       for(let i=0;i<dotVecs.length;i++){
         const d=dotVecs[i], wx=R*d.x, wy=R*d.y, wz=R*d.z;
         const facing=(wx*cp.x+wy*cp.y+wz*cp.z)/(R*camDist);
@@ -1242,10 +1348,17 @@ const Q_ZT_BASE=765231800, Q_TODAY_BASE=37920000, Q_BASE_VOL=1402819440, Q_BASE_
 
 function updateStats(){
   const vol=Q_BASE_VOL+totalVol, tx=Q_BASE_TX+totalTx, zt=Q_ZT_BASE+ztVol, today=Q_TODAY_BASE+totalVol;
-  document.getElementById('sq-vol').textContent=fmtCompact(vol);
-  document.getElementById('sq-tx').textContent=fmtTx(tx);
-  document.getElementById('sq-zt').textContent=fmtCompact(zt);
-  document.getElementById('sq-today').textContent=fmtCompact(today);
+  // Hero signal only (stats removed from hero)
+  const svol=fmtCompact(vol), stx=fmtTx(tx), szt=fmtCompact(zt), std=fmtCompact(today);
+  // Signal line
+  const sig=document.getElementById('sq-vol-signal');
+  if(sig) sig.textContent=svol;
+  // Full stats module
+  const ids={'ss-vol':svol,'ss-zt':szt,'ss-tx':stx,'ss-today':std};
+  for(const[id,v] of Object.entries(ids)){
+    const el=document.getElementById(id);
+    if(el) el.textContent=v;
+  }
 }
 
 function processTx(data){
@@ -1316,12 +1429,19 @@ function drawPageBg(){
   if(!BW) return;
   bx.clearRect(0,0,BW,BH);
   const isDark=html.getAttribute('data-theme')==='dark';
-  bx.fillStyle=isDark?'#04080f':'#f2f5f9';
+  bx.fillStyle=isDark?'#04080f':'#f7f5f0';
   bx.fillRect(0,0,BW,BH);
   const g1=bx.createRadialGradient(BW*.68,BH*.42,0,BW*.68,BH*.42,BW*.58);
-  g1.addColorStop(0,isDark?'rgba(0,184,169,0.05)':'rgba(0,184,169,0.03)');
+  g1.addColorStop(0,isDark?'rgba(0,184,169,0.05)':'rgba(0,184,169,0.04)');
   g1.addColorStop(1,'rgba(0,0,0,0)');
   bx.fillStyle=g1; bx.fillRect(0,0,BW,BH);
+  // Light mode: add a warm amber glow upper-left for visual interest
+  if(!isDark){
+    const g2=bx.createRadialGradient(BW*.12,BH*.15,0,BW*.12,BH*.15,BW*.45);
+    g2.addColorStop(0,'rgba(220,185,120,0.10)');
+    g2.addColorStop(1,'rgba(0,0,0,0)');
+    bx.fillStyle=g2; bx.fillRect(0,0,BW,BH);
+  }
   if(isDark){
     const rng=(s,m)=>{let x=Math.sin(s)*43758.5453;return(x-Math.floor(x))*m;};
     for(let i=0;i<160;i++){
